@@ -100,7 +100,17 @@ Das vorliegende Dokument beschreibt grob eine Idee und das vorgehen für die Ums
 \sectionnumbering{arabic} 
 
 \section{Problemstellung}
+Wir erhalten eine große Menge an Sensordaten die zur Verarbeitung und Erfassung von Wetterdaten, Berechnung von Statistiken und Erstellung von Wetterwarnungen verwendet werden sollen. Der Eingang der Wetterdaten erfolgt kontinuierlich und Belastungsspitzen sind nur in Ausnahmefällen zu erwarten. Zusätzlich sollen beliebige zusätzliche Wetterdaten in den Verarbeitungsprozess integriert werden können. 
+Da zum Empfang der Daten und anschließenden Verarbeitung kein Server vollständig ausgelastet wird, soll das System in einer Cloud-Lösung ausgelagert werden. 
+Des Weiteren ist die Cloudlösung nötig, da wir keine eigene Server-Infrastruktur betreiben wollen oder können, da dies aus finanzieller, organisatorischer und infrastruktureller Sicht vorteilhaft ist.
+
 \section{Lösungsansatz}
+Die heterogenen Systeme (Sender von Wetterdaten, Anwendung für Complex Event Processing und Clients zum Empfang / Darstellen der aufbereiteten Wetterdaten und Warnungen) sollen durch eine Message-oriented Middleware kommunizieren, welche Sensordaten verarbeiten kann. Die Middleware kann prinzipiell jede Art von Binärdaten verarbeiten und kann dadurch gleichzeitig für andere Szenarien verwendet werden. 
+\begin{itemize}
+\item In unserem Fall sind dies Wetterdaten aus einer Wetter-API (Format json oder XML). Um die Auslastung der Instanz steuern zu können, wird sie auch fingierte Wetterdaten weiterleiten und durch Complex Event Processing verarbeiten können. 
+\end{itemize} 
+Bei einer definierten Systemauslastung müssen weitere Ressourcen dazu geschaltet werden können. 
+
 \section{Testing}
 
 
