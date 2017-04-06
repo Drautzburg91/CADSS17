@@ -105,17 +105,87 @@ Da zum Empfang der Daten und anschließenden Verarbeitung kein Server vollständ
 Des Weiteren ist die Cloudlösung nötig, da wir keine eigene Server-Infrastruktur betreiben wollen oder können, da dies aus finanzieller, organisatorischer und infrastruktureller Sicht vorteilhaft ist.
 
 \section{Lösungsansatz}
-Die heterogenen Systeme (Sender von Wetterdaten, Anwendung für Complex Event Processing und Clients zum Empfang / Darstellen der aufbereiteten Wetterdaten und Warnungen) sollen durch eine Message-oriented Middleware kommunizieren, welche Sensordaten verarbeiten kann. Die Middleware kann prinzipiell jede Art von Binärdaten verarbeiten und kann dadurch gleichzeitig für andere Szenarien verwendet werden. 
+In diesem Abschnitt wird vorerst auf eine kurze Beschreibung für die im vorhergenden Kapitel beschriebenen Problemstellung eingegangen. Anschließend wird aus der der allgemeinen Beschreibung eine erste Anforderungsdefinition an eine Softwarelösung abgeleitet.
+\subsection{Allgemein}
+Der Ansatz einer angemessenen Softwarelösung schließt drei heterogene Systeme mit ein. 
+
+Diese drei heterogenen Systeme bestehen aus,
 \begin{itemize}
-\item In unserem Fall sind dies Wetterdaten aus einer Wetter-API (Format json oder XML). Um die Auslastung der Instanz steuern zu können, wird sie auch fingierte Wetterdaten weiterleiten und durch Complex Event Processing verarbeiten können. 
-\end{itemize} 
-Bei einer definierten Systemauslastung müssen weitere Ressourcen dazu geschaltet werden können. 
+\item Sender von Wetterdaten
+\item Anwendung für Complex Event Processing
+\item Clients zum Empfang und zum Darstellen der aufbereiteten Wetterdaten und Warnungen
+\end{itemize}
+sollen durch eine Message-oriented Middleware (MoM) kommunizieren. Die MoM soll im allgemeinen Sensordaten verarbeiten können, welche 
+aus prinzipiell jeder Art von Binärdaten bestehen können, somit kann diese MoM gleichzeitig für andere Szenarien verwendet werden. 
+
+Im vorliegendem Fall beschränken sich die zu verarbeitenden Daten auf Wetterdaten aus einer Wetter-API. Diese angesprochenen Wetterdaten können sowohl als Json wie auch als XML abgezogen werden. Um die Auslastung einer Instanz steuern zu können, wird die MoM auch fingierte Wetterdaten weiterleiten können und durch Complex Event Processing "CEP" verarbeiten können. Ein weiterer Hintergrund für diese Entscheidung war die Richtigkeit der errechneten Daten. Die Wetterdaten der API können, zu keinem Zeitpunkt, genau vorhergesagt werden und somit können die Ergebnisse des "CEP" nicht auf Richtigkeit validiert werden. 
+
+Ferner soll die Lösung bei einer vorher definierten Systemauslastung weitere Ressourcen dazuschalten können. 
+
+Die Abbildung zeigt das Ergebnis eines Brainstormings, welches als Grundlage für einen Lösungsansatz dient.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=450pt]{MoM based Information Live Flow.png}
+\caption{Brainstorming}
+\end{figure}
+
+
+\subsection{Anforderungsdefiniton}
+Aus dem im letzten Abschnitt allgemein beschriebenen können folgende grundlegenden nicht-funktionalen und funktionalen Anforderungen an ein System abgeleitet werden. 
+
+Die folgenden Tabelle beschreibt die Kern Anforderungen jeweils getrennt in nicht-funktionale und funktionale Anforderungen,
+\begin{table}[!ht]
+  \centering
+    \begin{minipage}{15cm}
+      \centering
+      \begin{tabular}{*{3}{|l|p{5.0cm}|p{5.0cm}}}\hline
+     ID&Anforderung&Beschreibung\\\hline
+  
+\multicolumn{3}{|c|}{\cellcolor[RGB]{200,200,200}Nicht-funktionale Anforderungen} \\\hline
+    
+     1.1&Multi-tenancy&Das System muss eine fehlerfreie Mehrnutzer Funktionalität erfüllen\\
+      \hline
+     1.2&Scalability&Das System muss in der Lage sein zu jeder Zeit skalieren zu können\\
+     \hline
+     1.3&Fault-tolerance&Das System muss auf Fehler von Nutzer in angemessenem Rahmen reagieren\\
+     \hline
+     1.4&Cloudarchitektur&Das System muss vollständig in einer Cloudbasierten Umgebung lauffähig sein\\
+     \hline
+\multicolumn{3}{|c|}{\cellcolor[RGB]{200,200,200}Funktionale Anforderungen} \\\hline   
+ 
+     1.4&Binäre Daten annehmen&Das System soll binäre Daten annehmen können\\
+     \hline
+     1.5&Daten aufbereiten& Die Daten werden nach einem Muster aufbereitet\\
+     \hline
+      1.6& Daten Abonnieren&Die Daten können von Abonnenten bezogen werden.\\
+     \hline
+      1.7&Userverwaltung&Die User sollen in einer Datenbank verwaltet werden können.\\
+     \hline
+       1.9&Statistikfunktion&Die gespeicherten Daten sollen mit Hilfe einer Statistikfunktion aufbereitet werden können.\\
+     \hline
+     1.9&Datenquelle&Die Daten sollen via Wetter App bezogen werden können\\
+\hline     
+     2&Datenquelle&Die Daten sollen mit einem Generator fingiert werden können\\
+\hline
+2.1&Complex Event Processing&Aus den analysierten Daten sollen mit Hilfe von CEP verschiedene Ereignisse getriggert werden können.\\
+     \hline
+      \end{tabular}
+   \caption{Funktionale Anforderungen an den Prototyp}\label{tab:Anforderungen1}
+    \end{minipage}
+\end{table}
+\clearpage
+
 
 \section{Testing}
 
+Im letzten Abschnitt dieser Projektbeschreibung wird auf das Testing eingegangen. Hierbei wird zwischen folgenden Kernpunkten unterschieden,
+\begin{description}
+\item [Skalierbarkeit] Neben konstanten Wetterdaten, welche durch eine API breitgestellt werden, werden fingierte Wetterdaten genutzt. Durch diese soll die Last in der CEP-Komponente erhöht werden, um die Skalierbarkeit nachzuweisen. 
+\item [Ausfallsicherheit] Multi-Tendency: Topic von anderem User darf nicht aufgerufen werden können.
+\item[ToDo: weitere finden uns ausformulieren !]
 
-
-
+\end{description}
 
 
 
