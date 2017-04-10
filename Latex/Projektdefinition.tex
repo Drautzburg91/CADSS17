@@ -76,7 +76,7 @@
 {\Large \textbf{Vorwort}}
 \bigskip
 
-Das vorliegende Dokument beschreibt grob eine Idee und das vorgehen für die Umsetzung für das Projekt im Rahmen der Master Veranstaltung Cloud Application Development.
+Das vorliegende Dokument beschreibt grob eine Idee und das Vorgehen für die Umsetzung für das Projekt im Rahmen der Master Veranstaltung \textit{Cloud Application Development}.
 \include{affidavit}
 \include{abstract}
 
@@ -105,24 +105,24 @@ Da zum Empfang der Daten und anschließenden Verarbeitung kein Server vollständ
 Des Weiteren ist die Cloudlösung nötig, da wir keine eigene Server-Infrastruktur betreiben wollen oder können, da dies aus finanzieller, organisatorischer und infrastruktureller Sicht vorteilhaft ist.
 
 \section{Lösungsansatz}
-In diesem Abschnitt wird vorerst auf eine kurze Beschreibung für die im vorhergenden Kapitel beschriebenen Problemstellung eingegangen. Anschließend wird aus der der allgemeinen Beschreibung eine erste Anforderungsdefinition an eine Softwarelösung abgeleitet.
+In diesem Abschnitt wird vorerst auf eine kurze Beschreibung für die im vorhergehenden Kapitel beschriebenen Problemstellung eingegangen. Anschließend wird aus  der allgemeinen Beschreibung eine erste Anforderungsdefinition an eine Softwarelösung abgeleitet.
 \subsection{Allgemein}
 Der Ansatz einer angemessenen Softwarelösung schließt drei heterogene Systeme mit ein. 
 
-Diese drei heterogenen Systeme bestehen aus,
+Diese drei heterogenen Systeme bestehen aus
 \begin{itemize}
-\item Sender von Wetterdaten
-\item Anwendung für Complex Event Processing
-\item Clients zum Empfang und zum Darstellen der aufbereiteten Wetterdaten und Warnungen
+\item Sender von Wetterdaten,
+\item Anwendung für \textit{Complex Event Processing},
+\item Clients zum Empfang und zum Darstellen der aufbereiteten Wetterdaten und Warnungen,
 \end{itemize}
-sollen durch eine Message-oriented Middleware (MoM) kommunizieren. Die MoM soll im allgemeinen Sensordaten verarbeiten können, welche 
+sollen durch eine \textit{Message-oriented Middleware} (MoM) kommunizieren. Die MoM soll im allgemeinen Sensordaten verarbeiten können, welche 
 aus prinzipiell jeder Art von Binärdaten bestehen können, somit kann diese MoM gleichzeitig für andere Szenarien verwendet werden. 
 
-Im vorliegendem Fall beschränken sich die zu verarbeitenden Daten auf Wetterdaten aus einer Wetter-API. Diese angesprochenen Wetterdaten können sowohl als Json wie auch als XML abgezogen werden. Um die Auslastung einer Instanz steuern zu können, wird die MoM auch fingierte Wetterdaten weiterleiten können und durch Complex Event Processing "CEP" verarbeiten können. Ein weiterer Hintergrund für diese Entscheidung war die Richtigkeit der errechneten Daten. Die Wetterdaten der API können, zu keinem Zeitpunkt, genau vorhergesagt werden und somit können die Ergebnisse des "CEP" nicht auf Richtigkeit validiert werden. 
+Im vorliegendem Fall beschränken sich die zu verarbeitenden Daten auf Wetterdaten aus einer Wetter-API. Diese angesprochenen Wetterdaten können sowohl als Json wie auch als XML abgezogen werden. Um die Auslastung einer Instanz steuern zu können, wird die MoM auch fingierte Wetterdaten weiterleiten können und durch Complex Event Processing (CEP) verarbeiten können. Ein weiterer Hintergrund für diese Entscheidung war die Richtigkeit der errechneten Daten. Die Wetterdaten der API können, zu keinem Zeitpunkt, genau vorhergesagt werden und somit können die Ergebnisse des CEP nicht auf Richtigkeit validiert werden. 
 
 Ferner soll die Lösung bei einer vorher definierten Systemauslastung weitere Ressourcen dazuschalten können. 
 
-Die Abbildung 1.  zeigt das Ergebnis eines Brainstormings, welches als Grundlage für einen Lösungsansatz dient.
+Die Abbildung 1. zeigt das Ergebnis eines Brainstormings, welches als Grundlage für einen Lösungsansatz dient.
 
 \begin{figure}[!ht]
 \centering
@@ -130,7 +130,7 @@ Die Abbildung 1.  zeigt das Ergebnis eines Brainstormings, welches als Grundlage
 \caption{Brainstorming}
 \end{figure}
 
-Die folgende Abbildung 2. zeigt die grobe System-Architektur. Die wichtigsten Bestandteile dieser sind,
+Die folgende Abbildung 2. zeigt die grobe System-Architektur. Die wichtigsten Bestandteile dieser sind:
 \begin{itemize}
 \item Sensoren (Dateninput)
 \item MoM
@@ -147,9 +147,9 @@ Die folgende Abbildung 2. zeigt die grobe System-Architektur. Die wichtigsten Be
 \clearpage
 
 \subsection{Anforderungsdefiniton}
-Aus dem im letzten Abschnitt allgemein beschriebenen können folgende grundlegenden nicht-funktionalen und funktionalen Anforderungen an ein System abgeleitet werden. 
+Aus dem im letzten Abschnitt allgemein Beschriebenen können folgende grundlegenden nicht-funktionalen und funktionalen Anforderungen an ein System abgeleitet werden. 
 
-Die folgenden Tabelle beschreibt die Kern Anforderungen jeweils getrennt in nicht-funktionale und funktionale Anforderungen,
+Die folgende Tabelle beschreibt die Kernanforderungen jeweils getrennt in nicht-funktionale und funktionale Anforderungen,
 \begin{table}[!ht]
   \centering
     \begin{minipage}{15cm}
@@ -173,9 +173,9 @@ Die folgenden Tabelle beschreibt die Kern Anforderungen jeweils getrennt in nich
      \hline
      1.5&Daten aufbereiten& Die Daten werden nach einem Muster aufbereitet\\
      \hline
-      1.6& Daten Abonnieren&Die Daten können von Abonnenten bezogen werden.\\
+      1.6& Daten abonnieren&Die Daten können von Abonnenten bezogen werden.\\
      \hline
-      1.7&Userverwaltung&Die User sollen in einer Datenbank verwaltet werden können.\\
+      1.7&Nutzerverwaltung&Die User sollen in einer Datenbank verwaltet werden können.\\
      \hline
        1.9&Statistikfunktion&Die gespeicherten Daten sollen mit Hilfe einer Statistikfunktion aufbereitet werden können.\\
      \hline
@@ -183,7 +183,7 @@ Die folgenden Tabelle beschreibt die Kern Anforderungen jeweils getrennt in nich
 \hline     
      2&Datenquelle&Die Daten sollen mit einem Generator fingiert werden können\\
 \hline
-2.1&Complex Event Processing&Aus den analysierten Daten sollen mit Hilfe von CEP verschiedene Ereignisse getriggert werden können.\\
+2.1&Complex Event Processing&Aus den analysierten Daten sollen mit Hilfe von CEP verschiedene Ereignisse ausgelöst werden können.\\
      \hline
       \end{tabular}
    \caption{Funktionale Anforderungen an den Prototyp}\label{tab:Anforderungen1}
@@ -194,20 +194,20 @@ Die folgenden Tabelle beschreibt die Kern Anforderungen jeweils getrennt in nich
 
 \section{Testing}
 
-Im letzten Abschnitt dieser Projektbeschreibung wird auf das Testing eingegangen. Hierbei wird zwischen den Kernpunkten Skalierbarbeit und Ausfallsicherheit/Multi-Tendency unterschieden, auf diese wird in den folgenden Abschnitten eingegangen.
+Im letzten Abschnitt dieser Projektbeschreibung wird auf das Testing eingegangen. Hierbei wird zwischen den Kernpunkten Skalierbarkeit und Ausfallsicherheit/Multi-Tendency unterschieden, auf diese wird in den folgenden Abschnitten eingegangen.
 
 \subsection{Skalierbarkeit}
 \begin{itemize}
 \item Normallast:	definierter Input durch Wetterdaten API mit bestimmter Clientzahl für Performancebalancing 
 Bestimmung von Grenzwerten (Scalingparameter) für Optimale Systemsicherheit (Datenkonsistenz/Datentransferraten etc.)
-\item Client-Stress Test:	definierte Menge an Topics werden  zur Verfügung gestellt. Schrittweise wird die Anzahl der Clientanschlüsse (virtuell) erhöht.  
-Mithilfe der Scalingparameter (Normallast) muss das Cloud System weitere Ressourcen in Anspruch nehmen und der Output muss bewältigt werden(Datensicherheit/Zugriffsteuerungen/etc.) können. Der Latenzvergleich mit optimaler Normallast ergibt das Maß für Skalierbarkeit des Systems.
-\item Inputdaten - Stresstest:	eine definierte Anzahl an Clientanschlüssen ist in Verbindung mit dem System und bezieht Daten aus der MOM. Mithilfe eines eigenen Programms werden nun fingierte Wetterdatenmengen in das System (MOM) gespeist.
+\item Client - Stresstest:	definierte Menge an Topics werden  zur Verfügung gestellt. Schrittweise wird die Anzahl der Clientanschlüsse (virtuell) erhöht.  
+Mithilfe der Scalingparameter (Normallast) muss das Cloud System weitere Ressourcen in Anspruch nehmen und der Output muss bewältigt werden(Datensicherheit\- /Zugriffsteuerungen/etc.) können. Der Latenzvergleich mit optimaler Normallast ergibt das Maß für Skalierbarkeit des Systems.
+\item Inputdaten - Stresstest:	eine definierte Anzahl an Clients verbindet sich mit dem System und bezieht Daten aus der MoM. Mit Hilfe einer eigenen Softwarelösung werden nun fingierte Wetterdatenmengen in das System (MOM) eingespeist.
 \begin{itemize}
-\item Scalingparameter (Normallast) Input muss bewältigt werden
+\item Skalierungsparameter (Normallast) Input muss bewältigt werden
 \item Latenzvergleich  (Datentransfer von Input bis Output auf einem Client) mit Optimaler Normallast ergibt Maß für Skalierbarkeit des Systems
 \end{itemize}
-\item Vision Test: Test und Finale Analyse des gesamten Cloudsystems 
+\item Abnahmetest: Test und finale Analyse des gesamten Cloudsystems 
 Verschiedene Szenarien  (Normallast, Client-Veränderungen, InputDaten-Veränderungen) werden in verschiedenen Kombinationen und Ausprägungen in das System gespeist.
 \item Finale Testinganalyse (Gesamtsystem)
 \item Modulparameter Fine-tuning der AWS Cloud Architecture
@@ -218,20 +218,16 @@ Verschiedene Szenarien  (Normallast, Client-Veränderungen, InputDaten-Veränder
 
 \begin{itemize}
 
-
-
-\item MOM- Clients:	Topics von anderem User dürfen nicht zur Verfügung gestellt werden. Zeitlich simultane Abfrage gleicher oder minimal abweichender Topics.		
+\item MoM- Clients:	Topics von anderem User dürfen nicht zur Verfügung gestellt werden. Zeitlich simultane Abfrage gleicher oder minimal abweichender Topics.		
 \begin{itemize}
-\item Test des Zugriffverfahrens IAM (Amazon Web Services Identity and Access Management) Hinweis: Analog zu Keystone Identity Modul (OpenStack)
+\item Test des Zugriffsverfahrens IAM (Amazon Web Services Identity and Access Management) Hinweis: Analog zu Keystone Identity Modul (OpenStack)
 \end{itemize}
-
-
 
 
 \item CEP - Datenbank:Datenkonsistenz bei Lastverhalten
 (siehe Szenarien der der Skalierbarkeit)
 \begin{itemize}
-\item Prüfung der Ergebnisse (TOPICS)
+\item Prüfung der Ergebnisse (Topics)
 \item Prüfung über Statistikvergleiche möglich (Rahmen für zu erwartenden Wert versus geliefert/berechneter Wert) 
 \end{itemize}
 
