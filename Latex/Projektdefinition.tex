@@ -13,7 +13,7 @@
 \newcommand{\zusammenfassung}{
 }
 
-\newcommand{\autor}{Paul Drautzburg,  Lukas Hansen,  Georg Mohr, Kim Desouza, Sebastian Thuemmel, Sascha Drobig}
+\newcommand{\autor}{Paul Drautzburg,  Lukas Hansen,  Georg Mohr, Kim De Souza, Sebastian Thuemmel, Sascha Drobig}
 
 %Encodingeinstellung
 \usepackage[utf8]{inputenc}
@@ -179,21 +179,53 @@ Die folgenden Tabelle beschreibt die Kern Anforderungen jeweils getrennt in nich
 
 \section{Testing}
 
-Im letzten Abschnitt dieser Projektbeschreibung wird auf das Testing eingegangen. Hierbei wird zwischen folgenden Kernpunkten unterschieden,
-\begin{description}
-\item [Skalierbarkeit] Neben konstanten Wetterdaten, welche durch eine API breitgestellt werden, werden fingierte Wetterdaten genutzt. Durch diese soll die Last in der CEP-Komponente erhöht werden, um die Skalierbarkeit nachzuweisen. 
-\item [Ausfallsicherheit] Multi-Tendency: Topic von anderem User darf nicht aufgerufen werden können.
-\item[ToDo: weitere finden uns ausformulieren !]
+Im letzten Abschnitt dieser Projektbeschreibung wird auf das Testing eingegangen. Hierbei wird zwischen den Kernpunkten Skalierbarbeit und Ausfallsicherheit/Multi-Tendency unterschieden, auf diese wird in den folgenden Abschnitten eingegangen.
 
-\end{description}
+\subsection{Skalierbarkeit}
+\begin{itemize}
+\item Normallast:	definierter Input durch Wetterdaten API mit bestimmter Clientzahl für Performancebalancing 
+Bestimmung von Grenzwerten (Scalingparameter) für Optimale Systemsicherheit (Datenkonsistenz/Datentransferraten etc.)
+\item Client-Stress Test:	definierte Menge an Topics werden  zur Verfügung gestellt. Schrittweise wird die Anzahl der Clientanschlüsse (virtuell) erhöht.  
+Mithilfe der Scalingparameter (Normallast) muss das Cloud System weitere Ressourcen in Anspruch nehmen und der Output muss bewältigt werden(Datensicherheit/Zugriffsteuerungen/etc.) können. Der Latenzvergleich mit optimaler Normallast ergibt das Maß für Skalierbarkeit des Systems.
+\item Inputdaten - Stresstest:	eine definierte Anzahl an Clientanschlüssen ist in Verbindung mit dem System und bezieht Daten aus der MOM. Mithilfe eines eigenen Programms werden nun fingierte Wetterdatenmengen in das System (MOM) gespeist.
+\begin{itemize}
+\item Scalingparameter (Normallast) Input muss bewältigt werden
+\item Latenzvergleich  (Datentransfer von Input bis Output auf einem Client) mit Optimaler Normallast ergibt Maß für Skalierbarkeit des Systems
+\end{itemize}
+\item Vision Test: Test und Finale Analyse des gesamten Cloudsystems 
+Verschiedene Szenarien  (Normallast, Client-Veränderungen, InputDaten-Veränderungen) werden in verschiedenen Kombinationen und Ausprägungen in das System gespeist.
+\item Finale Testinganalyse (Gesamtsystem)
+\item Modulparameter Fine-tuning der AWS Cloud Architecture
+\clearpage
+\end{itemize}
+
+\subsection{Ausfallsicherheit/Multi-Tendency}
+
+\begin{itemize}
+
+
+
+\item MOM- Clients:	Topics von anderem User dürfen nicht zur Verfügung gestellt werden. Zeitlich simultane Abfrage gleicher oder minimal abweichender Topics.		
+\begin{itemize}
+\item Test des Zugriffverfahrens IAM (Amazon Web Services Identity and Access Management) Hinweis: Analog zu Keystone Identity Modul (OpenStack)
+\end{itemize}
 
 
 
 
+\item CEP - Datenbank:Datenkonsistenz bei Lastverhalten
+(siehe Szenarien der der Skalierbarkeit)
+\begin{itemize}
+\item Prüfung der Ergebnisse (TOPICS)
+\item Prüfung über Statistikvergleiche möglich (Rahmen für zu erwartenden Wert versus geliefert/berechneter Wert) 
+\end{itemize}
 
 
 
-
-
+\item Clients - Datenbank:	User hat die Möglichkeit ein Userprofil anzulegen (Suchkriterien zu speichern/Statistiken anzusehen)
+\begin{itemize}
+\item Test des Userzugriffs Datensicherheit (Test der Oracle Userrollenzugriffe bzw. Test der Einstellungen im Modul IAM)
+\end{itemize}
+\end{itemize}
 
 \end{document}
