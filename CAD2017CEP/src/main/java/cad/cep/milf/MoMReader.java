@@ -17,7 +17,7 @@ public class MoMReader {
 	 */
 	public void read() throws MoMException{
 		IMoM mom =  MomFactory.createMom();
+		//prototype ussage, for cloud use it should be changed a bit
 		mom.readMessageFromTopic("TPOC");
-		mom.sendMessageToopic("aa", null);
 	}
 }

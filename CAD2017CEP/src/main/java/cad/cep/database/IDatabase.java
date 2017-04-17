@@ -24,10 +24,12 @@ public interface IDatabase {
 	IDatabase connectToDataBase(String path);
 	
 	/**
-	 * Save M essage.
+	 * Save Message.
 	 *
 	 * @param message the message
 	 * @return the i database
 	 */
-	IDatabase saveMEssage(IMessage message);
+	IDatabase saveMessage(IMessage message);
+	
+	IMessage readMessage(String query);
 }

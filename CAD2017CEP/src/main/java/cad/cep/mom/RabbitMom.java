@@ -10,7 +10,6 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-import com.rabbitmq.client.MessageProperties;
 
 import cad.cep.exceptions.MoMException;
 import cad.cep.model.IMessage;
