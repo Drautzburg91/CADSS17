@@ -10,17 +10,28 @@ import cad.cep.model.JSONMessage;
 public class EsperService {
 
 	EPServiceProvider enigne = EPServiceProviderManager.getDefaultProvider(); 
-	protected EsperService(){/*not needed */}
 	
-	protected final EsperService registerEvents(){
+	public EsperService(){
 		enigne.getEPAdministrator().getConfiguration().addEventType(JSONMessage.class);
+	}
+	
+	public final EsperService registerAdditionalEvent(Class<?> className){
+		enigne.getEPAdministrator().getConfiguration().addEventType(className);
 		return this;
 	}
 	
-	protected final EPStatement createStatement(String statementQuery, UpdateListener listener){
-		EPStatement statement = enigne.getEPAdministrator().createEPL(statementQuery);
-		statement.addListener(listener);
+	public final EPStatement createStatement(String statementQuery, UpdateListener listener){
+		EPStatement statement = createStatementWithoutListener(statementQuery);
+		addListener(listener, statement);
 		return statement;
+	}
+
+	public final void addListener(UpdateListener listener, EPStatement statement) {
+		statement.addListener(listener);
+	}
+
+	public final EPStatement createStatementWithoutListener(String statementQuery) {
+		return enigne.getEPAdministrator().createEPL(statementQuery);
 	}
 	
 	public EsperService sendEvent(JSONMessage messageEvent){
