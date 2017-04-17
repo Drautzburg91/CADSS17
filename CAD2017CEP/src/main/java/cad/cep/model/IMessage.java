@@ -13,4 +13,6 @@ public interface IMessage {
 	 * @return the i message
 	 */
 	IMessage createMessage(byte[] body);
+	
+	IMessage copy(IMessage toCopy);
 }
