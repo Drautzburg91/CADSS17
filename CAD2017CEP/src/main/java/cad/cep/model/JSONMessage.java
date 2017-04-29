@@ -13,7 +13,16 @@ public class JSONMessage implements IMessage{
 	
 	private String location;
 	private Date timestamp;
+	private int temperature;
 	
+	public int getTemperature() {
+		return temperature;
+	}
+
+	public void setTemperature(int temperature) {
+		this.temperature = temperature;
+	}
+
 	public String getLocation() {
 		return location;
 	}
