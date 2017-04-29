@@ -2,6 +2,7 @@ package cad.cep.engine;
 
 import java.util.Map;
 
+import cad.cep.database.DatabaseStub;
 import cad.cep.model.JSONMessage;
 
 public class CEPFactory {
@@ -9,11 +10,10 @@ public class CEPFactory {
 	public static EsperService createNewService(){
 		EsperService service = new EsperService();
 		service.registerAdditionalEvent(JSONMessage.class);
-		String statementQuery ="select location from JSONMessage";
+		String statementQuery ="select * from JSONMessage";
 		service.createStatement(statementQuery, (newData, oldData) ->{
-		
-				String location = (String) newData[0].get("location");
-				System.out.println(location);
+			DatabaseStub stub = new DatabaseStub();
+			stub.saveMessage((JSONMessage)newData[0].getUnderlying());
 		});
 		return service;
 	}
