@@ -10,7 +10,7 @@ public final class MomFactory {
 
 	/** The Constant HOST. */
 	//TODO use real host
-	private static final String HOST = "host";
+	private static final String HOST = "ec2-52-24-244-51.us-west-2.cpmpute.amazonaws.com";
 
 	/**
 	 * Instantiates a new mom factory.
@@ -23,7 +23,7 @@ public final class MomFactory {
 	 * @return the i mo M
 	 * @throws MoMException the mo M exception
 	 */
-	public static IMoM createMom() throws MoMException{
-		return new RabbitMom(HOST);
+	public static IMoM createMom(String id) throws MoMException{
+		return new MQTTMom(HOST, id);
 	}
 }

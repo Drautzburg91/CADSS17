@@ -8,7 +8,15 @@ import cad.cep.mom.MomFactory;
 /**
  * The Class MoMReader.
  */
-public class MoMReader {
+public class MoMReader extends Thread{
+	
+	public String topic;
+	private IMoM mom;
+	
+	public MoMReader(String topic, String id) throws MoMException{
+		this.topic = topic;
+		mom = MomFactory.createMom(id);
+	}
 
 	/**
 	 * Read.
@@ -16,8 +24,21 @@ public class MoMReader {
 	 * @throws MoMException the mo M exception
 	 */
 	public void read() throws MoMException{
-		IMoM mom =  MomFactory.createMom();
-		//prototype ussage, for cloud use it should be changed a bit
-		mom.readMessageFromTopic("TPOC");
+		mom.readMessageFromTopic(topic);
 	}
+
+	@Override
+	public void run() {
+		try {
+			while(!Thread.currentThread().isInterrupted()){
+				this.read();
+			}
+		} catch (MoMException e) {
+			//loging here
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
 }

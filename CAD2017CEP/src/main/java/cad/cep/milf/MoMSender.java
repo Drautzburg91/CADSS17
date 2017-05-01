@@ -15,7 +15,7 @@ public class MoMSender {
 	public void send() throws MoMException{
 		while(true){
 			IMessage message = stub.readMessage("I don´t care");
-			IMoM createMom = MomFactory.createMom();
+			IMoM createMom = MomFactory.createMom("BackEndSender");
 			createMom.sendMessageToopic("aaa", message);
 		}
 	}

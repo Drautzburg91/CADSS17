@@ -4,7 +4,7 @@ import cad.cep.database.DatabaseStub;
 import cad.cep.model.JSONMessage;
 
 public class CEPFactory {
-
+	
 	public static EsperService createNewService(){
 		EsperService service = new EsperService();
 		service.registerAdditionalEvent(JSONMessage.class);
