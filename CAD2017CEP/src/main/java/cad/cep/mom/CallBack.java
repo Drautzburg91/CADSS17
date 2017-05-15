@@ -18,8 +18,9 @@ public class CallBack implements MqttCallback{
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 			JSONMessage json = new JSONMessage();
-			json.createMessage(message.getPayload());
-			EngineControl.getInstance().sendEvent(json);
+//			json.createMessage(message.getPayload());
+//			EngineControl.getInstance().sendEvent(json);
+			System.out.println(new String(message.getPayload()));
 	}
 
 	@Override

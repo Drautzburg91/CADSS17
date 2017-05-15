@@ -10,7 +10,7 @@ public final class MomFactory {
 
 	/** The Constant HOST. */
 	//TODO use real host
-	private static final String HOST = "ec2-52-24-244-51.us-west-2.cpmpute.amazonaws.com";
+	private static final String HOST = "tcp://ec2-52-24-244-51.us-west-2.compute.amazonaws.com:1883";
 
 	/**
 	 * Instantiates a new mom factory.

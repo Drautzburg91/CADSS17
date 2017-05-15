@@ -14,6 +14,7 @@ public class InformationLifeFlow {
 		//need method to read topiclist somewhere
 		List<String> topics = new ArrayList<>();
 		List<MoMReader> topicReader = new ArrayList<>();
+		topics.add("today");
 		for (String topic : topics) {
 			topicReader.add(addnewReader(topic));
 		}

@@ -30,9 +30,7 @@ public class MoMReader extends Thread{
 	@Override
 	public void run() {
 		try {
-			while(!Thread.currentThread().isInterrupted()){
 				this.read();
-			}
 		} catch (MoMException e) {
 			//loging here
 			e.printStackTrace();

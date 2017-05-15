@@ -35,7 +35,7 @@ public class MQTTMom implements IMoM{
 	 */
 	protected MQTTMom(String host, String id) throws MoMException {
 			try {
-				client = new MqttClient(host, id);
+				client = new MqttClient(host, MqttClient.generateClientId());
 				client.connect();
 			} catch (MqttException e) {
 				throw new MoMException("Cannot connect to MoM", e);
@@ -46,7 +46,7 @@ public class MQTTMom implements IMoM{
 	 * @see cad.cep.mom.IMoM#readMessageFromTopic(java.lang.String)
 	 */
 	@Override
-	public final IMessage readMessageFromTopic(String topic) throws MoMException {
+	public final synchronized IMessage readMessageFromTopic(String topic) throws MoMException {
 		try {
 			//one message at the time
 			client.setCallback(new CallBack());
