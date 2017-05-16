@@ -1,0 +1,10 @@
+.idea/
+Dockerfile
+RabbitMQTest.iml
+docker-compose.yml
+s101plugin.state
+src/main/resources/
+src/test/
+target/
+config.properties
+paho*
