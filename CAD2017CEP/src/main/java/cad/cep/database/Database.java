@@ -1,5 +1,10 @@
 package cad.cep.database;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 
@@ -8,7 +13,12 @@ import cad.cep.model.IMessage;
 public class Database implements IDatabase{
 	
 	private EmbeddedDatabase database;
-	@Override
+	
+	public Database() throws FileNotFoundException, IOException{
+		Properties config = new Properties();
+		config.load(new FileInputStream("/resource/db.properties"));
+	}
+	
 	public boolean isConnected() {
 		return database != null;
 	}
