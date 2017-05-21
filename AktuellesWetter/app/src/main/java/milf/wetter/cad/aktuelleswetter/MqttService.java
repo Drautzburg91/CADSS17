@@ -78,15 +78,6 @@ public class MqttService extends Service implements MqttCallback {
                             e.printStackTrace();
                         }
                     }
-                    try {
-                        // wait to ensure subscribed messages are delivered
-                        if (subscriber) {
-                            Thread.sleep(5000);
-                        }
-                        myClient.disconnect();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 }
 
                 @Override
