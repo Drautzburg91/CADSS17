@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -28,7 +29,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class Aktuelles_Wetter extends AppCompatActivity  implements LocationListener {
+public class AktuellesWetterActivity extends AppCompatActivity implements LocationListener {
 
     private static final boolean AUTO_HIDE = true;
 
@@ -40,6 +41,8 @@ public class Aktuelles_Wetter extends AppCompatActivity  implements LocationList
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
     private View mContentView;
+
+
     private ImageView wetterIcons;
     private ImageView wetterMO;
     private ImageView wetterDI;
@@ -114,7 +117,7 @@ public class Aktuelles_Wetter extends AppCompatActivity  implements LocationList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_aktuelles__wetter);
+        setContentView(R.layout.activity_aktuelles_wetter);
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
@@ -144,7 +147,11 @@ public class Aktuelles_Wetter extends AppCompatActivity  implements LocationList
         wetter = new Wetter(getApplicationContext(),wetterIcons,wetterMO,wetterDI,wetterMI,wetterDO,wetterFR,wetterSA);
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+
+        }
         ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
 
         // Get the best provider between gps, network and passive
         Criteria criteria = new Criteria();

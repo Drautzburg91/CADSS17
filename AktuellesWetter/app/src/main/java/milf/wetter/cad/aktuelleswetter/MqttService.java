@@ -7,11 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.*;
 
 
 /**
@@ -64,38 +60,50 @@ public class MqttService extends Service implements MqttCallback {
 
         // Connect to Broker
         try {
-            myClient = new MqttAndroidClient(getApplicationContext(),clientID, BROKER_URL);
+            myClient = new MqttAndroidClient(getApplicationContext(), BROKER_URL, clientID);
             myClient.setCallback(this);
-            myClient.connect(connOpt);
+            myClient.connect(connOpt, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.i("MQTT-Service", "connection successful");
+                    // subscribe to topic if subscriber
+                    // setup topic
+                    // topics on m2m.io are in the form <domain>/<stuff>/<thing>
+                    String myTopic = "today";
+                    if (subscriber) {
+                        try {
+                            int subQoS = 0;
+                            myClient.subscribe(myTopic, subQoS);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    try {
+                        // wait to ensure subscribed messages are delivered
+                        if (subscriber) {
+                            Thread.sleep(5000);
+                        }
+                        myClient.disconnect();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.e("MQTT-Service", "failed to connect", exception);
+                }
+            });
         } catch (MqttException e) {
             e.printStackTrace();
             System.exit(-1);
         }
 
 
-        // setup topic
-        // topics on m2m.io are in the form <domain>/<stuff>/<thing>
-        String myTopic = "today";
 
 
-        // subscribe to topic if subscriber
-        if (subscriber) {
-            try {
-                int subQoS = 0;
-                myClient.subscribe(myTopic, subQoS);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        try {
-            // wait to ensure subscribed messages are delivered
-            if (subscriber) {
-                Thread.sleep(5000);
-            }
-            myClient.disconnect();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+
 
     }
 
