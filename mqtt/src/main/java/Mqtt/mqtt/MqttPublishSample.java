@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
@@ -29,6 +30,7 @@ public class MqttPublishSample {
 	private final static String QUEUE_NAME = "hello";
 	
 	
+	
 	public static void handlePLZ (String plz,String countryCode){
 		
 		Properties config = new Properties();
@@ -39,6 +41,8 @@ public class MqttPublishSample {
 
 			
 			String apiId = "41c464d95d33fabc24d44a5086ea9848";
+			  String M2MIO_USERNAME = "caduser";
+			 String M2MIO_PASSWORD_MD5 = "caduser";
 
 			String urlAPI = "http://api.openweathermap.org/data/2.5/find?q="+ plz + "," + countryCode + "&units=metric" + "&APPID="+ apiId;
 
@@ -59,17 +63,22 @@ public class MqttPublishSample {
 			JsonArray jsonArray = rootobj.getAsJsonArray("list"); // Json request with all information
 																	
 
-			//System.out.println(jsonArray);
+			System.out.println(jsonArray);
 
 			System.out.println("API reading complete");
 
 			// config.properties erstellen, code aus .example kopieren und bekannte url einsetzen
+			MqttConnectOptions options = new MqttConnectOptions();
+			options.setUserName(M2MIO_USERNAME);
+			options.setPassword(M2MIO_PASSWORD_MD5.toCharArray());
+			
 			
 			config.load(new FileInputStream("config.properties"));
 			MqttClient client = new MqttClient(config.getProperty("host"),
 					MqttClient.generateClientId());
-			client.connect();
-
+			
+			client.connect(options);
+		
 			Gson gson = new Gson();
 			WeatherData obj = new WeatherData();
 		
@@ -81,9 +90,10 @@ public class MqttPublishSample {
 			obj.setTemperature(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp").getAsDouble());
 			obj.setTemperatureMax(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp_max").getAsDouble());
 			obj.setTemperatureMin(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp_min").getAsDouble());
-			obj.setWindspeed(jsonArray.get(0).getAsJsonObject().get("wind").getAsJsonObject().get("speed").getAsDouble());
-			obj.setWindDeg(jsonArray.get(0).getAsJsonObject().get("wind").getAsJsonObject().get("deg").getAsInt());
+			obj.setWindspeed(jsonArray.get(0).getAsJsonObject().get("wind").getAsJsonObject().get("speed").getAsDouble());		
+			//obj.setWindspeed(jsonArray.get(0).getAsJsonObject().get("wind").getAsJsonObject().get("deg").getAsDouble());
 			obj.setCurrentWeather(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("description").getAsString());
+			obj.setCurrentWeatherId(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("id").getAsInt());
 			String jsonInString = gson.toJson(obj);
 	
 			

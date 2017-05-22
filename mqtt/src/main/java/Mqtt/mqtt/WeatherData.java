@@ -6,23 +6,30 @@ public class WeatherData {
 	double latitude;
 	String cityName;
 	String currentWeather;
+	int currentWeatherId;
 	int pressure;
 	int humitidy;
 	double windspeed;
-	int windDeg;
+    //double windDeg;
 	double temperature;
 	double temperatureMax;
 	double temperatureMin;
 	
 	
-	public int getWindDeg() {
+	
+	
+	public int getCurrentWeatherId() {
+		return currentWeatherId;
+	}
+	public void setCurrentWeatherId(int currentWeatherId) {
+		this.currentWeatherId = currentWeatherId;
+	}
+	/*public double getWindDeg() {
 		return windDeg;
 	}
-	public void setWindDeg(int windDeg) {
+	public void setWindDeg(double windDeg) {
 		this.windDeg = windDeg;
-	}
-
-	
+	}*/
 	public double getLongitude() {
 		return longitude;
 	}
