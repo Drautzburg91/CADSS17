@@ -4,10 +4,17 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.*;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 
 /**
@@ -17,7 +24,7 @@ import org.eclipse.paho.client.mqttv3.*;
 public class MqttService extends Service implements MqttCallback {
 
     final String serverUri = "";
-
+    Intent in = new Intent();
 
     MqttAndroidClient myClient;
     MqttConnectOptions connOpt;
@@ -38,7 +45,10 @@ public class MqttService extends Service implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
 
-        Log.e("| Message: " , new String(message.getPayload()));
+        in.putExtra("Message",message.getPayload());
+        in.putExtra("Topic",topic);
+        in.setAction("NOW");
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(in);
 
     }
 
@@ -50,6 +60,10 @@ public class MqttService extends Service implements MqttCallback {
 
     public void onCreate() {
         super.onCreate();
+
+
+
+
         String clientID = "test";
         connOpt = new MqttConnectOptions();
 
@@ -74,6 +88,7 @@ public class MqttService extends Service implements MqttCallback {
                         try {
                             int subQoS = 0;
                             myClient.subscribe(myTopic, subQoS);
+                            myClient.subscribe("weekly",subQoS);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

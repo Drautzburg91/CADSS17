@@ -2,8 +2,10 @@ package milf.wetter.cad.aktuelleswetter;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Criteria;
@@ -14,15 +16,19 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,7 +47,6 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
     private View mContentView;
-
 
     private ImageView wetterIcons;
     private ImageView wetterMO;
@@ -138,7 +143,7 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
         DO = (TextView) findViewById(R.id.DO);
         FR = (TextView) findViewById(R.id.FR);
         SA = (TextView) findViewById(R.id.SA);
-
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("NOW"));
         Intent serv = new Intent(this,MqttService.class);
         startService(serv);
 
@@ -208,7 +213,7 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
         dates.setVier();
         dates.setFuenf();
         dates.setSechs();
-       // wetter.setWetter();
+
         wetter.setWetterEins();
         wetter.setWetterZwei();
         wetter.setWetterDrei();
@@ -228,6 +233,62 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
 
     }
 
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            byte [] mes = intent.getByteArrayExtra("Message");
+            Log.e("onReceive: ",new String (mes));
+
+            if(new String(mes).contains("hallo")){
+
+            }else{
+            JSONObject payload = toJson(mes);
+
+            String wetterIcon = null;
+            try {
+                wetterIcon = (String)payload.get("weatherIcon");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Log.e("onReceive: ", wetterIcon);
+
+            String topic = intent.getStringExtra("Topic");
+
+            if(topic.contains("today")) {
+                 wetter.setWetter(wetterIcon);
+                }else if(topic.contains("weekly")){
+
+            }
+        }}
+    };
+
+
+    public JSONObject toJson (byte[] responseBody){
+
+        try {
+            JSONObject testV= new JSONObject(new String(responseBody));
+
+            return testV;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+            return null;
+
+    }
+
+
+
+
+
+
+
+
+
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -236,6 +297,12 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
         delayedHide(100);
     }
 
+
+
+
+
+
+
     private void toggle() {
         if (mVisible) {
             hide();
@@ -243,6 +310,14 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
             show();
         }
     }
+
+
+
+
+
+
+
+
 
     private void hide() {
         // Hide UI first
@@ -257,6 +332,13 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
         mHideHandler.removeCallbacks(mShowPart2Runnable);
         mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
+
+
+
+
+
+
+
 
     @SuppressLint("InlinedApi")
     private void show() {
@@ -274,10 +356,19 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
      * Schedules a call to hide() in [delay] milliseconds, canceling any
      * previously scheduled calls.
      */
+
+
+
+
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
+
+
+
+
 
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -300,6 +391,11 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
 
             }
         }
+
+
+
+
+
     public void onLocationChanged(Location location) {
         if(location != null){
             Geocoder gcd = new Geocoder(this, Locale.getDefault());

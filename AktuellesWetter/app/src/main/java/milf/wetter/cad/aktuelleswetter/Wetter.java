@@ -31,28 +31,88 @@ public class Wetter {
 
     }
 
-    public void setWetter(){
+    public void setWetter(String wetter){
 
 
-        wetterIcon.setImageResource(R.drawable.regen);
+        switch(wetter){
+            case "01d":
+                wetterIcon.setImageResource(R.drawable.d01);
+                break;
+            case "02d":
+                wetterIcon.setImageResource(R.drawable.d02);
+                break;
+            case "03d":
+                wetterIcon.setImageResource(R.drawable.d03);
+                break;
+            case "04d":
+                wetterIcon.setImageResource(R.drawable.d04);
+                break;
+            case "09d":
+                wetterIcon.setImageResource(R.drawable.d09);
+                break;
+            case "10d":
+                wetterIcon.setImageResource(R.drawable.d10);
+                break;
+            case "11d":
+                wetterIcon.setImageResource(R.drawable.d11);
+                break;
+            case "13d":
+                wetterIcon.setImageResource(R.drawable.d13);
+                break;
+            case "50d":
+                wetterIcon.setImageResource(R.drawable.d50);
+                break;
+            case "01n":
+                wetterIcon.setImageResource(R.drawable.n01);
+                break;
+            case "02n":
+                wetterIcon.setImageResource(R.drawable.n02);
+                break;
+            case "03n":
+                wetterIcon.setImageResource(R.drawable.n03);
+                break;
+            case "04n":
+                wetterIcon.setImageResource(R.drawable.n04);
+                break;
+            case "09n":
+                wetterIcon.setImageResource(R.drawable.n09);
+                break;
+            case "10n":
+                wetterIcon.setImageResource(R.drawable.n10);
+                break;
+            case "11n":
+                wetterIcon.setImageResource(R.drawable.n11);
+                break;
+            case "13n":
+                wetterIcon.setImageResource(R.drawable.n13);
+                break;
+            case "50n":
+                wetterIcon.setImageResource(R.drawable.n50);
+                break;
+
+
+
+        }
+
+
     }
 
     public void setWetterEins(){
-        wetterMO.setImageResource(R.drawable.sonne_gewitter_mini);
+        wetterMO.setImageResource(R.drawable.d01);
     }
     public void setWetterZwei(){
-        wetterDI.setImageResource(R.drawable.schnee_mini);
+        wetterDI.setImageResource(R.drawable.d02);
     }
     public void setWetterDrei(){
-        wetterMI.setImageResource(R.drawable.sonne_regen_mini);
+        wetterMI.setImageResource(R.drawable.d09);
     }
     public void setWetterVier(){
-        wetterDO.setImageResource(R.drawable.sonnig_mini);
+        wetterDO.setImageResource(R.drawable.d11);
     }
     public void setWetterFuenf(){
-        wetterFR.setImageResource(R.drawable.schnee_wind_mini);
+        wetterFR.setImageResource(R.drawable.d10);
     }
     public void setWetterSechs(){
-        wetterSA.setImageResource(R.drawable.sonnig_mit_schleier_mini);
+        wetterSA.setImageResource(R.drawable.d50);
     }
 }
