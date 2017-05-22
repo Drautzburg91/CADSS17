@@ -3,7 +3,7 @@ package cad.cep.engine;
 import cad.cep.database.DatabaseStub;
 import cad.cep.model.JSONMessage;
 
-public class CEPFactory {
+public final class CEPFactory {
 	
 	public static EsperService createNewService(){
 		EsperService service = new EsperService();
@@ -18,12 +18,14 @@ public class CEPFactory {
 		service.createStatement(statementQuery, (newData, oldData) ->{
 			for (int i = 0; i < oldData.length; i++) {
 				DatabaseStub stub = new DatabaseStub();
-				stub.saveMessage((JSONMessage)newData[0].getUnderlying());
+				JSONMessage underlying = (JSONMessage)newData[0].getUnderlying();
+				System.out.println(underlying.getCurrentWeather());
+				stub.saveMessage(underlying);
 			}
 		});
 	}
 	private static void addWarning(EsperService service) {
-		String statement = "select temperature, location from JSONMessage"
+		String statement = "select temperature, cityName from JSONMessage"
 				+" where temperature <= 0";
 		service.createStatement(statement, (newData, oldData)->{
 			for (int i = 0; i < newData.length; i++) {

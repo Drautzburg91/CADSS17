@@ -11,10 +11,24 @@ import com.google.gson.GsonBuilder;
  */
 public class JSONMessage implements IMessage{
 	
-	private String location;
+	//TODO cityname
+	private String cityName;
 	private Date timestamp;
 	private int temperature;
+	private int temperatureMax;
+	private int temperatureMin;
+	private String currentWeather;
+	private String currentWeatherId;
+	private double windDeg;
+	private double windspeed;
+	private int humilidy;
+	private int pressure;
+	String warining ="";
 	
+	public String getWarining() {
+		return warining;
+	}
+
 	public int getTemperature() {
 		return temperature;
 	}
@@ -23,12 +37,20 @@ public class JSONMessage implements IMessage{
 		this.temperature = temperature;
 	}
 
-	public String getLocation() {
-		return location;
+	public String getCityName() {
+		return cityName;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
+	public void setCityName(String location) {
+		this.cityName = location;
+	}
+	
+	public String getCurrentWeatherId() {
+		return currentWeatherId;
+	}
+
+	public void setCurrentWeatherId(String currentWeatherId) {
+		this.currentWeatherId = currentWeatherId;
 	}
 
 	public Date getTimestamp() {
@@ -39,7 +61,61 @@ public class JSONMessage implements IMessage{
 		this.timestamp = timestamp;
 	}
 
-	
+	public int getTemperatureMax() {
+		return temperatureMax;
+	}
+
+	public void setTemperatureMax(int temperatureMax) {
+		this.temperatureMax = temperatureMax;
+	}
+
+	public int getTemperatureMin() {
+		return temperatureMin;
+	}
+
+	public void setTemperatureMin(int temperatureMin) {
+		this.temperatureMin = temperatureMin;
+	}
+
+	public String getCurrentWeather() {
+		return currentWeather;
+	}
+
+	public void setCurrentWeather(String currentWeather) {
+		this.currentWeather = currentWeather;
+	}
+
+	public double getWindDeg() {
+		return windDeg;
+	}
+
+	public void setWindDeg(double windDeg) {
+		this.windDeg = windDeg;
+	}
+
+	public double getWindspeed() {
+		return windspeed;
+	}
+
+	public void setWindspeed(double windspeed) {
+		this.windspeed = windspeed;
+	}
+
+	public int getHumilidy() {
+		return humilidy;
+	}
+
+	public void setHumilidy(int humilidy) {
+		this.humilidy = humilidy;
+	}
+
+	public int getPressure() {
+		return pressure;
+	}
+
+	public void setPressure(int pressure) {
+		this.pressure = pressure;
+	}
 
 	/* (non-Javadoc)
 	 * @see cad.cep.model.IMessage#createMessage(byte[])
@@ -47,9 +123,11 @@ public class JSONMessage implements IMessage{
 	@Override
 	public IMessage createMessage(byte[] body) {
 		Gson gson = new GsonBuilder().create();
-		JSONMessage message = gson.fromJson(new String(body), this.getClass());
-		this.copy(message);
-		return this;
+		return gson.fromJson(new String(body), this.getClass());
+	}
+	
+	public void addWarning(String warining){
+		this.warining = this.warining + warining;
 	}
 
 	
@@ -61,7 +139,7 @@ public class JSONMessage implements IMessage{
 	@Override
 	public IMessage copy(IMessage toCopy) {
 		JSONMessage copy = (JSONMessage) toCopy;
-		this.setLocation(copy.getLocation());
+		this.setCityName(copy.getCityName());
 		this.setTimestamp(this.getTimestamp());
 		
 		return this;

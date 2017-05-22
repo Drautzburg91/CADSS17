@@ -1,9 +1,11 @@
 package cad.cep.mom;
 
 import java.io.IOException;
+import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
@@ -33,10 +35,13 @@ public class MQTTMom implements IMoM{
 	 * @param host the host
 	 * @throws MoMException the mo M exception
 	 */
-	protected MQTTMom(String host, String id) throws MoMException {
+	protected MQTTMom(String host, String id, Properties config) throws MoMException {
 			try {
-				client = new MqttClient(host, MqttClient.generateClientId());
-				client.connect();
+				client = new MqttClient(config.getProperty("host", host), MqttClient.generateClientId());
+				MqttConnectOptions options = new MqttConnectOptions();
+				options.setPassword(config.getProperty("pw").toCharArray());
+				options.setUserName(config.getProperty("user"));
+				client.connect(options);
 			} catch (MqttException e) {
 				throw new MoMException("Cannot connect to MoM", e);
 			}

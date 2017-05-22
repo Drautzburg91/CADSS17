@@ -16,7 +16,7 @@ public class Database implements IDatabase{
 	
 	public Database() throws FileNotFoundException, IOException{
 		Properties config = new Properties();
-		config.load(new FileInputStream("/resource/db.properties"));
+		config.load(new FileInputStream("/resources/db.properties"));
 	}
 	
 	public boolean isConnected() {
