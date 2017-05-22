@@ -11,12 +11,8 @@ import cad.cep.mom.MomFactory;
  */
 public class MoMSender {
 
-	DatabaseStub stub = new DatabaseStub();
-	public void send() throws MoMException{
-		while(true){
-			IMessage message = stub.readMessage("I don´t care");
+	public void send(String topic, IMessage message) throws MoMException{
 			IMoM createMom = MomFactory.createMom("BackEndSender");
-			createMom.sendMessageToopic("aaa", message);
-		}
+			createMom.sendMessageToopic(topic, message);
 	}
 }

@@ -18,13 +18,21 @@ public class CallBack implements MqttCallback{
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 			JSONMessage json = new JSONMessage();
-			String string = new String(message.getPayload());
+			byte[] payload = message.getPayload();
+			String string = new String(payload);
 			if("hallo".equals(string)){
-				System.out.println("FUCK YOU TOO");
+				System.out.println("MoMbased Information Life Flow started working");
 				return;
 			}
-			json.createMessage(message.getPayload());
-			EngineControl.getInstance().sendEvent(json);
+			try {
+				System.out.println("got");
+				System.err.println(new String(payload));
+				json.createMessage(payload, topic);
+//				json.setTopic(topic);
+				EngineControl.getInstance().sendEvent(json);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 	}
 
 	@Override

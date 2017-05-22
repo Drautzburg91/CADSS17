@@ -11,23 +11,66 @@ import com.google.gson.GsonBuilder;
  */
 public class JSONMessage implements IMessage{
 	
-	//TODO cityname
+	private double longitude;
+	private double latitude;
 	private String cityName;
-	private Date timestamp;
+	private String plz;
+	private String weatherIcon;
+	private String currentWeather;
+	private String currentWeatherId;
+	private int humitidy;
+	private int pressure;
+	private double windspeed;
+	private double windDeg;
 	private int temperature;
 	private int temperatureMax;
 	private int temperatureMin;
-	private String currentWeather;
-	private String currentWeatherId;
-	private double windDeg;
-	private double windspeed;
-	private int humilidy;
-	private int pressure;
-	String warining ="";
+	private String warining;
+	private String topic;
 	
 	public String getWarining() {
 		return warining;
 	}
+	
+	public String getCityName() {
+		return cityName;
+	}
+
+
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+
+
+	public String getWeatherIcon() {
+		return weatherIcon;
+	}
+
+	public void setWeatherIcon(String weatherIcon) {
+		this.weatherIcon = weatherIcon;
+	}
+
+
+
+	public String getTopic() {
+		return topic;
+	}
+
+	public String getPlz() {
+		return plz;
+	}
+
+	public void setPlz(String plz) {
+		this.plz = plz;
+	}
+
+	public void setTopic(String topic) {
+		this.topic = topic;
+	}
+
+
 
 	public int getTemperature() {
 		return temperature;
@@ -37,28 +80,12 @@ public class JSONMessage implements IMessage{
 		this.temperature = temperature;
 	}
 
-	public String getCityName() {
-		return cityName;
-	}
-
-	public void setCityName(String location) {
-		this.cityName = location;
-	}
-	
 	public String getCurrentWeatherId() {
 		return currentWeatherId;
 	}
 
 	public void setCurrentWeatherId(String currentWeatherId) {
 		this.currentWeatherId = currentWeatherId;
-	}
-
-	public Date getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
 	}
 
 	public int getTemperatureMax() {
@@ -101,12 +128,12 @@ public class JSONMessage implements IMessage{
 		this.windspeed = windspeed;
 	}
 
-	public int getHumilidy() {
-		return humilidy;
+	public int getHumitidy() {
+		return humitidy;
 	}
 
-	public void setHumilidy(int humilidy) {
-		this.humilidy = humilidy;
+	public void setHumitidy(int humilidy) {
+		this.humitidy = humilidy;
 	}
 
 	public int getPressure() {
@@ -116,18 +143,49 @@ public class JSONMessage implements IMessage{
 	public void setPressure(int pressure) {
 		this.pressure = pressure;
 	}
+	
+	public double getLongitude() {
+		return longitude;
+	}
+
+
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
+
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+
 
 	/* (non-Javadoc)
 	 * @see cad.cep.model.IMessage#createMessage(byte[])
 	 */
 	@Override
-	public IMessage createMessage(byte[] body) {
+	public IMessage createMessage(byte[] body, String topic) {
 		Gson gson = new GsonBuilder().create();
-		return gson.fromJson(new String(body), this.getClass());
+		JSONMessage fromJson = gson.fromJson(new String(body), this.getClass());
+		fromJson.setTopic(topic);
+		return this.copy(fromJson);
 	}
 	
 	public void addWarning(String warining){
 		this.warining = this.warining + warining;
+		if("".equals(this.warining)){
+			this.warining = warining;
+		}else{
+			this.warining = String.format("%s , %s", this.warining, warining);
+		}
 	}
 
 	
@@ -140,7 +198,21 @@ public class JSONMessage implements IMessage{
 	public IMessage copy(IMessage toCopy) {
 		JSONMessage copy = (JSONMessage) toCopy;
 		this.setCityName(copy.getCityName());
-		this.setTimestamp(this.getTimestamp());
+//		this.setTimestamp(this.getTimestamp());
+		this.setCurrentWeather(copy.getCurrentWeather());
+		this.setCurrentWeatherId(copy.getCurrentWeatherId());
+		this.setHumitidy(copy.getHumitidy());
+		this.setPlz(copy.getPlz());
+		this.setTemperature(copy.getTemperature());
+		this.setPressure(copy.getPressure());
+		this.setTemperatureMax(copy.getTemperatureMax());
+		this.setTemperatureMin(copy.getTemperatureMin());
+		this.setWeatherIcon(copy.getWeatherIcon());
+		this.setWindDeg(copy.getWindDeg());
+		this.setWindspeed(copy.getWindspeed());
+		this.setLongitude(copy.getLongitude());
+		this.setLatitude(copy.getLatitude());
+		this.setTopic(copy.getTopic());
 		
 		return this;
 	}
