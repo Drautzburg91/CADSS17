@@ -12,7 +12,7 @@ public class WeatherData {
 	int pressure;
 	int humitidy;
 	double windspeed;
-    //double windDeg;
+    double windDeg;
 	double temperature;
 	double temperatureMax;
 	double temperatureMin;
@@ -39,12 +39,12 @@ public class WeatherData {
 	public void setCurrentWeatherId(int currentWeatherId) {
 		this.currentWeatherId = currentWeatherId;
 	}
-	/*public double getWindDeg() {
+	public double getWindDeg() {
 		return windDeg;
 	}
 	public void setWindDeg(double windDeg) {
 		this.windDeg = windDeg;
-	}*/
+	}
 	public double getLongitude() {
 		return longitude;
 	}
