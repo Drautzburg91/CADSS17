@@ -5,6 +5,7 @@ public class WeatherData {
 	double longitude;
 	double latitude;
 	String cityName;
+	String plz;
 	String currentWeather;
 	int currentWeatherId;
 	int pressure;
@@ -18,6 +19,12 @@ public class WeatherData {
 	
 	
 	
+	public String getPlz() {
+		return plz;
+	}
+	public void setPlz(String plz) {
+		this.plz = plz;
+	}
 	public int getCurrentWeatherId() {
 		return currentWeatherId;
 	}

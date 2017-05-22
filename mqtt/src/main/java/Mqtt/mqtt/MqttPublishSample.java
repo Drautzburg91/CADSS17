@@ -33,6 +33,8 @@ public class MqttPublishSample {
 	
 	public static void handlePLZ (String plz,String countryCode){
 		
+		
+		
 		Properties config = new Properties();
 
 		try {
@@ -94,7 +96,9 @@ public class MqttPublishSample {
 			//obj.setWindspeed(jsonArray.get(0).getAsJsonObject().get("wind").getAsJsonObject().get("deg").getAsDouble());
 			obj.setCurrentWeather(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("description").getAsString());
 			obj.setCurrentWeatherId(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("id").getAsInt());
+			obj.setPlz(plz);
 			String jsonInString = gson.toJson(obj);
+			
 	
 			
 			System.out.println(jsonInString);
@@ -124,7 +128,7 @@ public class MqttPublishSample {
 		handlePLZ("78467","de");
 		handlePLZ("10115","de");
 		handlePLZ("20095","de");
-		handlePLZ("50679","de");
+		//handlePLZ("50679","de");
 		try{
 			Thread.sleep(2000);
 		}catch(InterruptedException e) {
