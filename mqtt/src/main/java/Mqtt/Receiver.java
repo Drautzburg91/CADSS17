@@ -1,4 +1,4 @@
-package Mqtt.mqtt;
+package Mqtt;
 
 import org.eclipse.paho.client.mqttv3.*;
 

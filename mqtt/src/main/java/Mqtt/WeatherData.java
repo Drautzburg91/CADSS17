@@ -1,4 +1,4 @@
-package Mqtt.mqtt;
+package Mqtt;
 
 public class WeatherData {
 
@@ -106,5 +106,24 @@ public class WeatherData {
 	public void setCurrentWeather(String currentWeather) {
 		this.currentWeather = currentWeather;
 	}
-	
+
+    @Override
+    public String toString() {
+        return "WeatherData{" +
+                "longitude=" + longitude +
+                ", latitude=" + latitude +
+                ", cityName='" + cityName + '\'' +
+                ", plz='" + plz + '\'' +
+                ", weatherIcon='" + weatherIcon + '\'' +
+                ", currentWeather='" + currentWeather + '\'' +
+                ", currentWeatherId=" + currentWeatherId +
+                ", pressure=" + pressure +
+                ", humitidy=" + humitidy +
+                ", windspeed=" + windspeed +
+                ", windDeg=" + windDeg +
+                ", temperature=" + temperature +
+                ", temperatureMax=" + temperatureMax +
+                ", temperatureMin=" + temperatureMin +
+                '}';
+    }
 }
