@@ -96,6 +96,7 @@ public class MqttPublishSample {
 			//obj.setWindspeed(jsonArray.get(0).getAsJsonObject().get("wind").getAsJsonObject().get("deg").getAsDouble());
 			obj.setCurrentWeather(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("description").getAsString());
 			obj.setCurrentWeatherId(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("id").getAsInt());
+			obj.setWeatherIcon(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("icon").getAsString());
 			obj.setPlz(plz);
 			String jsonInString = gson.toJson(obj);
 			

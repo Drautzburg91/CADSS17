@@ -6,6 +6,7 @@ public class WeatherData {
 	double latitude;
 	String cityName;
 	String plz;
+	String weatherIcon;
 	String currentWeather;
 	int currentWeatherId;
 	int pressure;
@@ -19,6 +20,13 @@ public class WeatherData {
 	
 	
 	
+	
+	public String getWeatherIcon() {
+		return weatherIcon;
+	}
+	public void setWeatherIcon(String weatherIcon) {
+		this.weatherIcon = weatherIcon;
+	}
 	public String getPlz() {
 		return plz;
 	}
