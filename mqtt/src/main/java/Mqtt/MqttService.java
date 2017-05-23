@@ -10,6 +10,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Properties;
 
+import static org.springframework.boot.Banner.Mode.LOG;
+
 /**
  * Created by Sebastian Thümmel on 22.05.2017.
  */
@@ -20,11 +22,18 @@ public class MqttService {
     private String apiId = "41c464d95d33fabc24d44a5086ea9848";
     private String M2MIO_USERNAME = "caduser";
     private String M2MIO_PASSWORD_MD5 = "caduser";
+    private String jsonInString;
+    private Gson gson;
     private Properties config;
-    private boolean liveSource;
+    private boolean transmittingLive;
+    private boolean transmittingGenerated;
 
     private MqttConnectOptions options;
     private MqttClient client;
+    private MqttMessage message;
+
+    private WeatherData fakeWeatherData;
+
 
 
     public MqttService(){
@@ -33,7 +42,7 @@ public class MqttService {
         options.setUserName(M2MIO_USERNAME);
         options.setPassword(M2MIO_PASSWORD_MD5.toCharArray());
         config  = new Properties();
-        liveSource = true;
+        gson = new Gson();
 
         try {
             config.load(new FileInputStream("config.properties"));
@@ -48,36 +57,48 @@ public class MqttService {
         }
     }
 
-
+    @Async
+    public void publishLiveWeatherData(){
+        transmittingLive = true;
+        while (transmittingLive) {
+            handlePLZ("78467", "de");
+            handlePLZ("10115", "de");
+            handlePLZ("20095", "de");
+            handlePLZ("50679", "de");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return;
+    }
 
     @Async
-    public void publishWeatherData(){
-        if(liveSource){
-            while(true){
-                handlePLZ("78467","de");
-                handlePLZ("10115","de");
-                handlePLZ("20095","de");
-                handlePLZ("50679","de");
-                try{
-                    Thread.sleep(2000);
-                }catch(InterruptedException e) {
-                    e.printStackTrace();
-                }
+    public void publishFakeWeatherData(WeatherData weatherData){
+        this.fakeWeatherData = weatherData;
+        transmittingGenerated = true;
 
+        while (transmittingGenerated){
+            try {
+                jsonInString = gson.toJson(this.fakeWeatherData);
+                message = new MqttMessage(jsonInString.getBytes());
+                System.out.println(jsonInString);
+                client.publish("today",message);
+                Thread.sleep(2000);
+            } catch (MqttException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        } else {
-            sendFakeData("78467","DE");
+            System.out.println("*published");
         }
-
+        System.out.println("***** publishing cancelled ***** ");
+        return;
     }
 
-    public void sendFakeData(String plz, String countryCode){
 
-    }
-
-    public void handlePLZ (String plz,String countryCode){
-        MqttMessage message;
-        String jsonInString;
+    private void handlePLZ (String plz,String countryCode){
 
         try {
             System.out.println("Reading API");
@@ -102,7 +123,7 @@ public class MqttService {
 
             System.out.println("API reading complete");
 
-            Gson gson = new Gson();
+
             WeatherData obj = new WeatherData();
 
             obj.setCityName(jsonArray.get(0).getAsJsonObject().get("name").getAsString());
@@ -143,7 +164,19 @@ public class MqttService {
         }
     }
 
+    public boolean isTransmittingLive() {
+        return transmittingLive;
+    }
 
+    public void setTransmittingLive(boolean transmittingLive) {
+        this.transmittingLive = transmittingLive;
+    }
 
+    public boolean isTransmittingGenerated() {
+        return transmittingGenerated;
+    }
 
+    public void setTransmittingGenerated(boolean transmittingGenerated) {
+        this.transmittingGenerated = transmittingGenerated;
+    }
 }

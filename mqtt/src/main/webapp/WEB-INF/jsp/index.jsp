@@ -6,13 +6,15 @@
 <html>
     <head>
         <!-- Access the bootstrap Css like this,
-                Spring boot will handle the resource mapping automcatically -->
-        <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
-
-        <!--
-	<spring:url value="/css/main.css" var="springCss" />
-	<link href="${springCss}" rel="stylesheet" />
-	 -->
+                Spring boot will handle the resource mapping automatically -->
+        <c:url value="/css/main.css" var="bootstrap" />
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <!--script
+                src="https://code.jquery.com/jquery-3.2.1.min.js"
+                integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+                crossorigin="anonymous"></script-->
+        <!--c:url value="/js/main.js" var="jstlJs"/>
+        <script href="${jstlJs}" type="application/javascript"></script-->
         <c:url value="/css/main.css" var="jstlCss" />
         <link href="${jstlCss}" rel="stylesheet" />
     </head>
@@ -35,7 +37,7 @@
 
         <div class="starter-template">
             <h1>Wetterdaten-Generator</h1>
-            <form:form method="post" modelAttribute="weatherdata" action="/">
+            <form:form method="post" modelAttribute="weatherdata" action="/messaging/generatedData">
                 <spring:bind path="cityName">
                     <div class="form-group ${status.error ? 'has error' : ''}">
                         <label class="col-sm-2 control-label">Cityname</label>
@@ -165,23 +167,22 @@
 
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn-lg btn-primary pull-right">Update</button>
+                        <button type="submit" class="btn-lg btn-primary pull-right">Send generated data</button>
                     </div>
                 </div>
 
 
             </form:form>
         </div>
-        <form action="<c:url value="/API-Data"/>"method="get">
+        <form action="<c:url value="/messaging/liveData"/>"method="post">
             <div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <input type="submit" class="btn-lg btn-primary pull-right" value="Send API-Data"/>
+                        <input type="submit" class="btn-lg btn-primary pull-right" value="Send Live-Data"/>
                     </div>
                 </div>
             </div>
         </form>
-
 
     </div>
 

@@ -19,7 +19,7 @@ public class WeatherApiApplication extends AsyncConfigurerSupport {
     @Bean
     public ReloadableResourceBundleMessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasenames(new String[] {"WEB-INF/classes/messages/validation"});
+        messageSource.setBasename("WEB-INF/classes/messages/validation");
         return messageSource;
     }
 

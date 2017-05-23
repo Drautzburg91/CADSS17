@@ -8,13 +8,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 /**
  * Created by Sebastian Thümmel on 22.05.2017.
  */
 @Controller
-public class WeatherController {
+public class MessagingController {
 
     @Autowired
     MqttService mqttService;
@@ -29,7 +27,6 @@ public class WeatherController {
 
     @RequestMapping("/")
     public String index(Model model) {
-        //mqttService.publishWeatherData();
         WeatherData data = new WeatherData();
         model.addAttribute("weatherdata", data);
         return "index";
@@ -41,12 +38,23 @@ public class WeatherController {
         return "index";
     }
 
-    @RequestMapping(value = "/API-Data", method = RequestMethod.GET)
-    public String startLiveApi(WeatherData weatherData, Model model){
-        mqttService.publishWeatherData();
+    @RequestMapping(value = "/messaging/liveData", method = RequestMethod.POST)
+    public String startLiveApi(@ModelAttribute("weatherdata") WeatherData weatherData, Model model){
+        mqttService.setTransmittingGenerated(false);
+        mqttService.publishLiveWeatherData();
         System.out.println("Live API running");
-        model.addAttribute("weatherdata", new WeatherData());
+        model.addAttribute("weatherdata", weatherData);
         return "index";
     }
+
+    @RequestMapping(value = "/messaging/generatedData", method = RequestMethod.POST)
+    public String startGeneratedData(@ModelAttribute("weatherdata") WeatherData weatherData, Model model){
+        mqttService.setTransmittingLive(false);
+        mqttService.publishFakeWeatherData(weatherData);
+        System.out.println("Fake API running");
+        model.addAttribute("weatherdata", weatherData);
+        return "index";
+    }
+
 
 }
