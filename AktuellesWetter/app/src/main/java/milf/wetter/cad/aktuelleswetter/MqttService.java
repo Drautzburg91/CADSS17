@@ -29,7 +29,7 @@ public class MqttService extends Service implements MqttCallback {
     MqttAndroidClient myClient;
     MqttConnectOptions connOpt;
 
-    static final String BROKER_URL = "tcp://ec2-35-163-22-190.us-west-2.compute.amazonaws.com:1883";
+    static final String BROKER_URL = "tcp://ec2-52-42-110-218.us-west-2.compute.amazonaws.com:1883";
     static final String M2MIO_USERNAME = "caduser";
     static final String M2MIO_PASSWORD_MD5 = "caduser";
 
@@ -87,8 +87,9 @@ public class MqttService extends Service implements MqttCallback {
                     if (subscriber) {
                         try {
                             int subQoS = 0;
-                            myClient.subscribe(myTopic, subQoS);
+                            myClient.subscribe("today", subQoS);
                             myClient.subscribe("weekly",subQoS);
+                            myClient.subscribe("alert",subQoS);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

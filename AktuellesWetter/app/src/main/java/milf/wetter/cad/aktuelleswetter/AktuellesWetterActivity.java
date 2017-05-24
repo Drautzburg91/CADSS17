@@ -2,6 +2,8 @@ package milf.wetter.cad.aktuelleswetter;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,8 +19,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.WakefulBroadcastReceiver;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -42,29 +46,52 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
     private double lat;
     private double lng;
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
-
+    Notification.Builder n  ;
+    NotificationManager mNotificationManager;
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
     private View mContentView;
-
+    private Context context;
     private ImageView wetterIcons;
+
     private ImageView wetterMO;
     private ImageView wetterDI;
     private ImageView wetterMI;
     private ImageView wetterDO;
     private ImageView wetterFR;
     private ImageView wetterSA;
+
     private TextView stadt;
     private TextView datum;
+    private TextView tempMom;
+
     private TextView MO;
     private TextView DI;
     private TextView MI;
     private TextView DO;
     private TextView FR;
     private TextView SA;
+
+    private TextView maxTempMo;
+    private TextView maxTempDi;
+    private TextView maxTempMi;
+    private TextView maxTempDo;
+    private TextView maxTempFr;
+    private TextView maxTempSa;
+
+    private TextView minTempMo;
+    private TextView minTempDi;
+    private TextView minTempMi;
+    private TextView minTempDo;
+    private TextView minTempFr;
+    private TextView minTempSa;
+
     private Datum dates;
     private Wetter wetter;
+    private Temparatur temparatur;
+
+
+
     /* GPS Constant Permission */
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
     private static final int MY_PERMISSION_ACCESS_FINE_LOCATION = 12;
@@ -124,6 +151,10 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
 
         setContentView(R.layout.activity_aktuelles_wetter);
 
+
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        context =getApplicationContext();
+
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
@@ -137,12 +168,30 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
 
         stadt = (TextView) findViewById(R.id.stadtTxt);
         datum = (TextView) findViewById(R.id.uhrZeitDatum);
+        tempMom = (TextView) findViewById(R.id.tempMom);
+
         MO = (TextView) findViewById(R.id.MO);
         DI = (TextView) findViewById(R.id.DI);
         MI = (TextView) findViewById(R.id.MI);
         DO = (TextView) findViewById(R.id.DO);
         FR = (TextView) findViewById(R.id.FR);
         SA = (TextView) findViewById(R.id.SA);
+
+        maxTempDi=(TextView) findViewById(R.id.maxTempDi);
+        maxTempDo=(TextView) findViewById(R.id.maxTempDo);
+        maxTempFr=(TextView) findViewById(R.id.maxTempFr);
+        maxTempMi=(TextView) findViewById(R.id.maxTempMi);
+        maxTempMo=(TextView) findViewById(R.id.maxTempMo);
+        maxTempSa=(TextView) findViewById(R.id.maxTempSa);
+
+        minTempDi=(TextView) findViewById(R.id.minTempDi);
+        minTempDo=(TextView) findViewById(R.id.minTempDo);
+        minTempSa=(TextView) findViewById(R.id.minTempSa);
+        minTempMi=(TextView) findViewById(R.id.minTempMi);
+        minTempMo=(TextView) findViewById(R.id.minTempMo);
+        minTempFr=(TextView) findViewById(R.id.minTempFr);
+
+
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("NOW"));
         Intent serv = new Intent(this,MqttService.class);
         startService(serv);
@@ -150,6 +199,7 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
 
         dates =  new Datum(datum,MO,DI,MI,DO,FR,SA);
         wetter = new Wetter(getApplicationContext(),wetterIcons,wetterMO,wetterDI,wetterMI,wetterDO,wetterFR,wetterSA);
+        temparatur =new Temparatur(maxTempMo,maxTempDi,maxTempMi,maxTempDo,maxTempFr,maxTempSa,minTempMo,minTempDi,minTempMi,minTempDo,minTempFr,minTempSa,tempMom);
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
@@ -214,12 +264,7 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
         dates.setFuenf();
         dates.setSechs();
 
-        wetter.setWetterEins();
-        wetter.setWetterZwei();
-        wetter.setWetterDrei();
-        wetter.setWetterVier();
-        wetter.setWetterFuenf();
-        wetter.setWetterSechs();
+
 
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,7 +274,7 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
         });
 
 
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+
 
     }
 
@@ -241,30 +286,81 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
             byte [] mes = intent.getByteArrayExtra("Message");
             Log.e("onReceive: ",new String (mes));
 
-            if(new String(mes).contains("hallo")){
-
-            }else{
+            if(new String(mes).contains("hallo")){}
+            else{
             JSONObject payload = toJson(mes);
-
-            String wetterIcon = null;
-            try {
-                wetterIcon = (String)payload.get("weatherIcon");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            Log.e("onReceive: ", wetterIcon);
 
             String topic = intent.getStringExtra("Topic");
 
             if(topic.contains("today")) {
+                String wetterIcon = null;
+                String temperature = null;
+                try {
+                    wetterIcon = (String)payload.get("weatherIcon");
+                    temperature = (String)payload.get("temperature");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                  wetter.setWetter(wetterIcon);
+                 temparatur.setTemp(temperature);
+
+
                 }else if(topic.contains("weekly")){
+                String wetterIconDayOne = null;
+                String wetterIconDayTwo = null;
+                String wetterIconDayThree = null;
+                String wetterIconDayFour = null;
+                String wetterIconDayFive = null;
+                String wetterIconDaySix = null;
+                try {
+                    wetterIconDayOne = (String)payload.get("weatherIcon");
+                    wetterIconDayTwo = (String)payload.get("weatherIcon");
+                    wetterIconDayThree = (String)payload.get("weatherIcon");
+                    wetterIconDayFour = (String)payload.get("weatherIcon");
+                    wetterIconDayFive = (String)payload.get("weatherIcon");
+                    wetterIconDaySix = (String)payload.get("weatherIcon");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                wetter.setWetterEins(wetterIconDayOne);
+                wetter.setWetterZwei(wetterIconDayTwo);
+                wetter.setWetterDrei(wetterIconDayThree);
+                wetter.setWetterVier(wetterIconDayFour);
+                wetter.setWetterFuenf(wetterIconDayFive);
+                wetter.setWetterSechs(wetterIconDaySix);
+
+
+            }else if (topic.contains("alert")){
+                String alertTitel = null;
+                String alertText = null;
+                try {
+                    alertTitel = (String)payload.get("alertTitel");
+                    alertText = (String)payload.get("alertText");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+
+                Notification noti =
+                        new NotificationCompat.Builder(context)
+                                .setSmallIcon(R.drawable.notification_icon)
+                                .setContentTitle(alertTitel)
+                                .setContentText(alertText).getNotification();
+                mNotificationManager.notify(001, noti);
+
 
             }
         }}
     };
 
+    private WakefulBroadcastReceiver wakefulBroadcastReceiver = new WakefulBroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+        }
+    };
 
     public JSONObject toJson (byte[] responseBody){
 

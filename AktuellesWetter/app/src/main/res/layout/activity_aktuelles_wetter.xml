@@ -36,14 +36,6 @@
             android:orientation="horizontal"
             tools:ignore="UselessParent">
 
-            <Button
-                android:id="@+id/dummy_button"
-                style="?metaButtonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dummy_button" />
-
         </LinearLayout>
     </FrameLayout>
 
@@ -87,7 +79,40 @@
             android:minWidth="150dp"
             android:maxHeight="150dp"
             android:maxWidth="150dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="30dp"
             app:srcCompat="@android:color/holo_blue_dark" />
+
+        <TextView
+            android:id="@+id/tempMom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="80dp"
+            android:layout_below="@+id/uhrZeitDatum"
+            android:textSize="42sp"
+            android:layout_marginTop="70dp"
+            android:textColor="#ffffff"
+            />
+
+
+        <TextView
+            android:id="@+id/windRichtung"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wind Richtung"
+            android:layout_marginLeft="100dp"
+            android:layout_below="@+id/wetterIcon"
+            android:textColor="#ffffff"
+            />
+
+        <ImageView
+            android:id="@+id/nadel"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/wetterIcon"
+            app:srcCompat="@drawable/nadel" />
 
         <View
             android:id="@+id/withe"
@@ -191,36 +216,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <TextView
+                    android:id="@+id/maxTempMo"
                     android:text="10°"
                     android:gravity="center"
                     android:maxWidth="80dp"
                     android:layout_marginLeft="30dp"
                     android:textColor="#FF0000"/>
                 <TextView
+                    android:id="@+id/maxTempDi"
                     android:maxWidth="80dp"
                     android:text="10°"
                     android:gravity="center"
                     android:layout_marginLeft="10dp"
                     android:textColor="#FF0000"/>
                 <TextView
+                    android:id="@+id/maxTempMi"
                     android:maxWidth="80dp"
                     android:text="10°"
                     android:gravity="center"
                     android:layout_marginLeft="10dp"
                     android:textColor="#FF0000"/>
                 <TextView
+                    android:id="@+id/maxTempDo"
                     android:maxWidth="80dp"
                     android:text="10°"
                     android:gravity="center"
                     android:layout_marginLeft="10dp"
                     android:textColor="#FF0000"/>
                 <TextView
+                    android:id="@+id/maxTempFr"
                     android:maxWidth="80dp"
                     android:text="10°"
                     android:gravity="center"
                     android:layout_marginLeft="10dp"
                     android:textColor="#FF0000"/>
                 <TextView
+                    android:id="@+id/maxTempSa"
                     android:maxWidth="80dp"
                     android:text="10°"
                     android:gravity="center"
@@ -232,36 +263,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <TextView
+                    android:id="@+id/minTempMo"
                     android:text="-10°"
                     android:gravity="center"
                     android:maxWidth="80dp"
                     android:layout_marginLeft="30dp"
                     android:textColor="#0000cc"/>
                 <TextView
+                    android:id="@+id/minTempDi"
                     android:maxWidth="80dp"
                     android:text="-10°"
                     android:gravity="center"
                     android:layout_marginLeft="10dp"
                     android:textColor="#0000cc"/>
                 <TextView
+                    android:id="@+id/minTempMi"
                     android:maxWidth="80dp"
                     android:text="-10°"
                     android:gravity="center"
                     android:layout_marginLeft="10dp"
                     android:textColor="#0000cc"/>
                 <TextView
+                    android:id="@+id/minTempDo"
                     android:maxWidth="80dp"
                     android:text="-10°"
                     android:gravity="center"
                     android:layout_marginLeft="10dp"
                     android:textColor="#0000cc"/>
                 <TextView
+                    android:id="@+id/minTempFr"
                     android:maxWidth="80dp"
                     android:text="-10°"
                     android:gravity="center"
                     android:layout_marginLeft="10dp"
                     android:textColor="#0000cc"/>
                 <TextView
+                    android:id="@+id/minTempSa"
                     android:maxWidth="80dp"
                     android:text="-10°"
                     android:gravity="center"
