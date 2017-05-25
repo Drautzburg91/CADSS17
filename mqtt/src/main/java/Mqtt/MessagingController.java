@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class MessagingController {
 
     @Autowired
-    MqttService mqttService;
+    MessagingService messagingService;
 
     @Autowired
     WeatherFormValidator weatherFormValidator;
@@ -40,8 +40,8 @@ public class MessagingController {
 
     @RequestMapping(value = "/messaging/liveData", method = RequestMethod.POST)
     public String startLiveApi(@ModelAttribute("weatherdata") WeatherData weatherData, Model model){
-        mqttService.setTransmittingGenerated(false);
-        mqttService.publishLiveWeatherData();
+        messagingService.setTransmittingGenerated(false);
+        messagingService.publishLiveWeatherData();
         System.out.println("Live API running");
         model.addAttribute("weatherdata", weatherData);
         return "index";
@@ -49,8 +49,8 @@ public class MessagingController {
 
     @RequestMapping(value = "/messaging/generatedData", method = RequestMethod.POST)
     public String startGeneratedData(@ModelAttribute("weatherdata") WeatherData weatherData, Model model){
-        mqttService.setTransmittingLive(false);
-        mqttService.publishFakeWeatherData(weatherData);
+        messagingService.setTransmittingLive(false);
+        messagingService.publishFakeWeatherData(weatherData);
         System.out.println("Fake API running");
         model.addAttribute("weatherdata", weatherData);
         return "index";

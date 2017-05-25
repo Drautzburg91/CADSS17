@@ -17,14 +17,11 @@ import static org.springframework.boot.Banner.Mode.LOG;
  */
 
 @Service
-public class MqttService {
+public class MqttService implements MessagingService {
 
     private String apiId = "41c464d95d33fabc24d44a5086ea9848";
-    private String M2MIO_USERNAME = "caduser";
-    private String M2MIO_PASSWORD_MD5 = "caduser";
     private String jsonInString;
     private Gson gson;
-    private Properties config;
     private boolean transmittingLive;
     private boolean transmittingGenerated;
 
@@ -37,22 +34,19 @@ public class MqttService {
 
 
     public MqttService(){
-        // config.properties erstellen, code aus .example kopieren und bekannte url einsetzen
+        // credentials have to be stored in env variables
         options = new MqttConnectOptions();
-        options.setUserName(M2MIO_USERNAME);
-        options.setPassword(M2MIO_PASSWORD_MD5.toCharArray());
-        config  = new Properties();
+        options.setUserName(System.getenv("CadRabbit_UserName"));
+        options.setPassword(System.getenv("CadRabbit_Password").toCharArray());
+
         gson = new Gson();
 
         try {
-            config.load(new FileInputStream("config.properties"));
-            client = new MqttClient(config.getProperty("host"), MqttClient.generateClientId());
+
+            System.out.println("Host: "+ System.getenv("CadRabbit_Host"));
+            client = new MqttClient("tcp://"+System.getenv("CadRabbit_Host"), MqttClient.generateClientId());
             client.connect(options);
         } catch (MqttException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
             e.printStackTrace();
         }
     }
