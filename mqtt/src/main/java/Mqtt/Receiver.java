@@ -37,7 +37,7 @@ public class Receiver {
                 }
             });
             client.connect();
-            client.subscribe("today"+plz);
+            client.subscribe(plz+"/today");
         } catch (MqttException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
