@@ -117,7 +117,6 @@ public class MqttService implements MessagingService {
 
             System.out.println("API reading complete");
 
-
             WeatherData obj = new WeatherData();
 
             obj.setCityName(jsonArray.get(0).getAsJsonObject().get("name").getAsString());
@@ -140,7 +139,7 @@ public class MqttService implements MessagingService {
 
             message = new MqttMessage(jsonInString.getBytes());
 
-            client.publish("today",message);
+            client.publish(plz+"/today",message);
             System.out.println("*published");
 
         } catch (FileNotFoundException e) {
