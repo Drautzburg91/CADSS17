@@ -1,8 +1,9 @@
 package cad.cep.milf;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import cad.cep.engine.CEPFactory;
 import cad.cep.engine.EngineControl;
@@ -13,12 +14,17 @@ import cad.cep.model.JSONMessage;
 public class InformationLifeFlow {
 
 	public static void main(String[] args) {
-		//need method to read topiclist somewhere
-		List<String> topics = new ArrayList<>();
-		List<MoMReader> topicReader = new ArrayList<>();
-		topics.add("today");
-		for (String topic : topics) {
-			topicReader.add(addnewReader(topic));
+		try {
+			Properties prop = new Properties();
+			prop.load(InformationLifeFlow.class.getClassLoader().getResourceAsStream("config.properties"));
+			String[] locations = prop.getProperty("locations").split(",");
+			List<MoMReader> topicsReader = new ArrayList<>();
+			for (int i = 0; i < locations.length; i++) {
+				String topic = String.format("%s/%s", locations[i], "today");
+				topicsReader.add(addnewReader(topic));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
