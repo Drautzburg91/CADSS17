@@ -44,7 +44,7 @@ public class MqttService implements MessagingService {
         try {
 
             System.out.println("Host: "+ System.getenv("CadRabbit_Host"));
-            client = new MqttClient("tcp://"+System.getenv("CadRabbit_Host"), MqttClient.generateClientId());
+            client = new MqttClient(System.getenv("CadRabbit_Host"), MqttClient.generateClientId());
             client.connect(options);
         } catch (MqttException e) {
             e.printStackTrace();
