@@ -1,0 +1,14 @@
+########################################################
+-------------------------------------------------------
+Download and ADD TO YOUR JAVA PROJECT
+------------------------------------------------------
+
+
+Necessary for:		CAD_WEATHER_SYSTEM_DATABASE_API 
+
+Downloadlink:		https://dev.mysql.com/downloads/connector/j/
+
+
+########################################################
+
+
