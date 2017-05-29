@@ -44,7 +44,7 @@ public class MqttService implements MessagingService {
         try {
 
             System.out.println("Host: "+ System.getenv("CadRabbit_Host"));
-            client = new MqttClient(System.getenv("CadRabbit_Host"), MqttClient.generateClientId());
+            client = new MqttClient("tcp://"+System.getenv("CadRabbit_Host"), MqttClient.generateClientId());
             client.connect(options);
         } catch (MqttException e) {
             e.printStackTrace();
@@ -118,31 +118,32 @@ public class MqttService implements MessagingService {
 
             System.out.println("API reading complete");
 
-            WeatherData obj = new WeatherData();
+            WeatherData result = new WeatherData();
 
-            obj.setCityName(jsonArray.get(0).getAsJsonObject().get("name").getAsString());
-            obj.setLongitude(jsonArray.get(0).getAsJsonObject().get("coord").getAsJsonObject().get("lon").getAsDouble());
-            obj.setLatitude(jsonArray.get(0).getAsJsonObject().get("coord").getAsJsonObject().get("lat").getAsDouble());
-            obj.setHumitidy(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("humidity").getAsInt());
-            obj.setPressure(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("pressure").getAsInt());
-            obj.setTemperature(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp").getAsDouble());
-            obj.setTemperatureMax(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp_max").getAsDouble());
-            obj.setTemperatureMin(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp_min").getAsDouble());
-            obj.setWindspeed(jsonArray.get(0).getAsJsonObject().get("wind").getAsJsonObject().get("speed").getAsDouble());
-            obj.setWindDeg(jsonArray.get(0).getAsJsonObject().get("wind").getAsJsonObject().get("deg").getAsDouble());
-            obj.setCurrentWeather(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("description").getAsString());
-            obj.setCurrentWeatherId(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("id").getAsInt());
-            obj.setWeatherIcon(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("icon").getAsString());
-            obj.setPlz(plz);
+            result.setCityName(jsonArray.get(0).getAsJsonObject().get("name").getAsString());
+            result.setLongitude(jsonArray.get(0).getAsJsonObject().get("coord").getAsJsonObject().get("lon").getAsDouble());
+            result.setLatitude(jsonArray.get(0).getAsJsonObject().get("coord").getAsJsonObject().get("lat").getAsDouble());
+            result.setHumitidy(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("humidity").getAsInt());
+            result.setPressure(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("pressure").getAsInt());
+            result.setTemperature(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp").getAsDouble());
+            result.setTemperatureMax(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp_max").getAsDouble());
+            result.setTemperatureMin(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp_min").getAsDouble());
+            result.setWindspeed(jsonArray.get(0).getAsJsonObject().get("wind").getAsJsonObject().get("speed").getAsDouble());
+            result.setCurrentWeather(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("description").getAsString());
+            result.setCurrentWeatherId(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("id").getAsInt());
+            result.setWeatherIcon(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("icon").getAsString());
+            result.setPlz(plz);
 
-            Object winDeg = obj.getWindDeg();
-            System.out.println("WinDeg: " + winDeg.toString());
-            if(winDeg.equals(null)){
-            	
-            	obj.setWindDeg(0.0);
-            }
+            JsonElement winDeg = jsonArray.get(0).getAsJsonObject().get("wind").getAsJsonObject().get("deg");
+            //System.out.println("WinDeg: " + winDeg.toString());
             
-            jsonInString = gson.toJson(obj);
+            if(winDeg ==null){
+            	
+            	result.setWindDeg(0.0);
+            }else 
+            	result.setWindDeg(winDeg.getAsDouble());
+           
+            jsonInString = gson.toJson(result);
             System.out.println(jsonInString);
 
             message = new MqttMessage(jsonInString.getBytes());
