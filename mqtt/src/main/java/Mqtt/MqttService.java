@@ -90,6 +90,7 @@ public class MqttService implements MessagingService {
         System.out.println("***** publishing cancelled ***** ");
         return;
     }
+ 
 
 
     private void handlePLZ (String plz,String countryCode){
@@ -135,6 +136,13 @@ public class MqttService implements MessagingService {
             obj.setWeatherIcon(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("icon").getAsString());
             obj.setPlz(plz);
 
+            Object winDeg = obj.getWindDeg();
+            System.out.println("WinDeg: " + winDeg.toString());
+            if(winDeg.equals(null)){
+            	
+            	obj.setWindDeg(0.0);
+            }
+            
             jsonInString = gson.toJson(obj);
             System.out.println(jsonInString);
 
