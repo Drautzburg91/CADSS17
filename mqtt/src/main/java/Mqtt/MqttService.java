@@ -44,7 +44,7 @@ public class MqttService implements MessagingService {
         try {
 
             System.out.println("Host: "+ System.getenv("CadRabbit_Host"));
-            client = new MqttClient("tcp://"+System.getenv("CadRabbit_Host"), MqttClient.generateClientId());
+            client = new MqttClient(System.getenv("CadRabbit_Host"), MqttClient.generateClientId());
             client.connect(options);
         } catch (MqttException e) {
             e.printStackTrace();
@@ -118,7 +118,6 @@ public class MqttService implements MessagingService {
 
             System.out.println("API reading complete");
 
-
             WeatherData obj = new WeatherData();
 
             obj.setCityName(jsonArray.get(0).getAsJsonObject().get("name").getAsString());
@@ -148,7 +147,7 @@ public class MqttService implements MessagingService {
 
             message = new MqttMessage(jsonInString.getBytes());
 
-            client.publish("today",message);
+            client.publish(plz+"/today",message);
             System.out.println("*published");
 
         } catch (FileNotFoundException e) {
