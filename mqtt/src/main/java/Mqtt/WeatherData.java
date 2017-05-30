@@ -16,10 +16,7 @@ public class WeatherData {
 	double temperature;
 	double temperatureMax;
 	double temperatureMin;
-	
-	
-	
-	
+
 	
 	public String getWeatherIcon() {
 		return weatherIcon;
