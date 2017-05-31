@@ -1,6 +1,5 @@
 package milf.wetter.cad.aktuelleswetter;
 
-import android.util.Log;
 import android.widget.TextView;
 
 /**
@@ -40,7 +39,6 @@ public class Temparatur {
     }
 
     public void setTemp(String temp){
-        Log.e("setTemp",temp);
         momTemp.setText(temp+"°C");
     }
     public void setTempMo(String min, String max){

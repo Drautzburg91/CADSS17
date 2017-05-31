@@ -2,10 +2,13 @@ package milf.wetter.cad.aktuelleswetter;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -26,9 +29,16 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -41,7 +51,9 @@ import java.util.Locale;
 
 public class AktuellesWetterActivity extends AppCompatActivity implements LocationListener {
 
-    private static final boolean AUTO_HIDE = true;
+    private static final boolean AUTO_HIDE = false;
+
+    private Activity mActivity;
 
     private double lat;
     private double lng;
@@ -53,7 +65,8 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
     private View mContentView;
     private Context context;
     private ImageView wetterIcons;
-
+    final Context contextOne = this;
+    private Intent serv;
     private ImageView wetterMO;
     private ImageView wetterDI;
     private ImageView wetterMI;
@@ -64,6 +77,20 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
     private TextView stadt;
     private TextView datum;
     private TextView tempMom;
+    private TextView weatherState;
+    private TextView windSpeed;
+    private TextView regenWahr;
+    private ImageView windDirection;
+    private LinearLayout tempChart;
+
+
+    String plz;
+    private ImageButton btn;
+    private FrameLayout mFrameLayout;
+    private PopupWindow mPopupWindow;
+    private EditText plzStadt;
+    private InputMethodManager imm;
+    Intent in = new Intent();
 
     private TextView MO;
     private TextView DI;
@@ -89,8 +116,8 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
     private Datum dates;
     private Wetter wetter;
     private Temparatur temparatur;
-
-
+    private Chart chart;
+    private Uebersetzung ueberSetzung;
 
     /* GPS Constant Permission */
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
@@ -103,47 +130,7 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
     /* GPS */
     private String mProviderName;
 
-    private final Runnable mHidePart2Runnable = new Runnable() {
-        @SuppressLint("InlinedApi")
-        @Override
-        public void run() {
 
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        }
-    };
-    private View mControlsView;
-    private final Runnable mShowPart2Runnable = new Runnable() {
-        @Override
-        public void run() {
-            // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.show();
-            }
-            mControlsView.setVisibility(View.VISIBLE);
-        }
-    };
-    private boolean mVisible;
-    private final Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +138,7 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
 
         setContentView(R.layout.activity_aktuelles_wetter);
 
+        mActivity = AktuellesWetterActivity.this;
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         context =getApplicationContext();
@@ -169,6 +157,16 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
         stadt = (TextView) findViewById(R.id.stadtTxt);
         datum = (TextView) findViewById(R.id.uhrZeitDatum);
         tempMom = (TextView) findViewById(R.id.tempMom);
+        weatherState = (TextView) findViewById(R.id.wetterStatus);
+        windSpeed=  (TextView) findViewById(R.id.windgeschwindigkeit);
+        windDirection = (ImageView) findViewById(R.id.windrichtungNadel);
+        regenWahr = (TextView) findViewById(R.id.Regenwahrsch);
+        tempChart = (LinearLayout) findViewById(R.id.chart);
+
+        btn = (ImageButton) findViewById(R.id.Standort);
+        mFrameLayout = (FrameLayout) findViewById(R.id.mainFrame);
+
+
 
         MO = (TextView) findViewById(R.id.MO);
         DI = (TextView) findViewById(R.id.DI);
@@ -193,68 +191,86 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
 
 
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("NOW"));
-        Intent serv = new Intent(this,MqttService.class);
-        startService(serv);
 
+        serv = new Intent(this,MqttService.class);
+        startService(serv);
 
         dates =  new Datum(datum,MO,DI,MI,DO,FR,SA);
         wetter = new Wetter(getApplicationContext(),wetterIcons,wetterMO,wetterDI,wetterMI,wetterDO,wetterFR,wetterSA);
         temparatur =new Temparatur(maxTempMo,maxTempDi,maxTempMi,maxTempDo,maxTempFr,maxTempSa,minTempMo,minTempDi,minTempMi,minTempDo,minTempFr,minTempSa,tempMom);
+        chart= new Chart();
+        ueberSetzung = new Uebersetzung();
+        final Geocoder gcdOne = new Geocoder(this, Locale.GERMAN);
 
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+        btn.setOnClickListener(
+                new View.OnClickListener() {
 
-        }
-        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    @Override
+                    public void onClick(View arg0) {
 
+                        // get prompts.xml view
+                        LayoutInflater li = LayoutInflater.from(contextOne);
+                        View promptsView = li.inflate(R.layout.custom_dialog, null);
 
-        // Get the best provider between gps, network and passive
-        Criteria criteria = new Criteria();
-        mProviderName = locationManager.getBestProvider(criteria, true);
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                contextOne);
 
-        // API 23: we have to check if ACCESS_FINE_LOCATION and/or ACCESS_COARSE_LOCATION permission are granted
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // No one provider activated: prompt GPS
-            if (mProviderName == null || mProviderName.equals("")) {
-                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-            }
-            // At least one provider activated. Get the coordinates
-            switch (mProviderName) {
-                case "gps":
-                    locationManager.requestLocationUpdates(mProviderName, MINIMUM_TIME, MINIMUM_DISTANCE, this);
-                    Location location = locationManager.getLastKnownLocation(mProviderName);
-                    if(location != null){
-                        Geocoder gcd = new Geocoder(this, Locale.getDefault());
-                        try {
-                            List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                            if (addresses.size() > 0) {
-                                stadt.setText(""+addresses.get(0).getLocality());
-                                dates.setDatum();
+                        // set prompts.xml to alertdialog builder
+                        alertDialogBuilder.setView(promptsView);
+
+                        final EditText userInput = (EditText) promptsView
+                                .findViewById(R.id.editText);
+
+                        // set dialog message
+                        alertDialogBuilder
+                                .setCancelable(false)
+                                .setPositiveButton("OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog,int id) {
+                                                // get user input and set it to result
+                                                // edit text
+                                                String inp = userInput.getText().toString();
+                                                Log.e("alert",inp);
+                                                stadt.setText(inp);
+                                                try {
+                                                    List<Address> addresses =   gcdOne.getFromLocationName(inp,1);
+                                                    if (addresses.size() > 0) {
+                                                        addresses = gcdOne.getFromLocation(addresses.get(0).getLatitude(),addresses.get(0).getLongitude(),1);
+                                                        if (addresses.size() > 0) {
+                                                            Log.e("addresses",addresses.get(0).getPostalCode());
+                                                        }
+
+                                                    }
+                                                } catch (IOException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                serv.putExtra("plz",userInput.getText().toString());
+                                                startService(serv);
+                                            }
+                                        })
+                                .setNegativeButton("Cancel",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog,int id) {
+                                                dialog.cancel();
+                                            }
+                                        })
+                        .setNeutralButton("GPS",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                gps();
+                                dialog.cancel();
                             }
-                        }catch(IOException e){
-                            e.printStackTrace();
-                        }
+                        });
+
+                        // create alert dialog
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+
+                        // show it
+                        alertDialog.show();
+
                     }
-                    break;
-            }
-            // One or both permissions are denied.
-        } else {
-            // The ACCESS_COARSE_LOCATION is denied, then I request it and manage the result in
-            // onRequestPermissionsResult() using the constant MY_PERMISSION_ACCESS_FINE_LOCATION
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        MY_PERMISSION_ACCESS_COARSE_LOCATION);
-            }
-            // The ACCESS_FINE_LOCATION is denied, then I request it and manage the result in
-            // onRequestPermissionsResult() using the constant MY_PERMISSION_ACCESS_FINE_LOCATION
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-                ActivityCompat.requestPermissions(this,
-                        new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
-                        MY_PERMISSION_ACCESS_FINE_LOCATION);
-            }
-        }
+                });
+
+        gps();
 
         dates.setDatum();
         dates.setEins();
@@ -273,6 +289,8 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
             }
         });
 
+        in.setAction("PLZ");
+        in.putExtra("PLZ",plz);
 
 
 
@@ -294,15 +312,32 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
 
             if(topic.contains("today")) {
                 String wetterIcon = null;
-                String temperature = null;
+                Double temperature = null;
+                Double windspeed = null;
+                Double windDig = null;
+                int temp = 0;
+                int winds = 0;
+                int weaterText = 0;
                 try {
                     wetterIcon = (String)payload.get("weatherIcon");
-                    temperature = (String)payload.get("temperature");
+                    temperature = (Double) payload.get("temperature");
+                    windspeed = (Double) payload.get("windspeed");
+                    weaterText = (Integer) payload.get("currentWeatherId");
+                    windDig = (Double) payload.get("windDeg");
+                    temp = temperature.intValue();
+                    winds = (int)((windspeed.doubleValue()/1000d)*3600d);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                chart.makeChart(tempChart,getApplicationContext());
+
                  wetter.setWetter(wetterIcon);
-                 temparatur.setTemp(temperature);
+                 temparatur.setTemp(Integer.toString(temp));
+                 weatherState.setText(ueberSetzung.uebersetzen(weaterText));
+                 windSpeed.setText("Wind: "+winds+"km/h");
+                 windDirection.setRotation(windDig.floatValue());
+                 regenWahr.setText("38%");
 
 
                 }else if(topic.contains("weekly")){
@@ -355,12 +390,71 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
         }}
     };
 
-    private WakefulBroadcastReceiver wakefulBroadcastReceiver = new WakefulBroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
+    public void gps(){
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
 
         }
-    };
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
+
+        // Get the best provider between gps, network and passive
+        Criteria criteria = new Criteria();
+        mProviderName = locationManager.getBestProvider(criteria, true);
+
+        // API 23: we have to check if ACCESS_FINE_LOCATION and/or ACCESS_COARSE_LOCATION permission are granted
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // No one provider activated: prompt GPS
+            if (mProviderName == null || mProviderName.equals("")) {
+                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            }
+            // At least one provider activated. Get the coordinates
+            switch (mProviderName) {
+                case "gps":
+                    locationManager.requestLocationUpdates(mProviderName, MINIMUM_TIME, MINIMUM_DISTANCE, this);
+                    Location location = locationManager.getLastKnownLocation(mProviderName);
+                    if(location != null){
+                        Geocoder gcd = new Geocoder(this, Locale.getDefault());
+                        try {
+                            List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                            if (addresses.size() > 0) {
+                                stadt.setText(""+addresses.get(0).getLocality());
+                                dates.setDatum();
+                                plz = addresses.get(0).getPostalCode();
+                                serv.putExtra("plz",plz);
+                                Log.e("GPS",addresses.get(0).getPostalCode());
+                                startService(serv);
+                            }
+                        }catch(IOException e){
+                            e.printStackTrace();
+                        }
+                    }
+                    break;
+            }
+            // One or both permissions are denied.
+        } else {
+            // The ACCESS_COARSE_LOCATION is denied, then I request it and manage the result in
+            // onRequestPermissionsResult() using the constant MY_PERMISSION_ACCESS_FINE_LOCATION
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        MY_PERMISSION_ACCESS_COARSE_LOCATION);
+            }
+            // The ACCESS_FINE_LOCATION is denied, then I request it and manage the result in
+            // onRequestPermissionsResult() using the constant MY_PERMISSION_ACCESS_FINE_LOCATION
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+                ActivityCompat.requestPermissions(this,
+                        new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
+                        MY_PERMISSION_ACCESS_FINE_LOCATION);
+            }
+        }
+
+
+
+    }
 
     public JSONObject toJson (byte[] responseBody){
 
@@ -375,16 +469,6 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
             return null;
 
     }
-
-
-
-
-
-
-
-
-
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -490,7 +574,47 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
 
 
 
+    private final Runnable mHidePart2Runnable = new Runnable() {
+        @SuppressLint("InlinedApi")
+        @Override
+        public void run() {
 
+            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
+    };
+    private View mControlsView;
+    private final Runnable mShowPart2Runnable = new Runnable() {
+        @Override
+        public void run() {
+            // Delayed display of UI elements
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.show();
+            }
+            mControlsView.setVisibility(View.VISIBLE);
+        }
+    };
+    private boolean mVisible;
+    private final Runnable mHideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            hide();
+        }
+    };
+    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (AUTO_HIDE) {
+                delayedHide(AUTO_HIDE_DELAY_MILLIS);
+            }
+            return false;
+        }
+    };
 
     public void onLocationChanged(Location location) {
         if(location != null){

@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0099cc"
-    tools:context=".AktuellesWetterActivity">
+    tools:context=".AktuellesWetterActivity"
+    android:id="@+id/mainFrame">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
@@ -17,7 +18,9 @@
         android:keepScreenOn="true"
         android:textColor="#33b5e5"
         android:textSize="50sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        />
+
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
@@ -26,17 +29,16 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/fullscreen_content_controls"
-            style="?metaButtonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
-            android:background="@color/black_overlay"
             android:orientation="horizontal"
-            tools:ignore="UselessParent">
 
-        </LinearLayout>
+            >
+
+        </RelativeLayout>
     </FrameLayout>
 
     <RelativeLayout
@@ -56,7 +58,20 @@
             android:textSize="30dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
-
+        <ImageButton
+            android:id="@+id/Standort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/stadtTxt"
+            android:layout_marginTop="60dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/fadenkreuz"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:maxWidth="20dp"
+            android:maxHeight="20dp"
+            android:background="@null"
+            />
         <TextView
             android:id="@+id/uhrZeitDatum"
             android:layout_width="wrap_content"
@@ -95,31 +110,83 @@
             android:textColor="#ffffff"
             />
 
-
         <TextView
-            android:id="@+id/windRichtung"
+            android:id="@+id/wetterStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Wind Richtung"
-            android:layout_marginLeft="100dp"
             android:layout_below="@+id/wetterIcon"
+            android:layout_centerHorizontal="true"
             android:textColor="#ffffff"
+            android:textStyle="bold"
+            />
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="11dp"
+            android:layout_below="@+id/wetterStatus"
+            android:layout_alignParentStart="true"
+            android:showDividers="middle">
+
+            <TableRow android:layout_width="match_parent"
+                      android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/windgeschwindigkeit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:layout_marginLeft="20dp"
             />
 
-        <ImageView
-            android:id="@+id/nadel"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/wetterIcon"
-            app:srcCompat="@drawable/nadel" />
+        <TextView
+            android:id="@+id/windrichtung"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginLeft="50dp"
+            android:textColor="#ffffff"
+            android:text="Richtung:"
 
+            />
+        <ImageView
+            android:id="@+id/windrichtungNadel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:maxWidth="30dp"
+            android:maxHeight="30dp"
+            android:src="@drawable/nadel"/>
+
+                <ImageView
+                    android:id="@+id/regenwahrImage"
+                    android:layout_marginLeft="40dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:maxWidth="20dp"
+                    android:maxHeight="20dp"
+                    android:src="@drawable/regenwahr"/>
+
+            <TextView
+                android:id="@+id/Regenwahrsch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginLeft="10dp"
+                android:textColor="#ffffff"
+                />
+            </TableRow >
+        </TableLayout>
         <View
             android:id="@+id/withe"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:layout_below="@+id/wetterIcon"
-             />
+            android:layout_below="@+id/wetterStatus"
+            android:layout_marginTop="20dp"
+            />
         <View
             android:id="@+id/black"
             android:layout_width="wrap_content"
@@ -127,13 +194,24 @@
             android:layout_below="@+id/withe"
             android:background="@android:color/white" />
 
+        <LinearLayout
+            android:layout_width="350dp"
+            android:layout_height="100dp"
+            android:id="@+id/chart"
+            android:layout_below="@+id/black"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp">
+        </LinearLayout>
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="11dp"
-            android:layout_below="@+id/black"
+            android:layout_below="@+id/chart"
             android:layout_alignParentStart="true"
             android:showDividers="middle">
+
+
 
             <TableRow
                 android:layout_width="match_parent"
@@ -141,7 +219,7 @@
                 <ImageView
                     android:id="@+id/imgMO"
                     android:maxWidth="80dp"
-                    android:layout_marginLeft="30dp"/>
+                    android:layout_marginLeft="10dp"/>
                 <ImageView
                     android:id="@+id/imgDI"
                     android:maxWidth="80dp"
@@ -173,7 +251,7 @@
                     android:text=""
                     android:gravity="center"
                     android:maxWidth="80dp"
-                    android:layout_marginLeft="30dp"
+                    android:layout_marginLeft="10dp"
                     android:textColor="#FFFFFF"/>
                 <TextView
                     android:id="@+id/DI"
@@ -220,7 +298,7 @@
                     android:text="10°"
                     android:gravity="center"
                     android:maxWidth="80dp"
-                    android:layout_marginLeft="30dp"
+                    android:layout_marginLeft="10dp"
                     android:textColor="#FF0000"/>
                 <TextView
                     android:id="@+id/maxTempDi"
@@ -267,7 +345,7 @@
                     android:text="-10°"
                     android:gravity="center"
                     android:maxWidth="80dp"
-                    android:layout_marginLeft="30dp"
+                    android:layout_marginLeft="10dp"
                     android:textColor="#0000cc"/>
                 <TextView
                     android:id="@+id/minTempDi"
