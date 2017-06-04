@@ -9,16 +9,16 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Created by Sebastian Thümmel on 22.05.2017.
+ * Created by Sebastian Thümmel and Paul Drautzburg on 22.05.2017.
  */
 @Controller
 public class MessagingController {
 
     @Autowired
-    MessagingService messagingService;
+    private MessagingService messagingService;
 
     @Autowired
-    WeatherFormValidator weatherFormValidator;
+    private WeatherFormValidator weatherFormValidator;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder){

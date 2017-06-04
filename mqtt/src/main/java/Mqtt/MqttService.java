@@ -11,7 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * Created by Sebastian Thümmel on 22.05.2017.
+ * Created by Sebastian Thümmel and Paul Drautzburg on 22.05.2017.
  */
 
 @Service
@@ -121,7 +121,7 @@ public class MqttService implements MessagingService {
 			}
 		}
         System.out.println("Mqtt-Service: publishLiveWeatherData stopped");
-		return;
+
 	}
 
 	@Async
@@ -137,15 +137,12 @@ public class MqttService implements MessagingService {
 				System.out.println(jsonInString);
 				client.publish("weekly", message);
 				Thread.sleep(2000);
-			} catch (MqttException e) {
-				e.printStackTrace();
-			} catch (InterruptedException e) {
+			} catch (MqttException | InterruptedException e) {
 				e.printStackTrace();
 			}
-			System.out.println("*published");
+            System.out.println("*published");
 		}
         System.out.println("Mqtt-Service: publishFakeWeatherData stopped");
-		return;
 	}
 
 	private void handlePLZToday(String plz, String countryCode) {
@@ -205,20 +202,10 @@ public class MqttService implements MessagingService {
 			client.publish(plz + "/today", message);
             System.out.println("Mqtt-Service: handlePLZToday published, PLZ:" +plz );
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (MqttPersistenceException e) {
-			e.printStackTrace();
-		} catch (MqttSecurityException e) {
-			e.printStackTrace();
-		} catch (MqttException e) {
-			e.printStackTrace();
-		} catch (NullPointerException e) {
+		} catch (IOException | MqttException | NullPointerException e) {
 			e.printStackTrace();
 		}
-	}
+    }
 
 	private void handlePLZWeekly(String plz, String countryCode) {
         System.out.println("Mqtt-Service: handlePLZWeekly started, PLZ:" +plz );
@@ -245,7 +232,7 @@ public class MqttService implements MessagingService {
 
 			System.out.println("API reading complete");
 
-			ArrayList<WeatherDataWeekly> result = new ArrayList<WeatherDataWeekly>();
+			ArrayList<WeatherDataWeekly> result = new ArrayList<>();
 
 			for (JsonElement daily : jsonArray) {
 
@@ -286,20 +273,10 @@ public class MqttService implements MessagingService {
 			client.publish(plz + "/weekly", message);
             System.out.println("Mqtt-Service: handlePLZWeekly published, PLZ:" +plz );
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (MqttPersistenceException e) {
-			e.printStackTrace();
-		} catch (MqttSecurityException e) {
-			e.printStackTrace();
-		} catch (MqttException e) {
-			e.printStackTrace();
-		} catch (NullPointerException e) {
+		} catch (IOException | MqttException | NullPointerException e) {
 			e.printStackTrace();
 		}
-	}
+    }
 
 
 
