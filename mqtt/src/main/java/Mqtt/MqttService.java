@@ -26,6 +26,7 @@ public class MqttService implements MessagingService {
 	private MqttConnectOptions options;
 	private MqttClient client;
 	private MqttMessage message;
+	private MqttCallback callback;
 
 	private WeatherData fakeWeatherData;
 
@@ -43,6 +44,30 @@ public class MqttService implements MessagingService {
 			System.out.println("Host: " + System.getenv("CadRabbit_Host"));
 			client = new MqttClient("tcp://" + System.getenv("CadRabbit_Host"), MqttClient.generateClientId());
 			client.connect(options);
+			callback = new MqttCallback() {
+				@Override
+				public void connectionLost(Throwable throwable) {
+					try {
+						System.out.println("MqttService: connection lost - reconnecting");
+						client.connect(options);
+						System.out.println("MqttService: connection lost - reconnection successful ");
+					} catch (MqttException e) {
+						e.printStackTrace();
+					}
+				}
+
+				@Override
+				public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
+
+				}
+
+				@Override
+				public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+
+				}
+
+			};
+
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -275,6 +300,8 @@ public class MqttService implements MessagingService {
 			e.printStackTrace();
 		}
 	}
+
+
 
 	public boolean isTransmittingLive() {
 		return transmittingLive;
