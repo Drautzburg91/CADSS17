@@ -8,7 +8,16 @@ import cad.cep.engine.EngineControl;
 import cad.cep.model.JSONMessage;
 
 public class CallBack implements MqttCallback{
+	
+	 private EngineControl control;
 
+	public CallBack() {
+		control = EngineControl.getInstance();
+	}
+	 public CallBack(EngineControl control){
+		this.control = control;
+		 
+	 }
 
 	@Override
 	public void connectionLost(Throwable cause) {
@@ -29,7 +38,7 @@ public class CallBack implements MqttCallback{
 				System.err.println(new String(payload));
 				json.createMessage(payload, topic);
 //				json.setTopic(topic);
-				EngineControl.getInstance().sendEvent(json);
+				control.sendEvent(json);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

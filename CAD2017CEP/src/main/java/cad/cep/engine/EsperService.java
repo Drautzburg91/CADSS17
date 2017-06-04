@@ -41,5 +41,9 @@ public class EsperService {
 		enigne.getEPRuntime().sendEvent(messageEvent);
 		return this;	
 	}
+	
+	public void destroyConnection(){
+		this.enigne.destroy();
+	}
 
 }

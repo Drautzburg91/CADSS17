@@ -17,7 +17,7 @@ public class JSONMessage implements IMessage{
 	private String plz;
 	private String weatherIcon;
 	private String currentWeather;
-	private String currentWeatherId;
+	private int currentWeatherId;
 	private int humitidy;
 	private int pressure;
 	private double windspeed;
@@ -80,11 +80,11 @@ public class JSONMessage implements IMessage{
 		this.temperature = temperature;
 	}
 
-	public String getCurrentWeatherId() {
+	public int getCurrentWeatherId() {
 		return currentWeatherId;
 	}
 
-	public void setCurrentWeatherId(String currentWeatherId) {
+	public void setCurrentWeatherId(int currentWeatherId) {
 		this.currentWeatherId = currentWeatherId;
 	}
 

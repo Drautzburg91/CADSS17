@@ -11,12 +11,20 @@ public class EngineControl {
 		service = CEPFactory.createNewService();
 	}
 	
+	public void setService(EsperService serive){
+		this.service = serive;
+	}
+	
 	public static EngineControl getInstance(){
 		return instance;
 	}
 	
 	public void sendEvent(JSONMessage event){
 		service.sendEvent(event);
+	}
+	
+	public void destroyEnigne(){
+		this.service.destroyConnection();
 	}
 
 }
