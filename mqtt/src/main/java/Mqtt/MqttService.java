@@ -6,13 +6,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Properties;
-
-import static org.springframework.boot.Banner.Mode.LOG;
 
 /**
  * Created by Sebastian Thümmel on 22.05.2017.
@@ -34,7 +30,8 @@ public class MqttService implements MessagingService {
 	private WeatherData fakeWeatherData;
 
 	public MqttService() {
-		// credentials have to be stored in env variables
+        System.out.println("MqttService started");
+        // credentials have to be stored in env variables
 		options = new MqttConnectOptions();
 		options.setUserName(System.getenv("CadRabbit_UserName"));
 		options.setPassword(System.getenv("CadRabbit_Password").toCharArray());
@@ -53,6 +50,7 @@ public class MqttService implements MessagingService {
 
 	@Async
 	public void publishLiveWeatherData() {
+        System.out.println("Mqtt-Service: publishLiveWeatherData started");
 		transmittingLive = true;
 		while (transmittingLive) {
 			handlePLZWeekly("78467", "de");// Konstanz
@@ -73,23 +71,23 @@ public class MqttService implements MessagingService {
 			handlePLZWeekly("66111", "de");// Saarbrücken
 			handlePLZWeekly("28215", "de");// Bremen
 
-			handlePLZ("78467", "de");// Konstanz
-			handlePLZ("40213", "de");// Düsseldorf
-			handlePLZ("80331", "de");// München
-			handlePLZ("70173", "de");// Stuttgart
-			handlePLZ("30159", "de");// Hannover
-			handlePLZ("65183", "de");// Wiesbaden
-			handlePLZ("01069", "de");// Dresden
-			handlePLZ("55116", "de");// Mainz
-			handlePLZ("10785", "de");// Berlin
-			handlePLZ("24103", "de");// Kiel
-			handlePLZ("14467", "de");// Potsdam
-			handlePLZ("39104", "de");// Magdeburg
-			handlePLZ("99084", "de");// Erfurt
-			handlePLZ("20095", "de");// Hamburg
-			handlePLZ("19055", "de");// Schwerin
-			handlePLZ("66111", "de");// Saarbrücken
-			handlePLZ("28215", "de");// Bremen
+			handlePLZToday("78467", "de");// Konstanz
+			handlePLZToday("40213", "de");// Düsseldorf
+			handlePLZToday("80331", "de");// München
+			handlePLZToday("70173", "de");// Stuttgart
+			handlePLZToday("30159", "de");// Hannover
+			handlePLZToday("65183", "de");// Wiesbaden
+			handlePLZToday("01069", "de");// Dresden
+			handlePLZToday("55116", "de");// Mainz
+			handlePLZToday("10785", "de");// Berlin
+			handlePLZToday("24103", "de");// Kiel
+			handlePLZToday("14467", "de");// Potsdam
+			handlePLZToday("39104", "de");// Magdeburg
+			handlePLZToday("99084", "de");// Erfurt
+			handlePLZToday("20095", "de");// Hamburg
+			handlePLZToday("19055", "de");// Schwerin
+			handlePLZToday("66111", "de");// Saarbrücken
+			handlePLZToday("28215", "de");// Bremen
 
 			try {
 				Thread.sleep(Integer.parseInt(System.getenv("APICallIntervall")));
@@ -97,11 +95,13 @@ public class MqttService implements MessagingService {
 				e.printStackTrace();
 			}
 		}
+        System.out.println("Mqtt-Service: publishLiveWeatherData stopped");
 		return;
 	}
 
 	@Async
 	public void publishFakeWeatherData(WeatherData weatherData) {
+        System.out.println("Mqtt-Service: publishFakeWeatherData started");
 		this.fakeWeatherData = weatherData;
 		transmittingGenerated = true;
 
@@ -119,12 +119,12 @@ public class MqttService implements MessagingService {
 			}
 			System.out.println("*published");
 		}
-		System.out.println("***** publishing cancelled ***** ");
+        System.out.println("Mqtt-Service: publishFakeWeatherData stopped");
 		return;
 	}
 
-	private void handlePLZ(String plz, String countryCode) {
-
+	private void handlePLZToday(String plz, String countryCode) {
+        System.out.println("Mqtt-Service: handlePLZToday started, PLZ:" +plz );
 		try {
 			System.out.println("Reading API");
 			String urlAPI = "http://api.openweathermap.org/data/2.5/find?q=" + plz + "," + countryCode + "&units=metric" + "&APPID=" + apiId;
@@ -178,7 +178,7 @@ public class MqttService implements MessagingService {
 			message = new MqttMessage(jsonInString.getBytes());
 
 			client.publish(plz + "/today", message);
-			System.out.println("*published");
+            System.out.println("Mqtt-Service: handlePLZToday published, PLZ:" +plz );
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -196,7 +196,7 @@ public class MqttService implements MessagingService {
 	}
 
 	private void handlePLZWeekly(String plz, String countryCode) {
-
+        System.out.println("Mqtt-Service: handlePLZWeekly started, PLZ:" +plz );
 		try {
 			System.out.println("Reading API");
 			String urlAPI = "http://api.openweathermap.org/data/2.5/forecast?zip=" + plz + "," + countryCode + "&units=metric" + "&APPID=" + apiId;
@@ -259,7 +259,7 @@ public class MqttService implements MessagingService {
 			message = new MqttMessage(jsonInString.getBytes());
 
 			client.publish(plz + "/weekly", message);
-			System.out.println("*published");
+            System.out.println("Mqtt-Service: handlePLZWeekly published, PLZ:" +plz );
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
