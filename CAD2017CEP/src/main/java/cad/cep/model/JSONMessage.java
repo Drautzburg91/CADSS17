@@ -1,7 +1,5 @@
 package cad.cep.model;
 
-import java.util.Date;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -25,7 +23,7 @@ public class JSONMessage implements IMessage{
 	private int temperature;
 	private int temperatureMax;
 	private int temperatureMin;
-	private String warining;
+	private String warining = "";
 	private String topic;
 	
 	public String getWarining() {
@@ -180,11 +178,10 @@ public class JSONMessage implements IMessage{
 	}
 	
 	public void addWarning(String warining){
-		this.warining = this.warining + warining;
 		if("".equals(this.warining)){
 			this.warining = warining;
 		}else{
-			this.warining = String.format("%s , %s", this.warining, warining);
+			this.warining = String.format("%s, %s", this.warining, warining);
 		}
 	}
 

@@ -1,13 +1,15 @@
 package cad.cep.engine;
 
-import org.junit.After;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+
+import java.io.IOException;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.mockito.Mockito.*;
-
-import java.io.IOException;
 
 import cad.cep.exceptions.MoMException;
 import cad.cep.milf.MoMSender;
@@ -24,13 +26,14 @@ public class CEPFactoryTest {
 		mom = mock(MoMSender.class);
 		CEPFactory.switchSender(mom);
 	}
-	@Test
+	@Test(expected=IllegalArgumentException.class)
 	public void testEventSending() {
 		//Create JSON Message to send
 		JSONMessage messageEvent = new JSONMessage();
 		//send it
 		service.sendEvent(messageEvent);
 		//if no exception Test is successfull
+		service.sendEvent(null);
 	}
 	@Test
 	public void testWInterWarning(){

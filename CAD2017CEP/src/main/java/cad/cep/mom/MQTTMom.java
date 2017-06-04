@@ -1,25 +1,14 @@
 package cad.cep.mom;
 
-import java.io.IOException;
 import java.util.Properties;
-import java.util.concurrent.TimeoutException;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
-
 import cad.cep.exceptions.MoMException;
 import cad.cep.model.IMessage;
-import cad.cep.model.JSONMessage;
 
 // TODO: Auto-generated Javadoc
 /**

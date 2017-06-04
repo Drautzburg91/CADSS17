@@ -5,11 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import cad.cep.engine.CEPFactory;
-import cad.cep.engine.EngineControl;
-import cad.cep.engine.EsperService;
 import cad.cep.exceptions.MoMException;
-import cad.cep.model.JSONMessage;
 
 public class InformationLifeFlow {
 

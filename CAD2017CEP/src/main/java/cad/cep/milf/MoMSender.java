@@ -23,7 +23,6 @@ public class MoMSender {
 	public void send(String topic, IMessage message) throws MoMException{
 		if(createMom == null){
 			createMom = MomFactory.createMom("BackEndSender");
-
 		}
 		createMom.sendMessageToopic(topic, message);
 	}

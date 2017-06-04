@@ -1,7 +1,5 @@
 package cad.cep.engine;
 
-import com.espertech.esper.client.PropertyAccessException;
-
 import cad.cep.exceptions.MoMException;
 import cad.cep.milf.MoMSender;
 import cad.cep.model.JSONMessage;
