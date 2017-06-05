@@ -99,144 +99,74 @@ Das vorliegende Dokument beschreibt grob eine Idee und das Vorgehen für die Ums
 \pagenumbering{arabic} 
 \sectionnumbering{arabic} 
 
-\section{Problemstellung}
-Wir erhalten eine große Menge an Sensordaten die zur Verarbeitung und Erfassung von Wetterdaten, Berechnung von Statistiken und Erstellung von Wetterwarnungen verwendet werden sollen. Der Eingang der Wetterdaten erfolgt kontinuierlich und Belastungsspitzen sind nur in Ausnahmefällen zu erwarten. Zusätzlich sollen beliebige zusätzliche Wetterdaten in den Verarbeitungsprozess integriert werden können. 
-Da zum Empfang der Daten und anschließenden Verarbeitung kein Server vollständig ausgelastet wird, soll das System in einer Cloud-Lösung ausgelagert werden. 
-Des Weiteren ist die Cloudlösung nötig, da wir keine eigene Server-Infrastruktur betreiben wollen oder können, da dies aus finanzieller, organisatorischer und infrastruktureller Sicht vorteilhaft ist.
+\section{Motivation}
+\subsection{Zielsetzung}
+\subsection{Die 12 Faktor-APP Anforderungen}
 
-\section{Lösungsansatz}
-In diesem Abschnitt wird vorerst auf eine kurze Beschreibung für die im vorhergehenden Kapitel beschriebenen Problemstellung eingegangen. Anschließend wird aus  der allgemeinen Beschreibung eine erste Anforderungsdefinition an eine Softwarelösung abgeleitet.
-\subsection{Allgemein}
-Der Ansatz einer angemessenen Softwarelösung schließt drei heterogene Systeme mit ein. 
+\section{Einleitung}
 
-Diese drei heterogenen Systeme bestehen aus
-\begin{itemize}
-\item Sender von Wetterdaten,
-\item Anwendung für \textit{Complex Event Processing},
-\item Clients zum Empfang und zum Darstellen der aufbereiteten Wetterdaten und Warnungen,
-\end{itemize}
-sollen durch eine \textit{Message-oriented Middleware} (MoM) kommunizieren. Die MoM soll im allgemeinen Sensordaten verarbeiten können, welche 
-aus prinzipiell jeder Art von Binärdaten bestehen können, somit kann diese MoM gleichzeitig für andere Szenarien verwendet werden. 
+\section{Verbindung der Systeme (MOM)}
 
-Im vorliegendem Fall beschränken sich die zu verarbeitenden Daten auf Wetterdaten aus einer Wetter-API. Diese angesprochenen Wetterdaten können sowohl als Json wie auch als XML abgezogen werden. Um die Auslastung einer Instanz steuern zu können, wird die MoM auch fingierte Wetterdaten weiterleiten können und durch Complex Event Processing (CEP) verarbeiten können. Ein weiterer Hintergrund für diese Entscheidung war die Richtigkeit der errechneten Daten. Die Wetterdaten der API können, zu keinem Zeitpunkt, genau vorhergesagt werden und somit können die Ergebnisse des CEP nicht auf Richtigkeit validiert werden. 
 
-Ferner soll die Lösung bei einer vorher definierten Systemauslastung weitere Ressourcen dazuschalten können. 
+\section{Datenquelle (Wetter-API)}
+ 
 
-Die Abbildung 1. zeigt das Ergebnis eines Brainstormings, welches als Grundlage für einen Lösungsansatz dient.
-
-\begin{figure}[!ht]
-\centering
-\includegraphics[width=450pt]{MoM based Information Live Flow.png}
-\caption{Brainstorming}
-\end{figure}
-
-Die folgende Abbildung 2. zeigt die grobe System-Architektur. Die wichtigsten Bestandteile dieser sind:
-\begin{itemize}
-\item Sensoren (Dateninput)
-\item MoM
-\item CEP
-\item Database
-\item Android-Client
-\item Web-Client
-\end{itemize}
-\begin{figure}[!ht]
-\centering
-\includegraphics[width=450pt]{System-Archtitektur.jpeg}
-\caption{Grobe System-Architektur}
-\end{figure}
-\clearpage
-
-\subsection{Anforderungsdefiniton}
-Aus dem im letzten Abschnitt allgemein Beschriebenen können folgende grundlegenden nicht-funktionalen und funktionalen Anforderungen an ein System abgeleitet werden. 
-
-Die folgende Tabelle beschreibt die Kernanforderungen jeweils getrennt in nicht-funktionale und funktionale Anforderungen,
+Die folgende Tabelle beschreibt die Kernanforderungen der 12 Faktor APP, 
 \begin{table}[!ht]
   \centering
     \begin{minipage}{15cm}
       \centering
       \begin{tabular}{*{3}{|l|p{5.0cm}|p{5.0cm}}}\hline
+      \multicolumn{3}{|c|}{\cellcolor[RGB]{200,200,200}12 Faktor APP Anforderungen} \\\hline
      ID&Anforderung&Beschreibung\\\hline
-  
-\multicolumn{3}{|c|}{\cellcolor[RGB]{200,200,200}Nicht-funktionale Anforderungen} \\\hline
-    
-     1.1&Multi-tenancy&Das System muss eine fehlerfreie Mehrnutzer Funktionalität erfüllen\\
+     1.&Codebase&Eine im Versionsmanagementsystem verwaltete Codebase, viele Deployments.\\
       \hline
-     1.2&Scalability&Das System muss in der Lage sein zu jeder Zeit skalieren zu können\\
+     2.&Abhängigkeiten&Abhängigkeiten explizit deklarieren und isolieren.\\
      \hline
-     1.3&Fault-tolerance&Das System muss auf Fehler von Nutzer in angemessenem Rahmen reagieren\\
+     3.&Konfiguration&Die Konfiguration in Umgebungsvariablen ablegen.\\
      \hline
-     1.4&Cloudarchitektur&Das System muss vollständig in einer Cloudbasierten Umgebung lauffähig sein\\
+     4.&Unterstützende Dienste&Unterstützende Dienste als angehängte Ressourcen behandeln.\\
+     \hline 
+     5.&Build, release, run&Build- und Run-Phase strikt trennen.\\
      \hline
-\multicolumn{3}{|c|}{\cellcolor[RGB]{200,200,200}Funktionale Anforderungen} \\\hline   
- 
-     1.4&Binäre Daten annehmen&Das System soll binäre Daten annehmen können\\
+     6.&Prozesse&Die App als einen oder mehrere Prozesse ausführen.\\
      \hline
-     1.5&Daten aufbereiten& Die Daten werden nach einem Muster aufbereitet\\
+      7.&Bindung an Ports&Dienste durch das Binden von Ports exportieren.\\
      \hline
-      1.6& Daten abonnieren&Die Daten können von Abonnenten bezogen werden.\\
+      8.&Nebenläufigkeit&Mit dem Prozess-Modell skalieren.\\
      \hline
-      1.7&Nutzerverwaltung&Die User sollen in einer Datenbank verwaltet werden können.\\
+      9.&Einweggebrauch&Robuster mit schnellem Start und problemlosen Stopp.\\
      \hline
-       1.9&Statistikfunktion&Die gespeicherten Daten sollen mit Hilfe einer Statistikfunktion aufbereitet werden können.\\
+     10.&Dev-Prod-Vergleichbarkeit&Entwicklung, Staging und Produktion so ähnlich wie möglich halten.\\
+     \hline     
+     11.&Logs&Logs als Strom von Ereignissen behandeln.\\
      \hline
-     1.9&Datenquelle&Die Daten sollen via Wetter App bezogen werden können\\
-\hline     
-     2&Datenquelle&Die Daten sollen mit einem Generator fingiert werden können\\
-\hline
-2.1&Complex Event Processing&Aus den analysierten Daten sollen mit Hilfe von CEP verschiedene Ereignisse ausgelöst werden können.\\
+     12.&Admin-Prozesse&Admin/Management-Aufgaben als einmalige Vorgänge behandeln.\\
      \hline
       \end{tabular}
-   \caption{Funktionale Anforderungen an den Prototyp}\label{tab:Anforderungen1}
+   \caption{12 Faktor App Anforderungen}\label{tab:Anforderungen}
     \end{minipage}
 \end{table}
 \clearpage
 
 
-\section{Testing}
-
-Im letzten Abschnitt dieser Projektbeschreibung wird auf das Testing eingegangen. Hierbei wird zwischen den Kernpunkten Skalierbarkeit und Ausfallsicherheit/Multi-Tendency unterschieden, auf diese wird in den folgenden Abschnitten eingegangen.
-
-\subsection{Skalierbarkeit}
-\begin{itemize}
-\item Normallast:	definierter Input durch Wetterdaten API mit bestimmter Clientzahl für Performancebalancing 
-Bestimmung von Grenzwerten (Scalingparameter) für Optimale Systemsicherheit (Datenkonsistenz/Datentransferraten etc.)
-\item Client - Stresstest:	definierte Menge an Topics werden  zur Verfügung gestellt. Schrittweise wird die Anzahl der Clientanschlüsse (virtuell) erhöht.  
-Mithilfe der Scalingparameter (Normallast) muss das Cloud System weitere Ressourcen in Anspruch nehmen und der Output muss bewältigt werden(Datensicherheit\- /Zugriffsteuerungen/etc.) können. Der Latenzvergleich mit optimaler Normallast ergibt das Maß für Skalierbarkeit des Systems.
-\item Inputdaten - Stresstest:	eine definierte Anzahl an Clients verbindet sich mit dem System und bezieht Daten aus der MoM. Mit Hilfe einer eigenen Softwarelösung werden nun fingierte Wetterdatenmengen in das System (MOM) eingespeist.
-\begin{itemize}
-\item Skalierungsparameter (Normallast) Input muss bewältigt werden
-\item Latenzvergleich  (Datentransfer von Input bis Output auf einem Client) mit Optimaler Normallast ergibt Maß für Skalierbarkeit des Systems
-\end{itemize}
-\item Abnahmetest: Test und finale Analyse des gesamten Cloudsystems 
-Verschiedene Szenarien  (Normallast, Client-Veränderungen, InputDaten-Veränderungen) werden in verschiedenen Kombinationen und Ausprägungen in das System gespeist.
-\item Finale Testinganalyse (Gesamtsystem)
-\item Modulparameter Fine-tuning der AWS Cloud Architecture
-\clearpage
-\end{itemize}
-
-\subsection{Ausfallsicherheit/Multi-Tendency}
-
-\begin{itemize}
-
-\item MoM- Clients:	Topics von anderem User dürfen nicht zur Verfügung gestellt werden. Zeitlich simultane Abfrage gleicher oder minimal abweichender Topics.		
-\begin{itemize}
-\item Test des Zugriffsverfahrens IAM (Amazon Web Services Identity and Access Management) Hinweis: Analog zu Keystone Identity Modul (OpenStack)
-\end{itemize}
-
-
-\item CEP - Datenbank:Datenkonsistenz bei Lastverhalten
-(siehe Szenarien der der Skalierbarkeit)
-\begin{itemize}
-\item Prüfung der Ergebnisse (Topics)
-\item Prüfung über Statistikvergleiche möglich (Rahmen für zu erwartenden Wert versus geliefert/berechneter Wert) 
-\end{itemize}
+\section{Datenverarbeitung}
+\subsection{CEP}
+\subsection{Datenbank}
 
 
 
-\item Clients - Datenbank:	User hat die Möglichkeit ein Userprofil anzulegen (Suchkriterien zu speichern/Statistiken anzusehen)
-\begin{itemize}
-\item Test des Userzugriffs Datensicherheit (Test der Oracle Userrollenzugriffe bzw. Test der Einstellungen im Modul IAM)
-\end{itemize}
-\end{itemize}
+\section{Anwendersicht}
+\subsection{Andriod-APP}
+\subsection{Web-Client}
+\section{Deployment}
+\subsection{Allgemein}
+\subsection{Cloudfoundry}
+\subsection{REDIS}
+\subsection{AWS}
+
+
+\section{Kostenmodell}
+
 
 \end{document}
