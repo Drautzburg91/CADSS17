@@ -155,9 +155,9 @@ public class MqttService implements MessagingService {
 			URL url = new URL(urlAPI);
 			HttpURLConnection request = (HttpURLConnection) url.openConnection();
 			// only for testing !!!
-			System.out.println("Reading request....");
+			System.out.println("TODAY: Reading request....");
 			request.setReadTimeout(10000);
-			
+
 			request.connect();
 
 			// Convert to a JSON object to print data
@@ -220,6 +220,10 @@ public class MqttService implements MessagingService {
 			// Connect to the URL using java's native library
 			URL url = new URL(urlAPI);
 			HttpURLConnection request = (HttpURLConnection) url.openConnection();
+			// only for testing !!!
+			System.out.println("WEEKLY: Reading request....");
+			request.setReadTimeout(10000);
+
 			request.connect();
 
 			// Convert to a JSON object to print data
