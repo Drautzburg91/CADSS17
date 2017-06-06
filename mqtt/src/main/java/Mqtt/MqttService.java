@@ -31,8 +31,8 @@ public class MqttService implements MessagingService {
 	private WeatherData fakeWeatherData;
 
 	public MqttService() {
-        System.out.println("MqttService started");
-        // credentials have to be stored in env variables
+		System.out.println("MqttService started");
+		// credentials have to be stored in env variables
 		options = new MqttConnectOptions();
 		options.setUserName(System.getenv("CadRabbit_UserName"));
 		options.setPassword(System.getenv("CadRabbit_Password").toCharArray());
@@ -75,7 +75,7 @@ public class MqttService implements MessagingService {
 
 	@Async
 	public void publishLiveWeatherData() {
-        System.out.println("Mqtt-Service: publishLiveWeatherData started");
+		System.out.println("Mqtt-Service: publishLiveWeatherData started");
 		transmittingLive = true;
 		while (transmittingLive) {
 			handlePLZWeekly("78467", "de");// Konstanz
@@ -120,13 +120,13 @@ public class MqttService implements MessagingService {
 				e.printStackTrace();
 			}
 		}
-        System.out.println("Mqtt-Service: publishLiveWeatherData stopped");
+		System.out.println("Mqtt-Service: publishLiveWeatherData stopped");
 
 	}
 
 	@Async
 	public void publishFakeWeatherData(WeatherData weatherData) {
-        System.out.println("Mqtt-Service: publishFakeWeatherData started");
+		System.out.println("Mqtt-Service: publishFakeWeatherData started");
 		this.fakeWeatherData = weatherData;
 		transmittingGenerated = true;
 
@@ -140,13 +140,13 @@ public class MqttService implements MessagingService {
 			} catch (MqttException | InterruptedException e) {
 				e.printStackTrace();
 			}
-            System.out.println("*published");
+			System.out.println("*published");
 		}
-        System.out.println("Mqtt-Service: publishFakeWeatherData stopped");
+		System.out.println("Mqtt-Service: publishFakeWeatherData stopped");
 	}
 
 	private void handlePLZToday(String plz, String countryCode) {
-        System.out.println("Mqtt-Service: handlePLZToday started, PLZ:" +plz );
+		System.out.println("Mqtt-Service: handlePLZToday started, PLZ:" + plz);
 		try {
 			System.out.println("Reading API");
 			String urlAPI = "http://api.openweathermap.org/data/2.5/find?q=" + plz + "," + countryCode + "&units=metric" + "&APPID=" + apiId;
@@ -154,6 +154,10 @@ public class MqttService implements MessagingService {
 			// Connect to the URL using java's native library
 			URL url = new URL(urlAPI);
 			HttpURLConnection request = (HttpURLConnection) url.openConnection();
+			// only for testing !!!
+			System.out.println("Reading request....");
+			request.setReadTimeout(10000);
+			
 			request.connect();
 
 			// Convert to a JSON object to print data
@@ -200,15 +204,15 @@ public class MqttService implements MessagingService {
 			message = new MqttMessage(jsonInString.getBytes());
 
 			client.publish(plz + "/today", message);
-            System.out.println("Mqtt-Service: handlePLZToday published, PLZ:" +plz );
+			System.out.println("Mqtt-Service: handlePLZToday published, PLZ:" + plz);
 
 		} catch (IOException | MqttException | NullPointerException e) {
 			e.printStackTrace();
 		}
-    }
+	}
 
 	private void handlePLZWeekly(String plz, String countryCode) {
-        System.out.println("Mqtt-Service: handlePLZWeekly started, PLZ:" +plz );
+		System.out.println("Mqtt-Service: handlePLZWeekly started, PLZ:" + plz);
 		try {
 			System.out.println("Reading API");
 			String urlAPI = "http://api.openweathermap.org/data/2.5/forecast?zip=" + plz + "," + countryCode + "&units=metric" + "&APPID=" + apiId;
@@ -271,14 +275,12 @@ public class MqttService implements MessagingService {
 			message = new MqttMessage(jsonInString.getBytes());
 
 			client.publish(plz + "/weekly", message);
-            System.out.println("Mqtt-Service: handlePLZWeekly published, PLZ:" +plz );
+			System.out.println("Mqtt-Service: handlePLZWeekly published, PLZ:" + plz);
 
 		} catch (IOException | MqttException | NullPointerException e) {
 			e.printStackTrace();
 		}
-    }
-
-
+	}
 
 	public boolean isTransmittingLive() {
 		return transmittingLive;
