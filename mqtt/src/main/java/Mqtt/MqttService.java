@@ -9,6 +9,8 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Sebastian Thümmel and Paul Drautzburg on 22.05.2017.
@@ -29,6 +31,7 @@ public class MqttService implements MessagingService {
 	private MqttCallback callback;
 
 	private WeatherData fakeWeatherData;
+	private HashMap<String, String> cities;
 
 	public MqttService() {
 		System.out.println("MqttService started");
@@ -37,8 +40,8 @@ public class MqttService implements MessagingService {
 		options.setUserName(System.getenv("CadRabbit_UserName"));
 		options.setPassword(System.getenv("CadRabbit_Password").toCharArray());
 
-		gson = new Gson();
-
+		gson = new GsonBuilder().setPrettyPrinting().create();
+        initPlz();
 		try {
 
 			System.out.println("Host: " + System.getenv("CadRabbit_Host"));
@@ -78,44 +81,22 @@ public class MqttService implements MessagingService {
 		System.out.println("Mqtt-Service: publishLiveWeatherData started");
 		transmittingLive = true;
 		while (transmittingLive) {
-			handlePLZWeekly("78467", "de");// Konstanz
-			handlePLZWeekly("40213", "de");// Düsseldorf
-			handlePLZWeekly("80331", "de");// München
-			handlePLZWeekly("70173", "de");// Stuttgart
-			handlePLZWeekly("30159", "de");// Hannover
-			handlePLZWeekly("65183", "de");// Wiesbaden
-			handlePLZWeekly("01069", "de");// Dresden
-			handlePLZWeekly("55116", "de");// Mainz
-			handlePLZWeekly("10785", "de");// Berlin
-			handlePLZWeekly("24103", "de");// Kiel
-			handlePLZWeekly("14467", "de");// Potsdam
-			handlePLZWeekly("39104", "de");// Magdeburg
-			handlePLZWeekly("99084", "de");// Erfurt
-			handlePLZWeekly("20095", "de");// Hamburg
-			handlePLZWeekly("19055", "de");// Schwerin
-			handlePLZWeekly("66111", "de");// Saarbrücken
-			handlePLZWeekly("28215", "de");// Bremen
-
-			handlePLZToday("78467", "de");// Konstanz
-			handlePLZToday("40213", "de");// Düsseldorf
-			handlePLZToday("80331", "de");// München
-			handlePLZToday("70173", "de");// Stuttgart
-			handlePLZToday("30159", "de");// Hannover
-			handlePLZToday("65183", "de");// Wiesbaden
-			handlePLZToday("01069", "de");// Dresden
-			handlePLZToday("55116", "de");// Mainz
-			handlePLZToday("10785", "de");// Berlin
-			handlePLZToday("24103", "de");// Kiel
-			handlePLZToday("14467", "de");// Potsdam
-			handlePLZToday("39104", "de");// Magdeburg
-			handlePLZToday("99084", "de");// Erfurt
-			handlePLZToday("20095", "de");// Hamburg
-			handlePLZToday("19055", "de");// Schwerin
-			handlePLZToday("66111", "de");// Saarbrücken
-			handlePLZToday("28215", "de");// Bremen
+		    for(Map.Entry<String, String> city:cities.entrySet()){
+                String citiesKey[] = city.getKey().split("-");
+                String countryCode = citiesKey[0];
+                String plz = citiesKey[1];
+                handlePLZToday(plz,countryCode);
+                handlePLZWeekly(plz, countryCode);
+            }
 
 			try {
-				Thread.sleep(Integer.parseInt(System.getenv("APICallIntervall")));
+		        String apiCallIntervall = System.getenv("APICallIntervall");
+		        if(apiCallIntervall != null){
+                    Thread.sleep(Integer.parseInt(apiCallIntervall));
+                } else {
+                    Thread.sleep(60000);
+                }
+
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -169,7 +150,7 @@ public class MqttService implements MessagingService {
 
 			JsonArray jsonArray = rootobj.getAsJsonArray("list"); // Json request with all information
 
-			System.out.println(jsonArray);
+			//System.out.println(jsonArray);
 
 			System.out.println("API reading complete");
 
@@ -236,7 +217,7 @@ public class MqttService implements MessagingService {
 			JsonArray jsonArray = rootobj.getAsJsonArray("list"); // Json request with all information
 
 			JsonObject cityObject = rootobj.getAsJsonObject("city"); // Important information as JsonObject outside the array
-			System.out.println(jsonArray);
+			//System.out.println(jsonArray);
 
 			System.out.println("API reading complete");
 
@@ -300,5 +281,26 @@ public class MqttService implements MessagingService {
 
 	public void setTransmittingGenerated(boolean transmittingGenerated) {
 		this.transmittingGenerated = transmittingGenerated;
+	}
+
+	private void initPlz(){
+        cities = new HashMap<>();
+		cities.put("de-78467", "Konstanz");
+		cities.put("de-40213", "Düsseldorf");
+		cities.put("de-80331", "München");
+		cities.put("de-70173", "Stuttgart");
+		cities.put("de-30159", "Hannover");
+		cities.put("de-65183", "Wiesbaden");
+		cities.put("de-01069", "Dresden");
+		cities.put("de-55116", "Mainz");
+		cities.put("de-10785", "Berlin");
+		cities.put("de-24103", "Kiel");
+		cities.put("de-14467", "Potsdam");
+		cities.put("de-39104", "Magdeburg");
+		cities.put("de-99084", "Erfurt");
+		cities.put("de-20095", "Hamburg");
+		cities.put("de-19055", "Schwerin");
+		cities.put("de-66111", "Saarbrücken");
+		cities.put("de-28215", "Bremen");
 	}
 }
