@@ -76,7 +76,7 @@
 {\Large \textbf{Vorwort}}
 \bigskip
 
-Das vorliegende Dokument beschreibt grob eine Idee und das Vorgehen für die Umsetzung für das Projekt im Rahmen der Master Veranstaltung \textit{Cloud Application Development}.
+Das vorliegende Dokument beschreibt die Umsetzung für das Projekt im Rahmen des MSI-Kurses \textit{Cloud Application Development}.
 \include{affidavit}
 \include{abstract}
 
@@ -148,7 +148,20 @@ Die folgende Tabelle beschreibt die Kernanforderungen der 12 Faktor APP,
 
 \section{Einleitung}
 
-\section{Verbindung der Systeme (MOM)}
+\section{Verbindung der System}
+Die entwickelte Anwendung besteht mit einem Java-Service für die verwendete Wetter-API, der Complex Event Processing Engine und den Anwender-Clients aus drei Komponenten. Diese Komponenten müssen möglichst stark entkoppelt miteinander kommunizieren können. Durch eine starke Entkopplung wird erreicht ,dass die jeweiligen Komponenten keine Kenntnisse über vorhandene Schnittstellen oder die verwendete Programmiersprache besitzen müssen. Um dies zu realisieren, wird RabbitMQ als Message-oriented Middleware (MoM) eingesetzt. 
+\subsection{RabbitMQ}
+Bei RabbitMQ handelt es sich um einen OpenSource Message Broker welcher unter anderem Bibliotheken für Java, JavaScript, Swift und C\# anbietet, wodurch die Kommunikation mit Android-, iOS- und Webapplikationen möglich wird. Durch die Verwendung von Queues und Topics wird die asynchrone Verteilung der Nachrichten ermöglicht. RabbitMQ verwendet als Standard das Messaging Protokoll AMQP, bietet aber Plugins für alternative Protokolle wie MQTT und STOMP. Da auch mobile Geräte zu den eingesetzten Komponenten gehören, wird das Protokoll MQTT eingesetzt, da dieses speziell für den Einsatz in Mobilgeräten entwickelt wurde. Die Kommunikation der einzelnen Komponenten erfolgt mit MQTT über Topics. Damit der Nachrichtenaustausch stattfinden kann, müssen sich die miteinander kommunizierenden Komponenten auf ein oder mehrere gemeinsame Topics einigen. Der Aufbau eines Topics ist mit REST-Schnittstellen vergleichbar und kann aus mehreren Topic-Leveln bestehen. Zusätzlich können beim Abonnement von Topics Platzhalter wie $+$ und \# eingesetzt werden. Diese funktionieren wie reguläre Ausdrücke und ersetzen im Falle des Platzhalters + eine einzelne Topic-Ebene und beim Platzhalter \# alle nachfolgenden Ebenen. Die Topics dieser Anwendung sehen wie folgt aus:
+\begin{description}
+\item[78467/today]\hfill \\ Abonnement des Wetters von Postleitzahl 78467 des heutigen Tages
+\item[$+$/today]\hfill \\ Abonnement des Wetters aller verfügbaren Postleitzahlen des heutigen Tages
+\item[78467/today/alert]\hfill \\ Abonnement der Wetterwarnungen für die Postleitzahl 78467
+\item[$+$/weekly]\hfill \\ Abonnement der Vorhersage der nächsten Woche aller verfügbaren Postleitzahlen
+\item[\#]\hfill \\ Abonnement aller verfügbaren Topics
+\end{description}
+Damit ein Client Daten senden und empfangen kann, muss er sich beim Verbindungsaufbau authentifizieren und für den Zugriff auf das entsprechende Topic autorisiert sein. Die Authentifizierung erfolgt über eine gewöhnliche Benutzername / Passwort - Abfrage. Um den Zugriff auf MQTT-Topics zu beschränken, ermöglicht RabbitMQ die Verwendung virtueller Hosts (vHosts). Durch diese erlangen nur die Nutzer Zugriff auf ein Topic, wenn sie für den vHost des Publishers autorisiert sind. Durch dieses Verfahren kann das gleiche Topic von mehreren Nutzern mit unterschiedlichen vHosts verwendet werden, ohne das sie die Nachrichten anderer vHosts des gleichen Topics lesen können. Auf diese Weise erfüllt die Anwendung die Anforderung der Multi-Tenancy.
+
+
 
 
 \section{Datenquelle (Wetter-API)}
