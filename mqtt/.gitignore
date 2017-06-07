@@ -3,3 +3,5 @@ mqtt.iml
 /target
 .classpath
 .project
+.idea
+.settings
