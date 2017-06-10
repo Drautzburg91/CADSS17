@@ -25,7 +25,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.content.WakefulBroadcastReceiver;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -41,12 +40,20 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import org.joda.time.DateTime;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import static android.R.attr.max;
 
 
 public class AktuellesWetterActivity extends AppCompatActivity implements LocationListener {
@@ -85,12 +92,14 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
 
 
     String plz;
+    String gpsPlz;
     private ImageButton btn;
     private FrameLayout mFrameLayout;
     private PopupWindow mPopupWindow;
     private EditText plzStadt;
     private InputMethodManager imm;
     Intent in = new Intent();
+    private Alerts alerts;
 
     private TextView MO;
     private TextView DI;
@@ -193,13 +202,14 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("NOW"));
 
         serv = new Intent(this,MqttService.class);
-        startService(serv);
+       // startService(serv);
 
         dates =  new Datum(datum,MO,DI,MI,DO,FR,SA);
         wetter = new Wetter(getApplicationContext(),wetterIcons,wetterMO,wetterDI,wetterMI,wetterDO,wetterFR,wetterSA);
         temparatur =new Temparatur(maxTempMo,maxTempDi,maxTempMi,maxTempDo,maxTempFr,maxTempSa,minTempMo,minTempDi,minTempMi,minTempDo,minTempFr,minTempSa,tempMom);
         chart= new Chart();
         ueberSetzung = new Uebersetzung();
+        alerts = new Alerts();
         final Geocoder gcdOne = new Geocoder(this, Locale.GERMAN);
 
         btn.setOnClickListener(
@@ -218,7 +228,7 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
                         // set prompts.xml to alertdialog builder
                         alertDialogBuilder.setView(promptsView);
 
-                        final EditText userInput = (EditText) promptsView
+                        final EditText stadtInput = (EditText) promptsView
                                 .findViewById(R.id.editText);
 
                         // set dialog message
@@ -229,24 +239,35 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
                                             public void onClick(DialogInterface dialog,int id) {
                                                 // get user input and set it to result
                                                 // edit text
-                                                String inp = userInput.getText().toString();
-                                                Log.e("alert",inp);
-                                                stadt.setText(inp);
-                                                try {
-                                                    List<Address> addresses =   gcdOne.getFromLocationName(inp,1);
-                                                    if (addresses.size() > 0) {
-                                                        addresses = gcdOne.getFromLocation(addresses.get(0).getLatitude(),addresses.get(0).getLongitude(),1);
-                                                        if (addresses.size() > 0) {
-                                                            Log.e("addresses",addresses.get(0).getPostalCode());
-                                                        }
+                                                String stadtInp = stadtInput.getText().toString();
+                                                if (!stadtInp.equals("")) {
+                                                    Log.e("alert", stadtInp);
+                                                    stadt.setText(stadtInp);
 
+                                                    try {
+                                                        List<Address> addresses = gcdOne.getFromLocationName(stadtInp, 1);
+                                                        if (addresses.size() > 0) {
+                                                            addresses = gcdOne.getFromLocation(addresses.get(0).getLatitude(), addresses.get(0).getLongitude(), 1);
+                                                            if (addresses.size() > 0) {
+                                                                Log.e("addresses", addresses.get(0).getPostalCode());
+                                                                gpsPlz = addresses.get(0).getPostalCode();
+                                                                serv.putExtra("plz", gpsPlz);
+                                                                serv.putExtra("alert",false);
+                                                                serv.putExtra("lastPlz",plz);
+                                                                startService(serv);
+                                                            }
+
+                                                        }
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
                                                     }
-                                                } catch (IOException e) {
-                                                    e.printStackTrace();
+
+                                                }else {
+                                                    gps();
                                                 }
-                                                serv.putExtra("plz",userInput.getText().toString());
-                                                startService(serv);
                                             }
+
+
                                         })
                                 .setNegativeButton("Cancel",
                                         new DialogInterface.OnClickListener() {
@@ -256,6 +277,8 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
                                         })
                         .setNeutralButton("GPS",new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
+                                serv.putExtra("alert",false);
+                                serv.putExtra("lastPlz",gpsPlz);
                                 gps();
                                 dialog.cancel();
                             }
@@ -330,7 +353,6 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                chart.makeChart(tempChart,getApplicationContext());
 
                  wetter.setWetter(wetterIcon);
                  temparatur.setTemp(Integer.toString(temp));
@@ -340,52 +362,110 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
                  regenWahr.setText("38%");
 
 
-                }else if(topic.contains("weekly")){
-                String wetterIconDayOne = null;
-                String wetterIconDayTwo = null;
-                String wetterIconDayThree = null;
-                String wetterIconDayFour = null;
-                String wetterIconDayFive = null;
-                String wetterIconDaySix = null;
-                try {
-                    wetterIconDayOne = (String)payload.get("weatherIcon");
-                    wetterIconDayTwo = (String)payload.get("weatherIcon");
-                    wetterIconDayThree = (String)payload.get("weatherIcon");
-                    wetterIconDayFour = (String)payload.get("weatherIcon");
-                    wetterIconDayFive = (String)payload.get("weatherIcon");
-                    wetterIconDaySix = (String)payload.get("weatherIcon");
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                }else {
+                if (topic.contains("weekly")) {
+                    JSONArray array = null;
+                    JSONObject dayOfWeek = null;
+
+                    String wetterIconDayOne = null;
+                    String wetterIconDayTwo = null;
+                    String wetterIconDayThree = null;
+                    String wetterIconDayFour = null;
+                    String wetterIconDayFive = null;
+                    String wetterIconDaySix = null;
+
+                    try {
+                        array = payload.getJSONArray("days");
+                        int [] max = new int[5];
+                        int [] min = new int[5];
+                        for (int i = 0; i < array.length(); i++) {
+                            dayOfWeek = array.getJSONObject(i);
+                            String date = dayOfWeek.get("date").toString();
+                            DateFormat formatWeekDate = new SimpleDateFormat("yyyy-mm-d");
+                            Date weekDate = formatWeekDate.parse(date);
+                            DateTime dateWeek = new DateTime(weekDate);
+                            Date d = new Date();
+                            DateTime dtOrg = new DateTime(d);
+
+
+                            if(dateWeek.equals(dtOrg.plusDays(1)))
+                            {
+                                wetterIconDayOne = (String) payload.get("weatherIcon");
+                                temparatur.setTempMo((String) payload.get("temperatureMin"),(String) payload.get("temperatureMax"));
+                                wetter.setWetterEins(wetterIconDayOne);
+                                max[0] = (int)payload.get("temperatureMax");
+                                min[0] = (int)payload.get("temperatureMax");
+                            }
+                            if(dateWeek.equals(dtOrg.plusDays(2)))
+                            {
+                                wetterIconDayTwo = (String) payload.get("weatherIcon");
+                                temparatur.setTempDi((String) payload.get("temperatureMin"),(String) payload.get("temperatureMax"));
+                                wetter.setWetterZwei(wetterIconDayTwo);
+                                max[1] = (int)payload.get("temperatureMax");
+                                min[1] = (int)payload.get("temperatureMax");
+                            }
+                            if(dateWeek.equals(dtOrg.plusDays(3)))
+                            {
+                                wetterIconDayThree = (String) payload.get("weatherIcon");
+                                temparatur.setTempMi((String) payload.get("temperatureMin"),(String) payload.get("temperatureMax"));
+                                wetter.setWetterDrei(wetterIconDayThree);
+                                max[2] = (int)payload.get("temperatureMax");
+                                min[2] = (int)payload.get("temperatureMax");
+                            }
+                            if(dateWeek.equals(dtOrg.plusDays(4)))
+                            {
+                                wetterIconDayFour = (String) payload.get("weatherIcon");
+                                temparatur.setTempDo((String) payload.get("temperatureMin"),(String) payload.get("temperatureMax"));
+                                wetter.setWetterVier(wetterIconDayFour);
+                                max[3] = (int)payload.get("temperatureMax");
+                                min[3] = (int)payload.get("temperatureMax");
+                            }
+                            if(dateWeek.equals(dtOrg.plusDays(5)))
+                            {
+                                wetterIconDayFive = (String) payload.get("weatherIcon");
+                                temparatur.setTempFr((String) payload.get("temperatureMin"),(String) payload.get("temperatureMax"));
+                                wetter.setWetterFuenf(wetterIconDayFive);
+                                max[4] = (int)payload.get("temperatureMax");
+                                min[4] = (int)payload.get("temperatureMax");
+                            }
+                            if(dateWeek.equals(dtOrg.plusDays(6)))
+                            {
+                                wetterIconDaySix = (String) payload.get("weatherIcon");
+                                temparatur.setTempSa((String) payload.get("temperatureMin"),(String) payload.get("temperatureMax"));
+                                wetter.setWetterSechs(wetterIconDaySix);
+                                max[5] = (int)payload.get("temperatureMax");
+                                min[5] = (int)payload.get("temperatureMax");
+                            }
+                        }
+                        chart.makeChart(tempChart,getApplicationContext(),max,min);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+
+
+
+                } else if (topic.contains("alert")) {
+                    String[] alertArray = null;
+                    try {
+                        alertArray = alerts.alert((String) payload.get("alertTitel"));
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    Notification noti =
+                            new NotificationCompat.Builder(context)
+                                    .setSmallIcon(R.drawable.notification_icon)
+                                    .setContentTitle(alertArray[0])
+                                    .setContentText(alertArray[1]).getNotification();
+                    mNotificationManager.notify(001, noti);
+
+
                 }
-
-                wetter.setWetterEins(wetterIconDayOne);
-                wetter.setWetterZwei(wetterIconDayTwo);
-                wetter.setWetterDrei(wetterIconDayThree);
-                wetter.setWetterVier(wetterIconDayFour);
-                wetter.setWetterFuenf(wetterIconDayFive);
-                wetter.setWetterSechs(wetterIconDaySix);
-
-
-            }else if (topic.contains("alert")){
-                String alertTitel = null;
-                String alertText = null;
-                try {
-                    alertTitel = (String)payload.get("alertTitel");
-                    alertText = (String)payload.get("alertText");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-
-                Notification noti =
-                        new NotificationCompat.Builder(context)
-                                .setSmallIcon(R.drawable.notification_icon)
-                                .setContentTitle(alertTitel)
-                                .setContentText(alertText).getNotification();
-                mNotificationManager.notify(001, noti);
-
-
             }
         }}
     };
@@ -469,6 +549,23 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
             return null;
 
     }
+
+    public void onLocationChanged(Location location) {
+      /*  if(location != null){
+            Geocoder gcd = new Geocoder(this, Locale.getDefault());
+            try {
+                List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                if (addresses.size() > 0) {
+
+                    stadt.setText(addresses.get(0).getLocality());
+                    dates.setDatum();
+                }
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }*/
+    }
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -499,19 +596,7 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
 
 
 
-    private void hide() {
-        // Hide UI first
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-        mControlsView.setVisibility(View.GONE);
-        mVisible = false;
 
-        // Schedule a runnable to remove the status and navigation bar after a delay
-        mHideHandler.removeCallbacks(mShowPart2Runnable);
-        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
-    }
 
 
 
@@ -574,6 +659,25 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
 
 
 
+
+
+
+
+
+
+    private void hide() {
+        // Hide UI first
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+        mControlsView.setVisibility(View.GONE);
+        mVisible = false;
+
+        // Schedule a runnable to remove the status and navigation bar after a delay
+        mHideHandler.removeCallbacks(mShowPart2Runnable);
+        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
+    }
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -616,21 +720,6 @@ public class AktuellesWetterActivity extends AppCompatActivity implements Locati
         }
     };
 
-    public void onLocationChanged(Location location) {
-        if(location != null){
-            Geocoder gcd = new Geocoder(this, Locale.getDefault());
-            try {
-                List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                if (addresses.size() > 0) {
-
-                    stadt.setText(addresses.get(0).getLocality());
-                    dates.setDatum();
-                }
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-        }
-    }
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {

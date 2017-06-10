@@ -88,7 +88,7 @@ public class Uebersetzung {
                 uebersetzt="Starkregen";
                 break;
             case 521:
-                uebersetzt="Starkregen";
+                uebersetzt="leichter Regen";
                 break;
             case 522:
                 uebersetzt="extremer Starkregen";

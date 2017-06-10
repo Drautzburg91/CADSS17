@@ -19,10 +19,10 @@ import org.achartengine.renderer.XYSeriesRenderer;
 public class Chart {
 
     int [] x = new int[]{1,2,3,4,5,6};
-    int [] max = new int[]{20,22,23,20,25,24};
-    int [] min = new int[]{10,14,17,18,15,20};
+   // int [] max1 = new int[]{20,22,23,20,25,24};
+   // int [] min1 = new int[]{10,14,17,18,15,20};
 
-    public void makeChart(LinearLayout tempChart, Context context){
+   public void makeChart(LinearLayout tempChart, Context context, int [] max, int [] min){
 
         XYSeries maxSeries = new XYSeries("max");
         XYSeries minSeries = new XYSeries("min");
@@ -39,7 +39,7 @@ public class Chart {
         maxRenderer.setColor(Color.RED);
         maxRenderer.setPointStyle(PointStyle.CIRCLE);
         maxRenderer.setFillPoints(true);
-        maxRenderer.setLineWidth(2);
+        maxRenderer.setLineWidth(3);
         maxRenderer.setDisplayChartValues(true);
         maxRenderer.setChartValuesTextSize(20);
 
@@ -47,7 +47,7 @@ public class Chart {
         minRenderer.setColor(Color.BLUE);
         minRenderer.setPointStyle(PointStyle.CIRCLE);
         minRenderer.setFillPoints(true);
-        minRenderer.setLineWidth(2);
+        minRenderer.setLineWidth(3);
         minRenderer.setDisplayChartValues(true);
         minRenderer.setChartValuesTextSize(20);
 
@@ -63,6 +63,7 @@ public class Chart {
         multiRenderer.addSeriesRenderer(maxRenderer);
         multiRenderer.addSeriesRenderer(minRenderer);
         multiRenderer.setShowLegend(false);
+        multiRenderer.setPanEnabled(false,false);
         GraphicalView graph = (GraphicalView) ChartFactory.getLineChartView(context,dataset, multiRenderer);
         tempChart.addView(graph);
 

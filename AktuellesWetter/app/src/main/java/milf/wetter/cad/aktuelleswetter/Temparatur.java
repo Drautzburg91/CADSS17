@@ -24,6 +24,9 @@ public class Temparatur {
      TextView minTempFr;
      TextView minTempSa;
 
+public Temparatur(){
+
+}
 
     public Temparatur(TextView maxTempMo, TextView maxTempDi, TextView maxTempMi, TextView maxTempDo, TextView maxTempFr, TextView maxTempSa,
                       TextView minTempMo, TextView minTempDi, TextView minTempMi, TextView minTempDo, TextView minTempFr, TextView minTempSa,

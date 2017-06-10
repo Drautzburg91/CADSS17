@@ -23,17 +23,17 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class MqttService extends Service implements MqttCallback {
 
-    final String serverUri = "";
     public String plz;
     Intent in = new Intent();
     private Intent intent;
-    public static final String KEY_TEST = "test";
     MqttAndroidClient myClient;
     MqttConnectOptions connOpt;
+    String lastPlz;
+    boolean bool;
 
-    static final String BROKER_URL = "tcp://ec2-52-43-30-22.us-west-2.compute.amazonaws.com:1883";
-    static final String M2MIO_USERNAME = "caduser";
-    static final String M2MIO_PASSWORD_MD5 = "caduser";
+    static final String BROKER_URL = "tcp://ec2-34-210-210-13.us-west-2.compute.amazonaws.com:1883";
+    static final String M2MIO_USERNAME = "cadAndroid";
+    static final String M2MIO_PASSWORD_MD5 = "cadAndroid";
 
     // the following two flags control whether this example is a publisher, a subscriber or both
     static final Boolean subscriber = true;
@@ -45,7 +45,7 @@ public class MqttService extends Service implements MqttCallback {
 
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-        Log.e("onReceive: ",new String (message.getPayload()));
+        Log.e("messageArrived: ",new String (message.getPayload()));
         in.putExtra("Message",message.getPayload());
         in.putExtra("Topic",topic);
         in.setAction("NOW");
@@ -69,8 +69,15 @@ public class MqttService extends Service implements MqttCallback {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         this.intent = intent;
+        bool = intent.getBooleanExtra("alert",true);
+        if(bool == false) {
+            Log.e("Boolean(alert,true)","true");
+            lastPlz = intent.getStringExtra("lastPlz");
+        }
+
         if(intent.getStringExtra("plz")!=null) {
             plz = intent.getStringExtra("plz");
+            Log.i("onStartCommande",plz);
             String clientID = "test";//MqttClient.generateClientId();
             connOpt = new MqttConnectOptions();
 
@@ -83,6 +90,8 @@ public class MqttService extends Service implements MqttCallback {
             try {
                 myClient = new MqttAndroidClient(getApplicationContext(), BROKER_URL, clientID);
                 myClient.setCallback(this);
+
+
                 myClient.connect(connOpt, null, new IMqttActionListener() {
                     @Override
                     public void onSuccess(IMqttToken asyncActionToken) {
@@ -90,13 +99,25 @@ public class MqttService extends Service implements MqttCallback {
                         // subscribe to topic if subscriber
                         // setup topic
                         // topics on m2m.io are in the form <domain>/<stuff>/<thing>
-                        String myTopic = "78467";
+                       // String myTopic = "78467";
+
+                        if(bool == false) {
+                            Log.e("Boolean(alert,true)", lastPlz);
+                            try {
+                                myClient.unsubscribe(lastPlz + "/today/cep");
+                                myClient.unsubscribe(lastPlz + "/weekly/cep");
+                                myClient.unsubscribe(lastPlz + "/alert");
+                            } catch (MqttException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         if (subscriber && plz != null) {
                             try {
                                 int subQoS = 0;
-                                myClient.subscribe(myTopic + "/today", subQoS);
-                                myClient.subscribe(myTopic + "/weekly", subQoS);
-                                myClient.subscribe(myTopic + "/alert", subQoS);
+                                myClient.subscribe(plz + "/today/cep", subQoS);
+                                myClient.subscribe(plz + "/weekly/cep", subQoS);
+                                myClient.subscribe(plz + "/alert", subQoS);
+
 
                             } catch (Exception e) {
                                 e.printStackTrace();

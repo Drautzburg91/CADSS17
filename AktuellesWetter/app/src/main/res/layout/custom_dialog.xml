@@ -20,9 +20,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:layout_marginLeft="20dp"
-        android:inputType="textPersonName"
+        android:inputType="text"
         android:textColor="#FE2E64"
-        android:hint="PLZ oder Stadt"
+        android:hint="Stadt"
         android:layout_below="@+id/Standorteingabe"/>
-
 </RelativeLayout>
