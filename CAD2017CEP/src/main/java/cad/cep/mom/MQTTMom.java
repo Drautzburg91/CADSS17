@@ -24,12 +24,12 @@ public class MQTTMom implements IMoM{
 	 * @param host the host
 	 * @throws MoMException the mo M exception
 	 */
-	protected MQTTMom(String host, String id, Properties config) throws MoMException {
+	protected MQTTMom(String host, String user, String pw) throws MoMException {
 			try {
-				client = new MqttClient(config.getProperty("host", host), MqttClient.generateClientId());
+				client = new MqttClient(host, MqttClient.generateClientId());
 				MqttConnectOptions options = new MqttConnectOptions();
-				options.setPassword(config.getProperty("pw").toCharArray());
-				options.setUserName(config.getProperty("user"));
+				options.setPassword(pw.toCharArray());
+				options.setUserName(user);
 				client.connect(options);
 			} catch (MqttException e) {
 				throw new MoMException("Cannot connect to MoM", e);

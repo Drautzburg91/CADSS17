@@ -13,9 +13,9 @@ public class MoMReader extends Thread{
 	public String topic;
 	private IMoM mom;
 	
-	public MoMReader(String topic, String id) throws MoMException{
+	public MoMReader(String topic) throws MoMException{
 		this.topic = topic;
-		mom = MomFactory.createMom(id);
+		mom = MomFactory.createMom();
 	}
 
 	/**

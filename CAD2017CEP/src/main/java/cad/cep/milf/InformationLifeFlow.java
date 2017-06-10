@@ -10,26 +10,20 @@ import cad.cep.exceptions.MoMException;
 public class InformationLifeFlow {
 
 	public static void main(String[] args) {
-		try {
-			Properties prop = new Properties();
-			prop.load(InformationLifeFlow.class.getClassLoader().getResourceAsStream("config.properties"));
-			String[] locations = prop.getProperty("locations").split(",");
-			List<MoMReader> topicsReader = new ArrayList<>();
-			for (int i = 0; i < locations.length; i++) {
-//				plz + "/weekly"
-				//today
-				System.out.println(locations[i]);
-				String topic = String.format("%s/%s", locations[i], "weekly");
-				topicsReader.add(addnewReader(topic));
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//			String[] locations = prop.getProperty("locations").split(",");
+//			List<MoMReader> topicsReader = new ArrayList<>();
+//			for (int i = 0; i < locations.length; i++) {
+////				plz + "/weekly"
+//				//today
+//				System.out.println(locations[i]);
+//				String topic = String.format("%s/%s", locations[i], "weekly");
+//				topicsReader.add(addnewReader(topic));
+//			}
 	}
 
 	private static MoMReader addnewReader(String topic){
 		try {
-			MoMReader reader = new MoMReader(topic, topic+"reader");
+			MoMReader reader = new MoMReader(topic);
 			reader.start();
 			return reader;
 		} catch (MoMException e) {
