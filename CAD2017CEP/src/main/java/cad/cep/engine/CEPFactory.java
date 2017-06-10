@@ -2,6 +2,7 @@ package cad.cep.engine;
 
 import cad.cep.exceptions.MoMException;
 import cad.cep.milf.MoMSender;
+import cad.cep.model.Alert;
 import cad.cep.model.JSONMessage;
 
 public final class CEPFactory {
@@ -32,8 +33,7 @@ public final class CEPFactory {
 		String tropical = "select * from JSONMessage where humitidy >= 90";
 		service.createStatement(tropical, (newData, oldData)->{
 			JSONMessage message = (JSONMessage) newData[0].getUnderlying();
-			message.addWarning("WARNING Tropical pack a second shirt.");
-			sendWarning(message, sender);
+			sendWarning(message.getPlz(), "Tropical", "T1", "Humitidy is over 90");
 		});
 	}
 	private static void addUpdateEvent(EsperService service) {
@@ -54,26 +54,25 @@ public final class CEPFactory {
 		service.createStatement(frostRisk, (newData, oldData)->{
 			System.out.println("Its cold");
 			JSONMessage message =(JSONMessage) newData[0].get("m2");
-			message.addWarning("WARNING there is a Frost chance");
-			sendWarning(message, sender);
+			sendWarning(message.getPlz(), "Frost", "W1", "There is a frost chance");
 		});
 		String extremeCold = "Select * from JSONMessage where temperature <=-9";
 		service.createStatement(extremeCold, (newData, oldData)->{
 			JSONMessage message = (JSONMessage) newData[0].getUnderlying();
-			message.addWarning("WARNING Extreme Cold");
-			sendWarning(message, sender);
+			sendWarning(message.getPlz(), "Cold", "W2", "The Temperature is " + message.getTemperature() + " wear warm clothing");
 		});
 		String heavySnow = "select * from JSONMessage where currentWeatherId = 622";
 		service.createStatement(heavySnow, (newData, oldData) ->{
 			JSONMessage message = (JSONMessage) newData[0].getUnderlying();
-			message.addWarning("WARNING Extrem snowfall");
-			sendWarning(message, sender);
+			sendWarning(message.getPlz(), "Heavy Snowfall", "W3", "Heavy Snowfall, be carefull");
 		});
 	}
-	private static void sendWarning(JSONMessage message, MoMSender sender){
-		try {
-			sender.send(message.getTopic()+"/alert", message);
-		} catch (MoMException e) {
+	
+	private static void sendWarning(String plz, String title, String code, String message){
+		try{
+			Alert alert = new Alert(title, code, message);
+			sender.send(String.format("%s/%s", plz, "alert"), alert);
+		}catch(MoMException e){
 			e.printStackTrace();
 		}
 	}
@@ -83,8 +82,7 @@ public final class CEPFactory {
 		String goSwimming = "Select * from JSONMessage where temperature >25 and currentWeatherId >= 800 and currentWeatherId <=804";
 		service.createStatement(goSwimming, (newData, oldData)->{
 			JSONMessage message = (JSONMessage) newData[0].getUnderlying();
-			message.addWarning("INFO You should go swimming today");
-			sendWarning(message, sender);
+			sendWarning(message.getPlz(), "Nice Day", "S1", "The Weather looks nice, go swimming");
 		});
 
 	}
@@ -96,8 +94,7 @@ public final class CEPFactory {
 			System.out.println("WARING Temperature Rises to much");
 			//gets the message for today
 			JSONMessage message = (JSONMessage) newData[0].get("d2");
-			message.addWarning("Heart Risk temperature rises to fast");
-			sendWarning(message, sender);
+			sendWarning(message.getPlz(), "HearthRisk", "H1", "Temperature rises to fast, please take medication if needed");
 			System.out.println("At " + message.getPlz());
 		});
 		String pressureSwitchRisk = "select * from pattern[p1=JSONMessage -> p2=JSONMessage(p1.plz = p2.plz and (p1.pressure - p2.pressure <-10 or p2.pressure - p1.pressure <-10 )) where timer:within(30 min)]"; 
@@ -105,16 +102,14 @@ public final class CEPFactory {
 			System.out.println("WARING pressure changes to much");
 			//gets the message for today
 			JSONMessage message = (JSONMessage) newData[0].get("p2");
-			message.addWarning("Heart Risk p");
-			sendWarning(message, sender);
+			sendWarning(message.getPlz(), "HearthRisk", "H2", "Pressure changes to rapitly, please take medication if needed");
 			System.out.println("At " + message.getPlz());
 		});
 		String toHotRisk = "select * from JSONMessage where temperature >=25";
 		service.createStatement(toHotRisk, (newData, oldData)->{
 			JSONMessage message = (JSONMessage) newData[0].getUnderlying();
 			System.out.println("TO HOT");
-			message.addWarning("WARNING To Hot, if needed take medication for blood pressure");
-			sendWarning(message, sender);
+			sendWarning(message.getPlz(), "HearthRisk", "H3", "Temperature over 25 degree, please take medication if needed");
 		});
 	}
 

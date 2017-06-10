@@ -16,5 +16,4 @@ public interface IMessage {
 	
 	IMessage copy(IMessage toCopy);
 	
-	void addWarning(String warning);
 }

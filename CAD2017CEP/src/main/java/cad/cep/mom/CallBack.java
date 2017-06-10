@@ -6,6 +6,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import cad.cep.engine.EngineControl;
 import cad.cep.model.JSONMessage;
+import cad.cep.model.WeeklyForcast;
 
 public class CallBack implements MqttCallback{
 	
@@ -26,21 +27,24 @@ public class CallBack implements MqttCallback{
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-			JSONMessage json = new JSONMessage();
 			byte[] payload = message.getPayload();
 			String string = new String(payload);
 			if("hallo".equals(string)){
 				System.out.println("MoMbased Information Life Flow started working");
 				return;
 			}
-			try {
+			
 				System.out.println("got");
 				System.err.println(new String(payload));
+				try {
+				JSONMessage json = new JSONMessage();
 				json.createMessage(payload, topic);
 //				json.setTopic(topic);
 				control.sendEvent(json);
 			} catch (Exception e) {
-				e.printStackTrace();
+				WeeklyForcast forcast = new WeeklyForcast();
+				forcast.createMessage(payload, topic);
+				System.out.println(forcast);
 			}
 	}
 

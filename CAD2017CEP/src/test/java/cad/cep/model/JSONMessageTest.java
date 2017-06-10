@@ -28,15 +28,6 @@ public class JSONMessageTest {
 		fromBytes.createMessage(message.toString().getBytes(), message.getTopic());
 		this.testGetMethods(fromBytes);
 	}
-	@Test
-	public void testAddWarning(){
-		JSONMessage message = new JSONMessage();
-		assertEquals("", message.getWarining());
-		message.addWarning("testWarning");
-		assertEquals("testWarning", message.getWarining());
-		message.addWarning("JUNIT Tests are hard");
-		assertEquals("testWarning, JUNIT Tests are hard", message.getWarining());
-	}
 
 	private void setTestValues(JSONMessage message) {
 		message.setCityName("a");

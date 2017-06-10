@@ -16,7 +16,10 @@ public class InformationLifeFlow {
 			String[] locations = prop.getProperty("locations").split(",");
 			List<MoMReader> topicsReader = new ArrayList<>();
 			for (int i = 0; i < locations.length; i++) {
-				String topic = String.format("%s/%s", locations[i], "today");
+//				plz + "/weekly"
+				//today
+				System.out.println(locations[i]);
+				String topic = String.format("%s/%s", locations[i], "weekly");
 				topicsReader.add(addnewReader(topic));
 			}
 		} catch (IOException e) {

@@ -23,12 +23,8 @@ public class JSONMessage implements IMessage{
 	private int temperature;
 	private int temperatureMax;
 	private int temperatureMin;
-	private String warining = "";
 	private String topic;
 	
-	public String getWarining() {
-		return warining;
-	}
 	
 	public String getCityName() {
 		return cityName;
@@ -176,15 +172,6 @@ public class JSONMessage implements IMessage{
 		fromJson.setTopic(topic);
 		return this.copy(fromJson);
 	}
-	
-	public void addWarning(String warining){
-		if("".equals(this.warining)){
-			this.warining = warining;
-		}else{
-			this.warining = String.format("%s, %s", this.warining, warining);
-		}
-	}
-
 	
 	public String toString(){
 		Gson gson = new GsonBuilder().create();
