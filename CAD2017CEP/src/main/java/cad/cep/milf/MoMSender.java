@@ -22,8 +22,8 @@ public class MoMSender {
 
 	public void send(String topic, IMessage message) throws MoMException{
 		if(createMom == null){
-			createMom = MomFactory.createMom();
+			createMom = MomFactory.createOrLoadMom();
 		}
-		createMom.sendMessageToopic(topic, message);
+		createMom.sendMessageTopic(topic, message);
 	}
 }

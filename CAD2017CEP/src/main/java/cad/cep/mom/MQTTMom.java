@@ -56,8 +56,7 @@ public class MQTTMom implements IMoM{
 	 * @see cad.cep.mom.IMoM#sendMessageToopic(java.lang.String, cad.cep.model.IMessage)
 	 */
 	@Override
-	//TODO Rewritto so that supports topic mechanic
-	public final void sendMessageToopic(String queue, IMessage message) throws MoMException {
+	public final void sendMessageTopic(String queue, IMessage message) throws MoMException {
 		try {
 			MqttMessage payload = new MqttMessage(message.toString().getBytes());
 			client.publish(queue, payload);

@@ -13,6 +13,12 @@ import com.google.gson.JsonParser;
 public class WeeklyForcast implements IMessage{
 	
 	private Set<Day> days = new HashSet<>();
+	
+	private String plz;
+	
+	public String getPlz(){
+		return this.plz;
+	}
 
 	@Override
 	public IMessage createMessage(byte[] body, String topic) {
@@ -35,6 +41,7 @@ public class WeeklyForcast implements IMessage{
 				day.setWeatherIcon(weatherIcon.getAsString());
 				day.setDate(date.getAsString());
 				day.setPlz(plz.getAsString());
+				this.plz = plz.getAsString();
 				day.setTemperature(temperature.getAsInt());
 				day.setCurrentWeather(currentWeather.getAsString());
 				days.add(day);

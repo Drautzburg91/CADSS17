@@ -8,6 +8,7 @@ import cad.cep.exceptions.MoMException;
  */
 public final class MomFactory {
 
+	private static MQTTMom mqttMom;
 	/**
 	 * Instantiates a new mom factory.
 	 */
@@ -19,9 +20,12 @@ public final class MomFactory {
 	 * @return the i mo M
 	 * @throws MoMException the mo M exception
 	 */
-	public static IMoM createMom() throws MoMException{
+	public static IMoM createOrLoadMom() throws MoMException{
 		try{
-			return new MQTTMom(System.getenv("MOM_HOST"), System.getenv("MOM_USER"), System.getenv("MOM_PW"));
+			if(mqttMom == null){
+				mqttMom =	new MQTTMom(System.getenv("MOM_HOST"), System.getenv("MOM_USER"), System.getenv("MOM_PW"));
+			}
+			return mqttMom;
 		} catch (Exception e) {
 			throw new MoMException("MOM not found", e);
 		}

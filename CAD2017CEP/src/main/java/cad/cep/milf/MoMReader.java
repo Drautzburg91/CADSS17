@@ -15,7 +15,7 @@ public class MoMReader extends Thread{
 	
 	public MoMReader(String topic) throws MoMException{
 		this.topic = topic;
-		mom = MomFactory.createMom();
+		mom = MomFactory.createOrLoadMom();
 	}
 
 	/**

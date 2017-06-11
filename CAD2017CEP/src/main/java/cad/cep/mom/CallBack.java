@@ -5,6 +5,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import cad.cep.engine.EngineControl;
+import cad.cep.milf.MoMSender;
 import cad.cep.model.JSONMessage;
 import cad.cep.model.WeeklyForcast;
 
@@ -29,6 +30,7 @@ public class CallBack implements MqttCallback{
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 			byte[] payload = message.getPayload();
 			String string = new String(payload);
+			//MoM greets us with hello if startup is successful 
 			if("hallo".equals(string)){
 				System.out.println("MoMbased Information Life Flow started working");
 				return;
@@ -44,7 +46,8 @@ public class CallBack implements MqttCallback{
 			} catch (Exception e) {
 				WeeklyForcast forcast = new WeeklyForcast();
 				forcast.createMessage(payload, topic);
-				System.out.println(forcast);
+				MoMSender sender = new MoMSender();
+				sender.send(forcast.getPlz()+"/weekly/CEP", forcast);
 			}
 	}
 

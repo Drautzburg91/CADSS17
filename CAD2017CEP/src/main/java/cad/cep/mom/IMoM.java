@@ -25,7 +25,7 @@ public interface IMoM {
 	 * @param message the message
 	 * @throws MoMException the mo M exception
 	 */
-	void sendMessageToopic(String queId, IMessage message) throws MoMException;
+	void sendMessageTopic(String queId, IMessage message) throws MoMException;
 	
 	/**
 	 * Close connection.

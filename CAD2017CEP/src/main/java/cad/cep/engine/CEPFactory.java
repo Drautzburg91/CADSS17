@@ -43,7 +43,7 @@ public final class CEPFactory {
 			System.out.println("Sending");
 			System.out.println(underlying.toString());
 			try {
-				sender.send(underlying.getTopic()+"-mobile", underlying);
+				sender.send(underlying.getTopic()+"/CEP", underlying);
 			} catch (MoMException e) {
 				e.printStackTrace();
 			}
