@@ -41,7 +41,7 @@ public class MqttService implements MessagingService {
 		options.setPassword(System.getenv("CadRabbit_Password").toCharArray());
 
 		gson = new GsonBuilder().setPrettyPrinting().create();
-        initPlz();
+		initPlz();
 		try {
 
 			System.out.println("Host: " + System.getenv("CadRabbit_Host"));
@@ -81,21 +81,21 @@ public class MqttService implements MessagingService {
 		System.out.println("Mqtt-Service: publishLiveWeatherData started");
 		transmittingLive = true;
 		while (transmittingLive) {
-		    for(Map.Entry<String, String> city:cities.entrySet()){
-                String citiesKey[] = city.getKey().split("-");
-                String countryCode = citiesKey[0];
-                String plz = citiesKey[1];
-                handlePLZToday(plz,countryCode);
-                handlePLZWeekly(plz, countryCode);
-            }
+			for (Map.Entry<String, String> city : cities.entrySet()) {
+				String citiesKey[] = city.getKey().split("-");
+				String countryCode = citiesKey[0];
+				String plz = citiesKey[1];
+				handlePLZToday(plz, countryCode);
+				handlePLZWeekly(plz, countryCode);
+			}
 
 			try {
-		        String apiCallIntervall = System.getenv("APICallIntervall");
-		        if(apiCallIntervall != null){
-                    Thread.sleep(Integer.parseInt(apiCallIntervall));
-                } else {
-                    Thread.sleep(60000);
-                }
+				String apiCallIntervall = System.getenv("APICallIntervall");
+				if (apiCallIntervall != null) {
+					Thread.sleep(Integer.parseInt(apiCallIntervall));
+				} else {
+					Thread.sleep(60000);
+				}
 
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -126,6 +126,44 @@ public class MqttService implements MessagingService {
 		System.out.println("Mqtt-Service: publishFakeWeatherData stopped");
 	}
 
+	public static WeatherData dailyToWeatherData(JsonElement root, String plz) {
+
+		JsonObject rootobj = root.getAsJsonObject(); // May be an array, may be an object.
+
+		JsonArray jsonArray = rootobj.getAsJsonArray("list"); // Json request with all information
+
+		// System.out.println(jsonArray);
+
+		System.out.println("API reading complete");
+
+		WeatherData result = new WeatherData();
+
+		result.setCityName(jsonArray.get(0).getAsJsonObject().get("name").getAsString());
+		result.setLongitude(jsonArray.get(0).getAsJsonObject().get("coord").getAsJsonObject().get("lon").getAsDouble());
+		result.setLatitude(jsonArray.get(0).getAsJsonObject().get("coord").getAsJsonObject().get("lat").getAsDouble());
+		result.setHumitidy(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("humidity").getAsInt());
+		result.setPressure(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("pressure").getAsInt());
+		result.setTemperature(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp").getAsDouble());
+		result.setTemperatureMax(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp_max").getAsDouble());
+		result.setTemperatureMin(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp_min").getAsDouble());
+		result.setWindspeed(jsonArray.get(0).getAsJsonObject().get("wind").getAsJsonObject().get("speed").getAsDouble());
+		result.setCurrentWeather(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("description").getAsString());
+		result.setCurrentWeatherId(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("id").getAsInt());
+		result.setWeatherIcon(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("icon").getAsString());
+		result.setPlz(plz);
+
+		JsonElement winDeg = jsonArray.get(0).getAsJsonObject().get("wind").getAsJsonObject().get("deg");
+		// System.out.println("WinDeg: " + winDeg.toString());
+
+		if (winDeg == null) {
+
+			result.setWindDeg(0.0);
+		} else
+			result.setWindDeg(winDeg.getAsDouble());
+
+		return result;
+	}
+
 	private void handlePLZToday(String plz, String countryCode) {
 		System.out.println("Mqtt-Service: handlePLZToday started, PLZ:" + plz);
 		try {
@@ -146,38 +184,7 @@ public class MqttService implements MessagingService {
 			JsonParser jp = new JsonParser(); // from gson
 			JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); // Convert the input stream to a json element
 
-			JsonObject rootobj = root.getAsJsonObject(); // May be an array, may be an object.
-
-			JsonArray jsonArray = rootobj.getAsJsonArray("list"); // Json request with all information
-
-			//System.out.println(jsonArray);
-
-			System.out.println("API reading complete");
-
-			WeatherData result = new WeatherData();
-
-			result.setCityName(jsonArray.get(0).getAsJsonObject().get("name").getAsString());
-			result.setLongitude(jsonArray.get(0).getAsJsonObject().get("coord").getAsJsonObject().get("lon").getAsDouble());
-			result.setLatitude(jsonArray.get(0).getAsJsonObject().get("coord").getAsJsonObject().get("lat").getAsDouble());
-			result.setHumitidy(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("humidity").getAsInt());
-			result.setPressure(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("pressure").getAsInt());
-			result.setTemperature(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp").getAsDouble());
-			result.setTemperatureMax(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp_max").getAsDouble());
-			result.setTemperatureMin(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp_min").getAsDouble());
-			result.setWindspeed(jsonArray.get(0).getAsJsonObject().get("wind").getAsJsonObject().get("speed").getAsDouble());
-			result.setCurrentWeather(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("description").getAsString());
-			result.setCurrentWeatherId(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("id").getAsInt());
-			result.setWeatherIcon(jsonArray.get(0).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("icon").getAsString());
-			result.setPlz(plz);
-
-			JsonElement winDeg = jsonArray.get(0).getAsJsonObject().get("wind").getAsJsonObject().get("deg");
-			// System.out.println("WinDeg: " + winDeg.toString());
-
-			if (winDeg == null) {
-
-				result.setWindDeg(0.0);
-			} else
-				result.setWindDeg(winDeg.getAsDouble());
+			WeatherData result = dailyToWeatherData(root, plz);
 
 			jsonInString = gson.toJson(result);
 			System.out.println(jsonInString);
@@ -190,6 +197,53 @@ public class MqttService implements MessagingService {
 		} catch (IOException | MqttException | NullPointerException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static ArrayList<WeatherDataWeekly> weeklyToWeatherDataWeekly(JsonElement root, String plz) {
+
+		JsonObject rootobj = root.getAsJsonObject(); // May be an array, may be an object.
+
+		JsonArray jsonArray = rootobj.getAsJsonArray("list"); // Json request with all information
+
+		JsonObject cityObject = rootobj.getAsJsonObject("city"); // Important information as JsonObject outside the array
+		// System.out.println(jsonArray);
+
+		System.out.println("API reading complete");
+
+		ArrayList<WeatherDataWeekly> result = new ArrayList<>();
+
+		for (JsonElement daily : jsonArray) {
+
+			WeatherDataWeekly dailyResult = new WeatherDataWeekly();
+
+			dailyResult.setCityName(cityObject.getAsJsonObject().get("name").getAsString());
+			dailyResult.setLatitude(cityObject.getAsJsonObject().get("coord").getAsJsonObject().get("lat").getAsDouble());
+			dailyResult.setLongitude(cityObject.getAsJsonObject().get("coord").getAsJsonObject().get("lon").getAsDouble());
+			dailyResult.setDate(daily.getAsJsonObject().get("dt_txt").getAsString());
+			dailyResult.setTemperatureMax(daily.getAsJsonObject().get("main").getAsJsonObject().get("temp_max").getAsDouble());
+			dailyResult.setTemperatureMin(daily.getAsJsonObject().get("main").getAsJsonObject().get("temp_min").getAsDouble());
+			dailyResult.setHumitidy(daily.getAsJsonObject().get("main").getAsJsonObject().get("humidity").getAsInt());
+			dailyResult.setPressure(daily.getAsJsonObject().get("main").getAsJsonObject().get("pressure").getAsInt());
+			dailyResult.setCurrentWeather(daily.getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("description").getAsString());
+			dailyResult.setCurrentWeatherId(daily.getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("id").getAsInt());
+			dailyResult.setWeatherIcon(daily.getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("icon").getAsString());
+			dailyResult.setTemperature(daily.getAsJsonObject().get("main").getAsJsonObject().get("temp").getAsDouble());
+			dailyResult.setWindspeed(daily.getAsJsonObject().get("wind").getAsJsonObject().get("speed").getAsDouble());
+			dailyResult.setPlz(plz);
+
+			JsonElement winDeg = daily.getAsJsonObject().get("wind").getAsJsonObject().get("deg");
+
+			// Check if "Deg" Element is null
+			if (winDeg == null) {
+
+				dailyResult.setWindDeg(0.0);
+			} else {
+				dailyResult.setWindDeg(winDeg.getAsDouble());
+			}
+			result.add(dailyResult);
+		}
+
+		return result;
 	}
 
 	private void handlePLZWeekly(String plz, String countryCode) {
@@ -212,47 +266,7 @@ public class MqttService implements MessagingService {
 			JsonParser jp = new JsonParser(); // from gson
 			JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); // Convert the input stream to a json element
 
-			JsonObject rootobj = root.getAsJsonObject(); // May be an array, may be an object.
-
-			JsonArray jsonArray = rootobj.getAsJsonArray("list"); // Json request with all information
-
-			JsonObject cityObject = rootobj.getAsJsonObject("city"); // Important information as JsonObject outside the array
-			//System.out.println(jsonArray);
-
-			System.out.println("API reading complete");
-
-			ArrayList<WeatherDataWeekly> result = new ArrayList<>();
-
-			for (JsonElement daily : jsonArray) {
-
-				WeatherDataWeekly dailyResult = new WeatherDataWeekly();
-
-				dailyResult.setCityName(cityObject.getAsJsonObject().get("name").getAsString());
-				dailyResult.setLatitude(cityObject.getAsJsonObject().get("coord").getAsJsonObject().get("lat").getAsDouble());
-				dailyResult.setLongitude(cityObject.getAsJsonObject().get("coord").getAsJsonObject().get("lon").getAsDouble());
-				dailyResult.setDate(daily.getAsJsonObject().get("dt_txt").getAsString());
-				dailyResult.setTemperatureMax(daily.getAsJsonObject().get("main").getAsJsonObject().get("temp_max").getAsDouble());
-				dailyResult.setTemperatureMin(daily.getAsJsonObject().get("main").getAsJsonObject().get("temp_min").getAsDouble());
-				dailyResult.setHumitidy(daily.getAsJsonObject().get("main").getAsJsonObject().get("humidity").getAsInt());
-				dailyResult.setPressure(daily.getAsJsonObject().get("main").getAsJsonObject().get("pressure").getAsInt());
-				dailyResult.setCurrentWeather(daily.getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("description").getAsString());
-				dailyResult.setCurrentWeatherId(daily.getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("id").getAsInt());
-				dailyResult.setWeatherIcon(daily.getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("icon").getAsString());
-				dailyResult.setTemperature(daily.getAsJsonObject().get("main").getAsJsonObject().get("temp").getAsDouble());
-				dailyResult.setWindspeed(daily.getAsJsonObject().get("wind").getAsJsonObject().get("speed").getAsDouble());
-				dailyResult.setPlz(plz);
-
-				JsonElement winDeg = daily.getAsJsonObject().get("wind").getAsJsonObject().get("deg");
-
-				// Check if "Deg" Element is null
-				if (winDeg == null) {
-
-					dailyResult.setWindDeg(0.0);
-				} else {
-					dailyResult.setWindDeg(winDeg.getAsDouble());
-				}
-				result.add(dailyResult);
-			}
+			ArrayList<WeatherDataWeekly> result = weeklyToWeatherDataWeekly(root, plz);
 
 			jsonInString = gson.toJson(result);
 			System.out.println(jsonInString);
@@ -283,8 +297,8 @@ public class MqttService implements MessagingService {
 		this.transmittingGenerated = transmittingGenerated;
 	}
 
-	private void initPlz(){
-        cities = new HashMap<>();
+	private void initPlz() {
+		cities = new HashMap<>();
 		cities.put("de-78467", "Konstanz");
 		cities.put("de-40213", "Düsseldorf");
 		cities.put("de-80331", "München");
