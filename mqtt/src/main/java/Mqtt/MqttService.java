@@ -118,7 +118,12 @@ public class MqttService implements MessagingService {
 				System.out.println(jsonInString);
 				client.publish("weekly", message);
 				Thread.sleep(2000);
-			} catch (MqttException | InterruptedException e) {
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (MqttPersistenceException e) {
+				e.printStackTrace();
+			} catch (MqttException e) {
+				reconnectToMoM();
 				e.printStackTrace();
 			}
 			System.out.println("*published");
@@ -194,7 +199,12 @@ public class MqttService implements MessagingService {
 			client.publish(plz + "/today", message);
 			System.out.println("Mqtt-Service: handlePLZToday published, PLZ:" + plz);
 
-		} catch (IOException | MqttException | NullPointerException e) {
+		} catch (IOException | NullPointerException e) {
+			e.printStackTrace();
+		} catch (MqttPersistenceException e) {
+			e.printStackTrace();
+		} catch (MqttException e) {
+			reconnectToMoM();
 			e.printStackTrace();
 		}
 	}
@@ -276,7 +286,12 @@ public class MqttService implements MessagingService {
 			client.publish(plz + "/weekly", message);
 			System.out.println("Mqtt-Service: handlePLZWeekly published, PLZ:" + plz);
 
-		} catch (IOException | MqttException | NullPointerException e) {
+		} catch (IOException | NullPointerException e) {
+			e.printStackTrace();
+		} catch (MqttPersistenceException e) {
+			e.printStackTrace();
+		} catch (MqttException e) {
+			reconnectToMoM();
 			e.printStackTrace();
 		}
 	}
@@ -316,5 +331,16 @@ public class MqttService implements MessagingService {
 		cities.put("de-19055", "Schwerin");
 		cities.put("de-66111", "Saarbrücken");
 		cities.put("de-28215", "Bremen");
+	}
+
+	private void reconnectToMoM(){
+		try {
+			Thread.sleep(1000);
+			client.connect(options);
+		} catch (MqttException e1) {
+			e1.printStackTrace();
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 }
