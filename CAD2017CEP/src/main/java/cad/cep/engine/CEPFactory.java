@@ -89,28 +89,19 @@ public final class CEPFactory {
 	}
 
 	private static void addHearthRiskStatement(EsperService service){
-		//if the temperature rises from one day to another more than 5dec.
-		String temperatueDiff = "select * from pattern[d1=JSONMessage ->d2=JSONMessage(d1.plz = d2.plz and d2.temperature - d1.temperature >=5) where timer:within(24 hours)]";
-		service.createStatement(temperatueDiff, (newData, oldData)->{
-			System.out.println("WARING Temperature Rises to much");
-			//gets the message for today
-			JSONMessage message = (JSONMessage) newData[0].get("d2");
-			sendWarning(message.getPlz(), "HearthRisk", "H1", "Temperature rises to fast, please take medication if needed");
-			System.out.println("At " + message.getPlz());
-		});
 		String pressureSwitchRisk = "select * from pattern[p1=JSONMessage -> p2=JSONMessage(p1.plz = p2.plz and (p1.pressure - p2.pressure <-10 or p2.pressure - p1.pressure <-10 )) where timer:within(30 min)]"; 
 		service.createStatement(pressureSwitchRisk, (newData, oldData)->{
 			System.out.println("WARING pressure changes to much");
 			//gets the message for today
 			JSONMessage message = (JSONMessage) newData[0].get("p2");
-			sendWarning(message.getPlz(), "HearthRisk", "H2", "Pressure changes to rapitly, please take medication if needed");
+			sendWarning(message.getPlz(), "HearthRisk", "H1", "Pressure changes to rapitly, please take medication if needed");
 			System.out.println("At " + message.getPlz());
 		});
 		String toHotRisk = "select * from JSONMessage where temperature >=25";
 		service.createStatement(toHotRisk, (newData, oldData)->{
 			JSONMessage message = (JSONMessage) newData[0].getUnderlying();
 			System.out.println("TO HOT");
-			sendWarning(message.getPlz(), "HearthRisk", "H3", "Temperature over 25 degree, please take medication if needed");
+			sendWarning(message.getPlz(), "HearthRisk", "H2", "Temperature over 25 degree, please take medication if needed");
 		});
 	}
 
