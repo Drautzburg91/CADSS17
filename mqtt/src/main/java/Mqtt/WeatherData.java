@@ -10,7 +10,7 @@ public class WeatherData {
 	String currentWeather;
 	int currentWeatherId;
 	int pressure;
-	int humitidy;
+	int humidity;
 	double windspeed;
     double windDeg;
 	double temperature;
@@ -67,12 +67,7 @@ public class WeatherData {
 	public void setPressure(int pressure) {
 		this.pressure = pressure;
 	}
-	public int getHumitidy() {
-		return humitidy;
-	}
-	public void setHumitidy(int humitidy) {
-		this.humitidy = humitidy;
-	}
+	
 	public double getWindspeed() {
 		return windspeed;
 	}
@@ -104,7 +99,13 @@ public class WeatherData {
 		this.currentWeather = currentWeather;
 	}
 
-    @Override
+    public int getHumidity() {
+		return humidity;
+	}
+	public void setHumidity(int humidity) {
+		this.humidity = humidity;
+	}
+	@Override
     public String toString() {
         return "WeatherData{" +
                 "longitude=" + longitude +
@@ -115,7 +116,7 @@ public class WeatherData {
                 ", currentWeather='" + currentWeather + '\'' +
                 ", currentWeatherId=" + currentWeatherId +
                 ", pressure=" + pressure +
-                ", humitidy=" + humitidy +
+                ", humitidy=" + humidity +
                 ", windspeed=" + windspeed +
                 ", windDeg=" + windDeg +
                 ", temperature=" + temperature +
@@ -130,7 +131,7 @@ public class WeatherData {
 		result = prime * result + ((cityName == null) ? 0 : cityName.hashCode());
 		result = prime * result + ((currentWeather == null) ? 0 : currentWeather.hashCode());
 		result = prime * result + currentWeatherId;
-		result = prime * result + humitidy;
+		result = prime * result + humidity;
 		long temp;
 		temp = Double.doubleToLongBits(latitude);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -172,7 +173,7 @@ public class WeatherData {
 			return false;
 		if (currentWeatherId != other.currentWeatherId)
 			return false;
-		if (humitidy != other.humitidy)
+		if (humidity != other.humidity)
 			return false;
 		if (Double.doubleToLongBits(latitude) != Double.doubleToLongBits(other.latitude))
 			return false;

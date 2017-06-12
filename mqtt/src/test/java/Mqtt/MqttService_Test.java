@@ -53,7 +53,7 @@ public class MqttService_Test extends TestCase {
 		expectedDailyResult.setCityName("Wollmatingen");
 		expectedDailyResult.setLongitude(9.1459);
 		expectedDailyResult.setLatitude(47.6923);
-		expectedDailyResult.setHumitidy(44);
+		expectedDailyResult.setHumidity(44);
 		expectedDailyResult.setPressure(1020);
 		expectedDailyResult.setTemperature(23.25);
 		expectedDailyResult.setTemperatureMax(25);
@@ -83,7 +83,7 @@ public class MqttService_Test extends TestCase {
 		expectedDailyResult.setCityName("Wollmatingen");
 		expectedDailyResult.setLongitude(9.1459);
 		expectedDailyResult.setLatitude(47.6923);
-		expectedDailyResult.setHumitidy(44);
+		expectedDailyResult.setHumidity(44);
 		expectedDailyResult.setPressure(1020);
 		expectedDailyResult.setTemperature(23.25);
 		expectedDailyResult.setTemperatureMax(25);

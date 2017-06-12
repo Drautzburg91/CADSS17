@@ -146,7 +146,7 @@ public class MqttService implements MessagingService {
 		result.setCityName(jsonArray.get(0).getAsJsonObject().get("name").getAsString());
 		result.setLongitude(jsonArray.get(0).getAsJsonObject().get("coord").getAsJsonObject().get("lon").getAsDouble());
 		result.setLatitude(jsonArray.get(0).getAsJsonObject().get("coord").getAsJsonObject().get("lat").getAsDouble());
-		result.setHumitidy(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("humidity").getAsInt());
+		result.setHumidity(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("humidity").getAsInt());
 		result.setPressure(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("pressure").getAsInt());
 		result.setTemperature(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp").getAsDouble());
 		result.setTemperatureMax(jsonArray.get(0).getAsJsonObject().get("main").getAsJsonObject().get("temp_max").getAsDouble());
@@ -232,7 +232,7 @@ public class MqttService implements MessagingService {
 			dailyResult.setDate(daily.getAsJsonObject().get("dt_txt").getAsString());
 			dailyResult.setTemperatureMax(daily.getAsJsonObject().get("main").getAsJsonObject().get("temp_max").getAsDouble());
 			dailyResult.setTemperatureMin(daily.getAsJsonObject().get("main").getAsJsonObject().get("temp_min").getAsDouble());
-			dailyResult.setHumitidy(daily.getAsJsonObject().get("main").getAsJsonObject().get("humidity").getAsInt());
+			dailyResult.setHumidity(daily.getAsJsonObject().get("main").getAsJsonObject().get("humidity").getAsInt());
 			dailyResult.setPressure(daily.getAsJsonObject().get("main").getAsJsonObject().get("pressure").getAsInt());
 			dailyResult.setCurrentWeather(daily.getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("description").getAsString());
 			dailyResult.setCurrentWeatherId(daily.getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("id").getAsInt());

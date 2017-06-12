@@ -11,7 +11,7 @@ public class WeatherDataWeekly {
 	String cityName;
 	int currentWeatherId;
 	int pressure;
-	int humitidy;
+	int humidity;
 	double windspeed;
     double windDeg;
 	double temperature;
@@ -76,11 +76,12 @@ public class WeatherDataWeekly {
 	public void setPressure(int pressure) {
 		this.pressure = pressure;
 	}
-	public int getHumitidy() {
-		return humitidy;
+	
+	public int getHumidity() {
+		return humidity;
 	}
-	public void setHumitidy(int humitidy) {
-		this.humitidy = humitidy;
+	public void setHumidity(int humidity) {
+		this.humidity = humidity;
 	}
 	public double getWindspeed() {
 		return windspeed;
