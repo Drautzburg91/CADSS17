@@ -1,18 +1,20 @@
 package cad.cep.model;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.espertech.esper.client.soda.AvgProjectionExpression;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import cad.cep.milf.util.AVGWeather;
 
 public class WeeklyForcast implements IMessage{
 	
-	private Set<Day> days = new HashSet<>();
+	private Set<Day> days = new LinkedHashSet<>();
 	
 	private String plz;
 	
@@ -36,6 +38,9 @@ public class WeeklyForcast implements IMessage{
 				JsonElement plz = jsonElement.getAsJsonObject().get("plz");
 				JsonElement id = jsonElement.getAsJsonObject().get("currentWeatherId");
 				JsonElement temperature = jsonElement.getAsJsonObject().get("temperature");
+				JsonElement maxTemp = jsonElement.getAsJsonObject().get("temperatureMax");
+				JsonElement min = jsonElement.getAsJsonObject().get("temperatureMin");
+				
 				day.setCityName(city.getAsString());
 				day.setCurrentWeatherId(id.getAsInt());
 				day.setWeatherIcon(weatherIcon.getAsString());
@@ -44,13 +49,21 @@ public class WeeklyForcast implements IMessage{
 				this.plz = plz.getAsString();
 				day.setTemperature(temperature.getAsInt());
 				day.setCurrentWeather(currentWeather.getAsString());
+				day.setMaxTemperature(maxTemp.getAsInt());
+				day.setMinTemperature(min.getAsInt());
+				AVGWeather.addEntryToDay(day);
 				days.add(day);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		Set<Day> averageDays = new LinkedHashSet<>();
+		for (Day day : days) {
+			averageDays.add(AVGWeather.getCalculatetCast(day.getPlz(), day.getDate()));
+		}
+		days = averageDays;
+		return this;
 	}
 
 	@Override

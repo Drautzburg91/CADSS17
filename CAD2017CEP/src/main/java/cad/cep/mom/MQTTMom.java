@@ -59,6 +59,7 @@ public class MQTTMom implements IMoM{
 	public final void sendMessageTopic(String queue, IMessage message) throws MoMException {
 		try {
 			MqttMessage payload = new MqttMessage(message.toString().getBytes());
+			payload.setRetained(true);
 			client.publish(queue, payload);
 		} catch (Exception e) {
 			//TODO LOGING
@@ -72,10 +73,17 @@ public class MQTTMom implements IMoM{
 	@Override
 	public void closeConnection() throws MoMException {
 		try {
+			System.out.println("Closing connection");
 			client.disconnect();
 		} catch (Exception e) {
-			// TODO Logging
 			throw new MoMException("Cannot close connection", e);
+		}
+	}
+	public void reConnect() throws MoMException{
+		try {
+			client.reconnect();
+		} catch (MqttException e) {
+			throw new MoMException("reconnect failed", e);
 		}
 	}
 

@@ -5,6 +5,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import cad.cep.engine.EngineControl;
+import cad.cep.exceptions.MoMException;
 import cad.cep.milf.MoMSender;
 import cad.cep.model.JSONMessage;
 import cad.cep.model.WeeklyForcast;
@@ -23,7 +24,11 @@ public class CallBack implements MqttCallback{
 
 	@Override
 	public void connectionLost(Throwable cause) {
-			System.err.println(cause.getMessage());
+			try {
+				MomFactory.createOrLoadMom().reConnect();
+			} catch (MoMException e) {
+				e.printStackTrace();
+			}
 	}
 
 	@Override

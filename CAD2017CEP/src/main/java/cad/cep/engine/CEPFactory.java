@@ -72,6 +72,7 @@ public final class CEPFactory {
 		try{
 			Alert alert = new Alert(title, code, message);
 			sender.send(String.format("%s/%s", plz, "alert"), alert);
+			System.out.println(alert);
 		}catch(MoMException e){
 			e.printStackTrace();
 		}

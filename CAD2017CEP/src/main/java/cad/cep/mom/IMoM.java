@@ -33,4 +33,5 @@ public interface IMoM {
 	 * @throws MoMException the mo M exception
 	 */
 	void closeConnection() throws MoMException;
+	void reConnect() throws MoMException;
 }

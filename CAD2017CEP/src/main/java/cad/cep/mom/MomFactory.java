@@ -23,7 +23,10 @@ public final class MomFactory {
 	public static IMoM createOrLoadMom() throws MoMException{
 		try{
 			if(mqttMom == null){
-				mqttMom =	new MQTTMom(System.getenv("MOM_HOST"), System.getenv("MOM_USER"), System.getenv("MOM_PW"));
+				String host = String.format("tcp://%s", System.getenv("MOM_HOST"));
+				String user = System.getenv("MOM_USER");
+				String pw = System.getenv("MOM_PW");
+				mqttMom =	new MQTTMom(host, user, pw);
 			}
 			return mqttMom;
 		} catch (Exception e) {

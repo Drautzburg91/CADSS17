@@ -37,12 +37,6 @@ public class InformationLifeFlow {
 			System.out.println(plz + " added");
 		}
 		
-//			for (int i = 0; i < locations.length; i++) {
-////				plz + "/weekly"
-//				//today
-//				System.out.println(locations[i]);
-//				String topic = String.format("%s/%s", locations[i], "weekly");
-//			}
 	}
 
 	private static MoMReader addnewReader(String topic){

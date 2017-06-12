@@ -5,7 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Day{
+public class Day implements Comparable<Day>{
 
 	private int temperature;
 	private String cityName;
@@ -14,6 +14,8 @@ public class Day{
 	private String currentWeather;
 	private int currentWeatherId;
 	private String date;
+	private int temperatureMax;
+	private int temperatureMin;
 	
 	private static final SimpleDateFormat FROMAT = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -73,6 +75,26 @@ public class Day{
 		this.date = FROMAT.format(FROMAT.parse(date));
 	}
 
+	public int getMaxTemperature() {
+		return temperatureMax;
+	}
+
+	public void setMaxTemperature(int maxTemperature) {
+		this.temperatureMax = maxTemperature;
+	}
+
+	public int getMinTemperature() {
+		return temperatureMin;
+	}
+
+	public void setMinTemperature(int minTemperature) {
+		this.temperatureMin = minTemperature;
+	}
+
+	public static SimpleDateFormat getFromat() {
+		return FROMAT;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -91,6 +113,11 @@ public class Day{
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public int compareTo(Day o) {
+		return this.date.compareTo(o.getDate());
 	}
 	
 }
