@@ -3,6 +3,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.PreparedStatement;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
@@ -13,7 +14,7 @@ import com.mysql.jdbc.Statement;
  * -----------------------------------------------------------------------------------------------------------------------------------
  * CAD SS2017 - Weather API MOM System - MYSQL Database Operation API 
  * ----------------------------------------------------------------------------------------------------------------------------------- 
- * Amazon Web Services Aurora MYSQL
+ * Amazon Web Services - Aurora MYSQL
  * 	Database Operation User: 	CAD_MASTER_JDBC
  * 	PW:							HTWGhtwg
  * 
@@ -32,7 +33,16 @@ import com.mysql.jdbc.Statement;
  * MYSQL Database Operation Overview
  * ------------------------------------------------------------------------------------------------------------------------------------
  * 
- * [INSERT]
+ * [GENERAL]
+ * 		1) Constructor
+ * 				Arguments: SQL Connection for Reader Connection and Writer Connection
+ * 						   NULL Objects - use default connection
+ * 
+ * 		2) check_database_connection()
+ * 				return:		Connection Test Feedback (
+ * 
+ * [CEP]
+ * 		[INSERT]
  * 		visible:	public
  * 		return:		String	(Data Check and Operation Feedback)
  * 
@@ -51,7 +61,7 @@ import com.mysql.jdbc.Statement;
  *			Note:	Only Timestamp, ZipCode, WeatherID need a valid value
  *					Double Values can be > 0 and String can be null
  *						
- * [SELECT]
+ * 		[SELECT]
  * 		visible:	public
  * 		return:		ResultSet (Result of Select statement query)											
  * 		
@@ -65,13 +75,39 @@ import com.mysql.jdbc.Statement;
  * 
  * 		5)	select_WeatherByCityAndDay(int city_ZipCode, Timestamp weatherDay)
  * 
- * 		6)	select_SubscribeByUser(String user_E_Mail)
+ * 		6)	select_WeatherByCityAndTimePeriod(int city_ZipCode, Timestamp fromDate, Timestamp toDate)
  * 
- * 		7)	select_SubscribeByCity(int ZipCode)
+ * 		7)	select_SubscribeByUser(String user_E_Mail)
  * 
- * 		8)  select_UserPwByEMail(String E_Mail)
+ * 		8)	select_SubscribeByCity(int ZipCode)
+ * 
+ * 		9)  select_UserPwByEMail(String E_Mail)
  * 
  * 
+ * [RABIT MQ]
+ * 		[INSERT]
+ * 		visible:	public
+ * 		return:		String	(Data Check and Operation Feedback)
+ * 
+ * 		1)	insert_SystemUser(String userName, String passwort, String additionalDescription)
+ * 
+ * 		2)	insert_VHost(Sting vHostName, String additionalDescription)
+ * 
+ * 		3) 	insert_Assigned(String systemUser_userName, String vHost_name, String additionalInformation)
+ * 
+ * 
+ * 		[SELECT]
+ * 
+ * 		1) select_VHost_all()
+ * 
+ * 		2) select_SystemUser_all() 
+ * 
+ * 		3) select_SystemUser_PWByUserName(String userName)
+ * 
+ * 		4) select_Assigned_all()
+ * 		
+ * 		5) select_Assigned_UserByVHost(String vHost_name)
+
  * 
  * 
  * 
@@ -85,8 +121,10 @@ public class CAD_WEATHER_SYSTEM_DATABASE_API
 //Variables&Refernces	
 	java.sql.Connection  writer_connection = null;
 	java.sql.Connection  reader_connection = null;
-	
 
+
+
+//[GENERAL]
 //--Constructor	
 	public CAD_WEATHER_SYSTEM_DATABASE_API(java.sql.Connection  writer_connection, java.sql.Connection  reader_connection)
 	{
@@ -107,6 +145,86 @@ public class CAD_WEATHER_SYSTEM_DATABASE_API
 	}
 	
 	
+	//Default Connection 
+		//Writer Connection
+			private java.sql.Connection connect_default_writer()
+			{
+				java.sql.Connection connection = null;
+				
+				try {
+					
+					//connection =  DriverManager.getConnection(default_writer);
+					connection	 =	DriverManager.getConnection("jdbc:mysql://" + "database4cad.cc1ormgk3ins.us-east-2.rds.amazonaws.com" + ":" + "3306" + "/" + "WeatherSystemDatabase", "CAD_MASTER_JDBC", "HTWGhtwg");
+				} 
+				catch (SQLException e) 
+				{
+			        System.out.println("Connection Failed!:\n" + e.getMessage());
+			    }
+
+			    if (connection != null) 
+			    {
+			        System.out.println("SUCCESS! WRITER is available");
+			    } 
+			    else 
+			    {
+			        System.out.println("FAILURE! WRITER couldn't be established");
+			    }
+				
+				return connection;
+			}
+		
+		//Reader Connection
+			private java.sql.Connection connect_default_reader()
+			{
+				java.sql.Connection connection = null;
+				
+				try {
+					//connection =  DriverManager.getConnection(default_reader);
+					connection 	 =	DriverManager.getConnection("jdbc:mysql://" + "database4cad-us-east-2b.cc1ormgk3ins.us-east-2.rds.amazonaws.com" + ":" + "3306" + "/" + "WeatherSystemDatabase", "CAD_MASTER_JDBC", "HTWGhtwg");
+			    } 
+				catch (SQLException e) 
+				{
+			        System.out.println("Connection Failed!:\n" + e.getMessage());
+			    }
+
+			    if (connection != null) 
+			    {
+			        System.out.println("SUCCESS! Reader is available");
+			    } 
+			    else 
+			    {
+			        System.out.println("FAILURE! Reader couldn't be established");
+			    }
+				
+				return connection;
+				
+			}
+			
+		//Check Connection
+			public String check_database_connection()
+			{
+			    boolean isConnected = false;
+			    
+			    try {
+			    	isConnected = reader_connection.isValid(5);
+
+			    } catch (SQLException | NullPointerException e) 
+			    {
+			        return ("Connection failed: " + e.getMessage());
+			    }
+			    
+			    if(isConnected)
+			    {
+			    	return "Connection works";
+			    }
+			      	
+			    	return "Connection failed";
+			    
+			}
+	
+//################################################################################################################
+//[CEP]
+//################################################################################################################			
 //INSERT MYSQL Operations
 	//DefaultWeather Table
 		public String insert_DefaultWeather(int WeatherID, String main, String description, String icon_referenz)
@@ -421,8 +539,6 @@ public class CAD_WEATHER_SYSTEM_DATABASE_API
 			}
 			
 			
-			
-
 //SELECT MYSQL Operations
 	//SELECT User Data by E-Mail (pk E-Mail)
 		public ResultSet select_UserByMail(String user_E_Mail)
@@ -599,9 +715,9 @@ public class CAD_WEATHER_SYSTEM_DATABASE_API
 						return null;
 					}
 					
-					if(weatherDay == null)
+					if(weatherDay != null)
 					{
-						
+						temp_weatherDay = " DATE_FORMAT("+weatherDay+",'%d %m %Y')";
 					}
 					
 				//MYSQL Query 
@@ -615,7 +731,7 @@ public class CAD_WEATHER_SYSTEM_DATABASE_API
 						query = "SELECT * " + 
 								"FROM Weather "+																	//Table Name
 								"WHERE ZipCode = '" + city_ZipCode + "' and " +
-								"DATE_FORMAT(Timestamp, '%d %m %Y') = '" + temp_weatherDay +"';" ;
+								"DATE_FORMAT(Timestamp, '%d %m %Y') = " + temp_weatherDay +";" ;
 												
 						temp_resultSet  = statement.executeQuery(query);
 					
@@ -627,9 +743,54 @@ public class CAD_WEATHER_SYSTEM_DATABASE_API
 					}
 
 				return temp_resultSet;
+				
+			
 			}	
+		
+		
+	//SELECT Weather City Data for a certain time period
+		public ResultSet select_WeatherByCityAndTimePeriod(int city_ZipCode, Timestamp fromDate, Timestamp toDate)
+		{
+			//Variables	
+			ResultSet temp_resultSet	= null;
+			String temp_fromDate 		= " DATE_FORMAT("+fromDate+",'%d %m %Y')"; 								//NOW equals Oracle SYSDATE		
+			String temp_toDate 			= " DATE_FORMAT("+toDate+",'%d %m %Y')"; 	
 			
 			
+			//Check Incoming Data
+				if(city_ZipCode <= 0)
+				{
+					return null;
+				}
+				
+				
+			//MYSQL Query 
+				Statement statement;
+				String query;
+				
+				try 
+				{
+					statement = (Statement) reader_connection.createStatement();	
+					
+					query = "SELECT * " + 
+							"FROM Weather "+																	//Table Name
+							"WHERE ZipCode = '" + city_ZipCode + "' and " +
+							"DATE_FORMAT(Timestamp, '%d %m %Y') BETWEEN " + temp_fromDate + " and " + temp_toDate + " ;" ;
+											
+					temp_resultSet  = statement.executeQuery(query);
+				
+					
+				} catch (SQLException e) 
+				{
+					System.out.println("Insert Operation failed:\n" + e.getMessage());								//Internal
+					//return("Insert Operation failed:\n" + e.getMessage());
+				}
+
+			return temp_resultSet;
+
+		}
+		
+		
 	//SELECT Subscribed City(s) by User 
 		public ResultSet select_SubscribeByUser(String user_E_Mail)
 			{
@@ -747,61 +908,324 @@ public class CAD_WEATHER_SYSTEM_DATABASE_API
 		}
 		
 		
-//Default Connection 
-	//Writer Connection
-		private java.sql.Connection connect_default_writer()
+
+		
+		
+//################################################################################################################
+//[RabbitMQ]
+//################################################################################################################		
+//Insert MYSQL Operations
+
+	//SystemUser
+		public String insert_SystemUser(String userName, String passwort, String additionalDescription)
 		{
-			java.sql.Connection connection = null;
-			
-			try {
+			//Check Incoming Data
+				if(userName == null)
+				{
+					return ("Attribute userName - primary Key - expected value");
+				}
 				
-				//connection =  DriverManager.getConnection(default_writer);
-				connection	 =	DriverManager.getConnection("jdbc:mysql://" + "database4cad.cc1ormgk3ins.us-east-2.rds.amazonaws.com" + ":" + "3306" + "/" + "WeatherSystemDatabase", "CAD_MASTER_JDBC", "HTWGhtwg");
-			} 
-			catch (SQLException e) 
-			{
-		        System.out.println("Connection Failed!:\n" + e.getMessage());
-		    }
-
-		    if (connection != null) 
-		    {
-		        System.out.println("SUCCESS! WRITER is available");
-		    } 
-		    else 
-		    {
-		        System.out.println("FAILURE! WRITER couldn't be established");
-		    }
+				if(passwort == null)
+				{
+					return ("Attribute passwort - not null - max length: 10");
+				}
+				
 			
-			return connection;
+			//MYSQL Query 
+				Statement statement;
+				String query;
+				int resultSet;
+				try 
+				{
+					statement = (Statement) writer_connection.createStatement();	
+					
+					query = "INSERT INTO " + 
+							"SystemUser "+																	//Table Name
+							"(userName, passwort , description)"+
+					        "VALUES"+
+							"('"+userName+"','"+passwort+"','"+additionalDescription+"');";				//Values for Insert
+					
+					
+					resultSet  = statement.executeUpdate(query);
+				
+					
+				} catch (SQLException e) 
+				{
+					//System.out.println("Insert Operation failed:\n" + e.getMessage());						//Internal
+					return("Insert Operation failed:\n" + e.getMessage());
+				}
+				
+
+		
+			
+			return "Successfull Insert Operation - Table User - Rowamount: " + resultSet;
 		}
-	
-	//Reader Connection
-		private java.sql.Connection connect_default_reader()
+		
+		
+	//VHost
+		public String insert_VHost(String vHostName, String additionalDescription)
 		{
-			java.sql.Connection connection = null;
+			//Check Incoming Data
+				if(vHostName == null)
+				{
+					return ("Attribute userName - primary Key - expected value");
+				}
+				
+				
 			
-			try {
-				//connection =  DriverManager.getConnection(default_reader);
-				connection 	 =	DriverManager.getConnection("jdbc:mysql://" + "database4cad-us-east-2b.cc1ormgk3ins.us-east-2.rds.amazonaws.com" + ":" + "3306" + "/" + "WeatherSystemDatabase", "CAD_MASTER_JDBC", "HTWGhtwg");
-		    } 
-			catch (SQLException e) 
-			{
-		        System.out.println("Connection Failed!:\n" + e.getMessage());
-		    }
-
-		    if (connection != null) 
-		    {
-		        System.out.println("SUCCESS! Reader is available");
-		    } 
-		    else 
-		    {
-		        System.out.println("FAILURE! Reader couldn't be established");
-		    }
+			//MYSQL Query 
+				Statement statement;
+				String query;
+				int resultSet;
+				try 
+				{
+					statement = (Statement) writer_connection.createStatement();	
+					
+					query = "INSERT INTO " + 
+							"VHost "+																	//Table Name
+							"(vHost_name, description)"+
+					        "VALUES"+
+							"('"+vHostName+"','"+additionalDescription+"');";				//Values for Insert
+					
+					
+					resultSet  = statement.executeUpdate(query);
+				
+					
+				} catch (SQLException e) 
+				{
+					//System.out.println("Insert Operation failed:\n" + e.getMessage());						//Internal
+					return("Insert Operation failed:\n" + e.getMessage());
+				}
+				
+	
+		
 			
-			return connection;
-			
+			return "Successfull Insert Operation - Table User - Rowamount: " + resultSet;
 		}
+		
+		
+	//Assigned
+		public String insert_Assigned(String systemUser_userName, String vHost_name, String additionalInformation)
+		{
+			//Check Incoming Data
+				if(systemUser_userName == null)
+				{
+					return ("Attribute System UserName - primary Key - expected value");
+				}
+				
+				if(vHost_name == null)
+				{
+					return ("Attribute vHost Name - primary Key - expected value");
+				}
+				
+				
+				
 			
+			//MYSQL Query 
+				Statement statement;
+				String query;
+				int resultSet;
+				try 
+				{
+					statement = (Statement) writer_connection.createStatement();	
+					
+					query = "INSERT INTO " + 
+							"Assigned "+																	//Table Name
+							"(userName, vHost_name, information)"+
+					        "VALUES"+
+							"('"+systemUser_userName+"','"+vHost_name+"','"+additionalInformation+"');";	//Values for Insert
+					
+					
+					resultSet  = statement.executeUpdate(query);
+				
+					
+				} catch (SQLException e) 
+				{
+					//System.out.println("Insert Operation failed:\n" + e.getMessage());						//Internal
+					return("Insert Operation failed:\n" + e.getMessage());
+				}
+				
+	
+		
+			
+			return "Successfull Insert Operation - Table User - Rowamount: " + resultSet;
+		}		
+
+		
+//SELECT MYSQL Operations	
+	//SELECT vHost - all
+		public ResultSet select_VHost_all()
+		{
+			
+			//Variables	
+			ResultSet temp_resultSet	= null;
+
+			//MYSQL Query 
+				Statement statement;
+				String query;
+				
+				try 
+				{
+					statement = (Statement) reader_connection.createStatement();	
+					
+					query = "SELECT * " + 
+							"FROM VHost;";																		//Table Name
+							
+											
+					temp_resultSet  = statement.executeQuery(query);
+				
+					
+				} catch (SQLException e) 
+				{
+					System.out.println("Insert Operation failed:\n" + e.getMessage());							//Internal
+					//return("Insert Operation failed:\n" + e.getMessage());
+				}
+
+			return temp_resultSet;
+		}			
+	
+		
+	//SELECT System User - all 
+		public ResultSet select_SystemUser_all()
+		{
+			
+			//Variables	
+			ResultSet temp_resultSet	= null;
+
+			//MYSQL Query 
+				Statement statement;
+				String query;
+				
+				try 
+				{
+					statement = (Statement) reader_connection.createStatement();	
+					
+					query = "SELECT * " + 
+							"FROM SystemUser;";																	//Table Name
+							
+											
+					temp_resultSet  = statement.executeQuery(query);
+				
+					
+				} catch (SQLException e) 
+				{
+					System.out.println("Insert Operation failed:\n" + e.getMessage());							//Internal
+					
+				}
+
+			return temp_resultSet;
+		}	
+
+
+	//SELECT  SystemUser Passwort
+		public ResultSet select_SystemUser_PWByUserName(String userName)
+		{
+			
+			//Variables	
+				ResultSet temp_resultSet	= null;
+			
+			//Check incoming data
+				if(userName == null)
+				{return null;}
+			
+			//MYSQL Query 
+				Statement statement;
+				String query;
+				
+				try 
+				{
+					statement = (Statement) reader_connection.createStatement();	
+					
+					query = "SELECT passwort " + 
+							"FROM SystemUser " +
+							"WHERE	userName = '"+userName+"';";																
+							
+											
+					temp_resultSet  = statement.executeQuery(query);
+				
+					
+				} catch (SQLException e) 
+				{
+					System.out.println("Insert Operation failed:\n" + e.getMessage());							//Internal
+				
+				}
+
+			return temp_resultSet;
+		}
+		
+		
+	//SELECT  Assigned - all
+		public ResultSet select_Assigned_all() 
+		{
+			
+			//Variables	
+				ResultSet temp_resultSet	= null;
+
+			//MYSQL Query 
+				Statement statement;
+				String query;
+				
+				try 
+				{
+					statement = (Statement) reader_connection.createStatement();	
+					
+					query = "SELECT * " + 
+							"FROM Assigned;" ;
+																
+							
+											
+					temp_resultSet  = statement.executeQuery(query);
+				
+					
+				} catch (SQLException e) 
+				{
+					System.out.println("Insert Operation failed:\n" + e.getMessage());							//Internal
+				
+				}
+
+			return temp_resultSet;
+		}	
+		
+			
+		//SELECT  Assigned - all
+			public ResultSet select_Assigned_UserByVHost(String vHost_name)
+			{
+				
+				//Variables	
+					ResultSet temp_resultSet	= null;
+				
+				//Check Incoming Data
+					if(vHost_name == null)
+					{
+						return null;
+					}
+
+				//MYSQL Query 
+					Statement statement;
+					String query;
+					
+					try 
+					{
+						statement = (Statement) reader_connection.createStatement();	
+						
+						query = "SELECT userName " + 
+								"FROM Assigned "+
+								"WHERE vHost_name = '" +vHost_name+ "';";
+																	
+								
+												
+						temp_resultSet  = statement.executeQuery(query);
+					
+						
+					} catch (SQLException e) 
+					{
+						System.out.println("Insert Operation failed:\n" + e.getMessage());							//Internal
+					
+					}
+
+				return temp_resultSet;
+			}			
+	
 }
 
 
