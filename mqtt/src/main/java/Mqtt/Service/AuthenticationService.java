@@ -1,5 +1,6 @@
-package Mqtt;
+package Mqtt.Service;
 
+import Mqtt.Model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

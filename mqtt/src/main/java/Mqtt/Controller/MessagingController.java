@@ -1,5 +1,8 @@
-package Mqtt;
+package Mqtt.Controller;
 
+import Mqtt.Service.MessagingService;
+import Mqtt.Model.WeatherData;
+import Mqtt.Validator.WeatherFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -1,5 +1,6 @@
-package Mqtt;
+package Mqtt.Service;
 
+import Mqtt.Model.WeatherData;
 import org.springframework.stereotype.Service;
 
 /**

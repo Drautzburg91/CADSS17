@@ -1,4 +1,4 @@
-package Mqtt;
+package Mqtt.Model;
 
 /**
  * Created by Basti on 13.06.2017.

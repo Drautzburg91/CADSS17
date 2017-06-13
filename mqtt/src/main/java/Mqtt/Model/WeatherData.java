@@ -1,4 +1,4 @@
-package Mqtt;
+package Mqtt.Model;
 
 public class WeatherData {
 

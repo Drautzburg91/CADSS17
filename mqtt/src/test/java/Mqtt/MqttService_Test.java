@@ -1,13 +1,7 @@
 package Mqtt;
 
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-
+import Mqtt.Model.WeatherData;
+import Mqtt.Service.MqttService;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 

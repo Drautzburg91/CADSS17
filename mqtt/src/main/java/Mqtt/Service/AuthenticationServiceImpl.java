@@ -1,4 +1,8 @@
-package Mqtt;
+package Mqtt.Service;
+
+import Mqtt.Model.User;
+import Mqtt.Model.UserDao;
+import Mqtt.Model.UserDaoImpl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

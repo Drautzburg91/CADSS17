@@ -1,5 +1,7 @@
-package Mqtt;
+package Mqtt.Service;
 
+import Mqtt.Model.WeatherData;
+import Mqtt.Model.WeatherDataWeekly;
 import com.google.gson.*;
 import org.eclipse.paho.client.mqttv3.*;
 import org.springframework.scheduling.annotation.Async;
