@@ -12,7 +12,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class WeatherApiApplication extends AsyncConfigurerSupport {
 
     public static void main(String[] args) {
-
         SpringApplication.run(WeatherApiApplication.class, args);
     }
 
@@ -22,6 +21,5 @@ public class WeatherApiApplication extends AsyncConfigurerSupport {
         messageSource.setBasename("WEB-INF/classes/messages/validation");
         return messageSource;
     }
-
 }
 	

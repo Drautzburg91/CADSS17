@@ -286,6 +286,8 @@ public class MqttService implements MessagingService {
 			client.publish(plz + "/weekly", message);
 			System.out.println("Mqtt-Service: handlePLZWeekly published, PLZ:" + plz);
 
+
+
 		} catch (IOException | NullPointerException e) {
 			e.printStackTrace();
 		} catch (MqttPersistenceException e) {
