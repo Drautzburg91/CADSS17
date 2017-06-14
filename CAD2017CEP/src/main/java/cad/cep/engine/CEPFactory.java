@@ -43,7 +43,7 @@ public final class CEPFactory {
 			System.out.println("Sending");
 			System.out.println(underlying.toString());
 			try {
-				sender.send(underlying.getTopic()+"/CEP", underlying);
+				sender.send(underlying.getTopic()+"/CEP", underlying, true);
 			} catch (MoMException e) {
 				e.printStackTrace();
 			}
@@ -71,7 +71,7 @@ public final class CEPFactory {
 	private static void sendWarning(String plz, String title, String code, String message){
 		try{
 			Alert alert = new Alert(title, code, message);
-			sender.send(String.format("%s/%s", plz, "alert"), alert);
+			sender.send(String.format("%s/%s", plz, "alert"), alert, false);
 			System.out.println(alert);
 		}catch(MoMException e){
 			e.printStackTrace();

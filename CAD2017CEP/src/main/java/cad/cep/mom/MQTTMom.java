@@ -56,10 +56,10 @@ public class MQTTMom implements IMoM{
 	 * @see cad.cep.mom.IMoM#sendMessageToopic(java.lang.String, cad.cep.model.IMessage)
 	 */
 	@Override
-	public final void sendMessageTopic(String queue, IMessage message) throws MoMException {
+	public final void sendMessageTopic(String queue, IMessage message, boolean retained) throws MoMException {
 		try {
 			MqttMessage payload = new MqttMessage(message.toString().getBytes());
-			payload.setRetained(true);
+			payload.setRetained(retained);
 			client.publish(queue, payload);
 		} catch (Exception e) {
 			//TODO LOGING

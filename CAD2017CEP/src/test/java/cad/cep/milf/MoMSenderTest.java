@@ -14,7 +14,7 @@ public class MoMSenderTest {
 		MoMSender sender = new MoMSender();
 		IMoM mockMom = mock(IMoM.class);
 		sender.setMom(mockMom);
-		sender.send("Test", null);
+		sender.send("Test", null, true);
 	}
 
 }

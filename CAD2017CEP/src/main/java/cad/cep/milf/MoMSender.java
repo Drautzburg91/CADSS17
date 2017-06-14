@@ -20,10 +20,10 @@ public class MoMSender {
 		this.createMom = mom;
 	}
 
-	public void send(String topic, IMessage message) throws MoMException{
+	public void send(String topic, IMessage message, boolean retained) throws MoMException{
 		if(createMom == null){
 			createMom = MomFactory.createOrLoadMom();
 		}
-		createMom.sendMessageTopic(topic, message);
+		createMom.sendMessageTopic(topic, message, retained);
 	}
 }

@@ -56,7 +56,7 @@ public class CEPFactoryTest {
 		//send it
 		service.sendEvent(message);
 		try {
-			doThrow(new MoMException("Test", new IOException())).when(mom).send(anyString(), any(IMessage.class));
+			doThrow(new MoMException("Test", new IOException())).when(mom).send(anyString(), any(IMessage.class), true);
 			service.sendEvent(message);
 		} catch (MoMException e) {
 			e.printStackTrace();
