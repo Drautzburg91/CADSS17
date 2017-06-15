@@ -1,11 +1,15 @@
-package Mqtt.Model;
+package Mqtt.Repository;
+
+import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 
 /**
  * Created by Basti on 13.06.2017.
  */
-public interface UserDao {
+
+@Repository("userRepository")
+public interface UserRepository {
 
     String insertSystemUser(String userName, String password, String additionalDescription);
     String insertSystemUser(String userName, String password);

@@ -2,20 +2,20 @@ package Mqtt.Model;
 
 public class WeatherData {
 
-	double longitude;
-	double latitude;
-	String cityName;
-	String plz;
-	String weatherIcon;
-	String currentWeather;
-	int currentWeatherId;
-	int pressure;
-	int humidity;
-	double windspeed;
-    double windDeg;
-	double temperature;
-	double temperatureMax;
-	double temperatureMin;
+	private double longitude;
+    private double latitude;
+    private String cityName;
+    private String plz;
+    private String weatherIcon;
+    private String currentWeather;
+    private int currentWeatherId;
+    private int pressure;
+    private int humidity;
+    private double windspeed;
+    private double windDeg;
+    private double temperature;
+    private double temperatureMax;
+    private double temperatureMin;
 
 	
 	public String getWeatherIcon() {
@@ -100,12 +100,14 @@ public class WeatherData {
 	}
 
     public int getHumidity() {
-		return humidity;
-	}
-	public void setHumidity(int humidity) {
-		this.humidity = humidity;
-	}
-	@Override
+        return humidity;
+    }
+
+    public void setHumidity(int humidity) {
+        this.humidity = humidity;
+    }
+
+    @Override
     public String toString() {
         return "WeatherData{" +
                 "longitude=" + longitude +
@@ -116,7 +118,7 @@ public class WeatherData {
                 ", currentWeather='" + currentWeather + '\'' +
                 ", currentWeatherId=" + currentWeatherId +
                 ", pressure=" + pressure +
-                ", humitidy=" + humidity +
+                ", humidity=" + humidity +
                 ", windspeed=" + windspeed +
                 ", windDeg=" + windDeg +
                 ", temperature=" + temperature +

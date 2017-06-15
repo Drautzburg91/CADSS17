@@ -11,7 +11,8 @@ import java.util.List;
 @Service
 public interface AuthenticationService {
 
-    void createUser(String username, String password, List<String> vHosts);
+    void createUser(String username, String password);
+    void createUser(String username, String password, String additionalInformation);
     List<User> getUserList();
     User getUser(String username);
 

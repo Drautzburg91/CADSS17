@@ -29,7 +29,7 @@ public class WeatherFormValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentWeather", "notEmpty.weatherData.currentWeather");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentWeatherId", "notEmpty.weatherData.currentWeatherId");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "pressure", "notEmpty.weatherData.pressure");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "humitidy", "notEmpty.weatherData.humitidy");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "humidity", "notEmpty.weatherData.humidity");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "windspeed", "notEmpty.weatherData.windspeed");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "windDeg", "notEmpty.weatherData.windDeg");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "temperature", "notEmpty.weatherData.temperature");

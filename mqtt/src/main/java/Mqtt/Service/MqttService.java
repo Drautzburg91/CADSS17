@@ -36,17 +36,17 @@ public class MqttService implements MessagingService {
 	private HashMap<String, String> cities;
 
 	public MqttService() {
-		System.out.println("MqttService started");
+		System.out.println("MqttService started: "+System.getenv("CadRabbit_Host"));
 		// credentials have to be stored in env variables
 		options = new MqttConnectOptions();
+        System.out.println("Connect-Options:" +System.getenv("CadRabbit_UserName"));
 		options.setUserName(System.getenv("CadRabbit_UserName"));
 		options.setPassword(System.getenv("CadRabbit_Password").toCharArray());
-
+        System.out.println("Host: " + System.getenv("CadRabbit_Host"));
 		gson = new GsonBuilder().setPrettyPrinting().create();
 		initPlz();
+        System.out.println("Host: " + System.getenv("CadRabbit_Host"));
 		try {
-
-			System.out.println("Host: " + System.getenv("CadRabbit_Host"));
 			client = new MqttClient("tcp://" + System.getenv("CadRabbit_Host"), MqttClient.generateClientId());
 			client.connect(options);
 			callback = new MqttCallback() {
@@ -74,7 +74,8 @@ public class MqttService implements MessagingService {
 			};
 
 		} catch (MqttException e) {
-			e.printStackTrace();
+            System.out.println("MqttException:" +e);
+            e.printStackTrace();
 		}
 	}
 

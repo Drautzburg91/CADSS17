@@ -1,11 +1,15 @@
-package Mqtt.Model;
+package Mqtt.Repository;
+
+import Mqtt.Model.User;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 
 /**
  * Created by Kim de Souza on 13.06.2017.
  */
-public class UserDaoImpl implements UserDao {
+@Repository("userRepository")
+public class UserRepositoryImpl implements UserRepository {
 
     //Variables&References
     Connection writerConnection;
@@ -16,14 +20,14 @@ public class UserDaoImpl implements UserDao {
 
     //[GENERAL]
     //--Constructor
-    public UserDaoImpl(Connection writerConnection, Connection readerConnection)
+    public UserRepositoryImpl(Connection writerConnection, Connection readerConnection)
     {
         this.writerConnection = writerConnection;
         this.readerConnection = readerConnection;
         this.user = new User();
     }
 
-    public UserDaoImpl(){
+    public UserRepositoryImpl(){
         this.writerConnection = connectDefaultWriter();
         this.readerConnection = connectDefaultReader();
         this.user = new User();
@@ -37,11 +41,12 @@ public class UserDaoImpl implements UserDao {
         java.sql.Connection connection = null;
 
         try {
-
+            System.out.println("user:" + System.getenv("CAD_DB_USER"));
+            System.out.println("pass:" + System.getenv("CAD_DB_PASSWORD"));
             //connection =  DriverManager.getConnection(default_writer);
             connection	 =	DriverManager.getConnection("jdbc:mysql://" +
                     "database4cad.cc1ormgk3ins.us-east-2.rds.amazonaws.com" + ":" + "3306" + "/" +
-                    "WeatherSystemDatabase", "CAD_MASTER_JDBC", "HTWGhtwg");
+                    "WeatherSystemDatabase", System.getenv("CAD_DB_USER"), System.getenv("CAD_DB_PASSWORD"));
         }
         catch (SQLException e)
         {
@@ -164,9 +169,9 @@ public class UserDaoImpl implements UserDao {
             return ("Attribute userName - primary Key - expected value");
         }
 
-        if(password == null || password.length() > 10)
+        if(password == null)
         {
-            return ("Attribute passwort - not null - max length: 10");
+            return ("Attribute passwort - not null");
         }
 
 
