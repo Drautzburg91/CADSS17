@@ -159,7 +159,7 @@ public class UserRepositoryImpl implements UserRepository {
             return("Insert Operation failed:\n" + e.getMessage());
         }
         System.out.println("Successfull Insert Operation - Table User - Rowamount: " + resultSet);
-        return "Successfull Insert Operation - Table User - Rowamount: " + resultSet;
+        return "Successfull";
     }
 
     public String insertSystemUser(String userName, String password){
@@ -197,7 +197,7 @@ public class UserRepositoryImpl implements UserRepository {
             return("Insert Operation failed:\n" + e.getMessage());
         }
         System.out.println("Successfull Insert Operation - Table User - Rowamount: " + resultSet);
-        return "Successfull Insert Operation - Table User - Rowamount: " + resultSet;
+        return "Successfull";
     }
 
 

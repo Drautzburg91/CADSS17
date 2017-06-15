@@ -1,6 +1,7 @@
 package Mqtt.Service;
 
 import Mqtt.Model.User;
+import Mqtt.Model.VHost;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +12,9 @@ import java.util.List;
 @Service
 public interface AuthenticationService {
 
-    void createUser(String username, String password);
-    void createUser(String username, String password, String additionalInformation);
+    String createUser(String username, String password);
+    String createUser(String username, String password, String additionalInformation);
+    void createPermission(VHost vHost);
     List<User> getUserList();
     User getUser(String username);
 

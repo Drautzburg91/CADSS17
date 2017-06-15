@@ -1,7 +1,7 @@
 package Mqtt;
 
 import Mqtt.Model.WeatherData;
-import Mqtt.Service.MqttService;
+import Mqtt.Service.WeatherApiService;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -12,14 +12,14 @@ import junit.framework.TestSuite;
 /**
  * Unit test for MqttService.
  */
-public class MqttService_Test extends TestCase {
+public class WeatherApiService_Test extends TestCase {
 	/**
 	 * Create the test case
 	 *
 	 * @param testName
 	 *            name of the test case
 	 */
-	public MqttService_Test(String testName) {
+	public WeatherApiService_Test(String testName) {
 		super(testName);
 	}
 
@@ -27,7 +27,7 @@ public class MqttService_Test extends TestCase {
 	 * @return the suite of tests being tested
 	 */
 	public static Test suite() {
-		return new TestSuite(MqttService_Test.class);
+		return new TestSuite(WeatherApiService_Test.class);
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class MqttService_Test extends TestCase {
 
 		JsonElement root = jp.parse(today);
 
-		WeatherData actualResult = MqttService.dailyToWeatherData(root, "78467");
+		WeatherData actualResult = WeatherApiService.dailyToWeatherData(root, "78467");
 
 		WeatherData expectedDailyResult = new WeatherData();
 
@@ -70,7 +70,7 @@ public class MqttService_Test extends TestCase {
 
 		JsonElement root = jp.parse(today);
 
-		WeatherData actualResult = MqttService.dailyToWeatherData(root, "78467");
+		WeatherData actualResult = WeatherApiService.dailyToWeatherData(root, "78467");
 
 		WeatherData expectedDailyResult = new WeatherData();
 

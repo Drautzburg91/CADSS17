@@ -1,6 +1,7 @@
 package Mqtt.Service;
 
 import Mqtt.Model.User;
+import Mqtt.Model.VHost;
 import Mqtt.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Basti on 13.06.2017.
+ * Created by Sebastian Thümmel on 13.06.2017.
  */
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -24,8 +25,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public void createUser(String username, String password) {
-        this.userRepository.insertSystemUser(username,bCryptPasswordEncoder.encode(password));
+    public String createUser(String username, String password) {
+        return this.userRepository.insertSystemUser(username,bCryptPasswordEncoder.encode(password));
     }
 
     public void addPermission(String username, String vHost){
@@ -33,17 +34,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void createUser(String username, String password, String additionalInformation) {
+    public String createUser(String username, String password, String additionalInformation) {
         boolean isAdmin = additionalInformation.equalsIgnoreCase("Administrator");
         if(isAdmin){
-            this.userRepository.insertSystemUser(username,bCryptPasswordEncoder.encode(password),"Administrator");
+            return this.userRepository.insertSystemUser(username,bCryptPasswordEncoder.encode(password),"Administrator");
         } else {
-            this.userRepository.insertSystemUser(username,bCryptPasswordEncoder.encode(password));
+            return this.userRepository.insertSystemUser(username,bCryptPasswordEncoder.encode(password));
         }
 
     }
 
-
+    @Override
+    public void createPermission(VHost vHost) {
+        this.userRepository.insertVHost(vHost.getvHostName(), vHost.getUsername());
+    }
 
 
     @Override

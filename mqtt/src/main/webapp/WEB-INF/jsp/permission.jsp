@@ -2,7 +2,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <html>
 <head>
     <jsp:include page="header.jsp"/>
@@ -11,21 +10,20 @@
 <jsp:include page="navbar.jsp"/>
 
 <div class="container">
-
     <c:if test="${not empty message}">
         <div class="alert alert-success">
             ${message}
         </div>
     </c:if>
     <c:if test="${not empty error}">
-        <div class="alert alert-error">
+        <div class="alert alert-warning">
             ${error}
         </div>
     </c:if>
     <div class="row">
         <div class="col-md-4">
-            <form:form method="POST" action="${pageContext.request.contextPath}/registration" modelAttribute="userForm" class="form-signin">
-                <h2 class="form-signin-heading">Create new account</h2>
+            <form:form method="POST" action="${pageContext.request.contextPath}/permission" modelAttribute="permissionForm" class="form-signin">
+                <h2 class="form-signin-heading">Add Permission</h2>
                 <spring:bind path="username">
                     <div class="form-group ${status.error ? 'has-error' : ''}">
                         <form:input type="text" path="username" class="form-control" placeholder="Username"
@@ -33,19 +31,29 @@
                         <form:errors path="username"></form:errors>
                     </div>
                 </spring:bind>
-
-                <spring:bind path="password">
+                <spring:bind path="vHostName">
                     <div class="form-group ${status.error ? 'has-error' : ''}">
-                        <form:input type="password" path="password" class="form-control" placeholder="Password"></form:input>
-                        <form:errors path="password"></form:errors>
+                        <form:input type="text" path="vHostName" class="form-control" placeholder="vHostName"
+                                    autofocus="true"></form:input>
+                        <form:errors path="vHostName"></form:errors>
                     </div>
                 </spring:bind>
-
-                <spring:bind path="passwordConfirm">
+                <spring:bind path="read">
                     <div class="form-group ${status.error ? 'has-error' : ''}">
-                        <form:input type="password" path="passwordConfirm" class="form-control"
-                                    placeholder="Confirm your password"></form:input>
-                        <form:errors path="passwordConfirm"></form:errors>
+                        <form:checkbox value="read" path="read"/>read
+                        <form:errors path="read"></form:errors>
+                    </div>
+                </spring:bind>
+                <spring:bind path="write">
+                    <div class="form-group ${status.error ? 'has-error' : ''}">
+                        <form:checkbox value="write" path="write"/>write
+                        <form:errors path="write"></form:errors>
+                    </div>
+                </spring:bind>
+                <spring:bind path="configure">
+                    <div class="form-group ${status.error ? 'has-error' : ''}">
+                        <form:checkbox value="configure" path="configure"/>configure
+                        <form:errors path="configure"></form:errors>
                     </div>
                 </spring:bind>
 
