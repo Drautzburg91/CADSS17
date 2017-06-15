@@ -6,7 +6,7 @@
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="/">Weatherdata</a></li>
-                <li><a href="/admin">Admin</a></li>
+                <li><a href="/registration">Admin</a></li>
                 <!--li><a href="/user">Live</a></li-->
             </ul>
         </div>
