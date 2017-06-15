@@ -1,6 +1,7 @@
 package Mqtt.Service;
 
 import Mqtt.Model.User;
+import Mqtt.Model.VHost;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,5 +12,7 @@ import org.springframework.stereotype.Service;
 public interface MomService {
 
     String addUser(User loggedInUser, User user);
+    String setPermission(User loggedInUser, User user, VHost vHost);
+    String createVhost(User loggedInUser, User user, VHost vHost);
 
 }
