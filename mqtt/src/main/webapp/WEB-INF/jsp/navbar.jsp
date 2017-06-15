@@ -5,8 +5,8 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/">Weatherdata</a></li>
-                <li><a href="/registration">Admin</a></li>
+                <li class="active"><a href="${pageContext.request.contextPath}/">Weatherdata</a></li>
+                <li><a href="${pageContext.request.contextPath}/registration">Admin</a></li>
                 <!--li><a href="/user">Live</a></li-->
             </ul>
         </div>

@@ -158,6 +158,7 @@ public class UserRepositoryImpl implements UserRepository {
             //System.out.println("Insert Operation failed:\n" + e.getMessage());						//Internal
             return("Insert Operation failed:\n" + e.getMessage());
         }
+        System.out.println("Successfull Insert Operation - Table User - Rowamount: " + resultSet);
         return "Successfull Insert Operation - Table User - Rowamount: " + resultSet;
     }
 
@@ -195,6 +196,7 @@ public class UserRepositoryImpl implements UserRepository {
         {
             return("Insert Operation failed:\n" + e.getMessage());
         }
+        System.out.println("Successfull Insert Operation - Table User - Rowamount: " + resultSet);
         return "Successfull Insert Operation - Table User - Rowamount: " + resultSet;
     }
 
