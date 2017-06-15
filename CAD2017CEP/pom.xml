@@ -65,7 +65,7 @@
       <configuration>
         <archive>
           <manifest>
-            <mainClass>cad.cep.milf.InformationLifeFlow.java</mainClass>
+            <mainClass>cad.cep.milf.InformationLifeFlow</mainClass>
           </manifest>
         </archive>
         <descriptorRefs>
