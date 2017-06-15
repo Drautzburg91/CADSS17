@@ -5,16 +5,15 @@ import Mqtt.Model.VHost;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -23,6 +22,9 @@ import java.util.HashMap;
 
 @Service
 public class MomServiceImpl implements MomService {
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     Gson gson;
 
@@ -133,11 +135,48 @@ public class MomServiceImpl implements MomService {
             reader.close();
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            return "error";
         } catch (IOException e) {
             e.printStackTrace();
+            return "error";
         }
 
         return "success";
+    }
+
+    public void writeSkript(){
+        List<User> users = authenticationService.getUserList();
+        List<VHost> vHosts = authenticationService.getVhosts();
+        File skript = new File ("init.sh");
+        try {
+            FileOutputStream fos = new FileOutputStream(skript);
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos));
+            writer.write("#!/bin/sh");
+            writer.write(System.getProperty("line.separator"));
+            writer.write("( sleep 5 ; \\");
+            writer.write(System.getProperty("line.separator"));
+            for(User user : users){
+                writer.write("rabbitmqctl add_user "+user.getUsername()+" "+user.getPassword()+" 2>/dev/null ; \\");
+                writer.write(System.getProperty("line.separator"));
+                if(user.isAdmin()){
+                    writer.write("rabbitmqctl set_user_tags "+user.getUsername()+" administrator ; \\");
+                    writer.write(System.getProperty("line.separator"));
+                }
+            }
+            for(VHost vHost : vHosts){
+                writer.write("rabbitmqctl set_permissions -p "+vHost.getvHostName()+" "+vHost.getUsername()+ "\".*\" \".*\" \".*\" ; \\");
+                writer.write(System.getProperty("line.separator"));
+            }
+            writer.write(") &");
+            writer.write(System.getProperty("line.separator"));
+            writer.write("rabbitmq-server $@");
+            writer.flush();
+            writer.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

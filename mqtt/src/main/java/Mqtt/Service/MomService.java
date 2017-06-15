@@ -14,5 +14,6 @@ public interface MomService {
     String addUser(User loggedInUser, User user);
     String setPermission(User loggedInUser, User user, VHost vHost);
     String createVhost(User loggedInUser, User user, VHost vHost);
+    void writeSkript();
 
 }

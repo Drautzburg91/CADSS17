@@ -30,7 +30,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public void addPermission(String username, String vHost){
-            this.userRepository.insertAssigned(username,vHost);
+        createVhost(vHost);
+        this.userRepository.insertAssigned(username,vHost, null);
     }
 
     @Override
@@ -44,9 +45,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     }
 
-    @Override
-    public void createPermission(VHost vHost) {
-        this.userRepository.insertVHost(vHost.getvHostName(), vHost.getUsername());
+    private void createVhost(String vHost) {
+        this.userRepository.insertVHost(vHost,null);
     }
 
 
@@ -59,7 +59,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             while (rs.next()){
                 User user = new User();
                 user.setUsername(rs.getString("userName"));
-                user.setPassword(rs.getString("password"));
+                user.setPassword(rs.getString("passwort"));
+                String description = rs.getString("description");
+                if(description.equals("Administrator")){
+                    user.setAdmin(true);
+                }
                 list.add(user);
             }
         } catch (SQLException e) {
@@ -85,5 +89,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<VHost> getVhosts(){
+
+        List<VHost> vHosts = new ArrayList<>();
+        ResultSet rs = this.userRepository.selectAssignedAll();
+
+        try {
+            System.out.println(rs.getMetaData());
+            while (rs.next()){
+                VHost vHost = new VHost();
+                vHost.setUsername(rs.getString("userName"));
+                vHost.setvHostName(rs.getString("vHost_name"));
+                vHosts.add(vHost);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return vHosts;
     }
 }

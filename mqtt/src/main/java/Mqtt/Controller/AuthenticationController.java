@@ -53,6 +53,7 @@ public class AuthenticationController {
         String status = authenticationService.createUser(userForm.getPassword(),userForm.getUsername());
         if(status.equals("Successfull")){
             momService.addUser(authenticationService.getUser(principal.getName()), userForm);
+            momService.writeSkript();
             model.addAttribute("message", userForm.getUsername()+" successful created");
         } else {
             model.addAttribute("error", "error creating "+userForm.getUsername());

@@ -50,9 +50,10 @@ public class PermissionController {
             return "registration";
         }
 
+        authenticationService.addPermission(vHostForm.getUsername(), vHostForm.getvHostName());
         momService.createVhost(authenticationService.getUser(principal.getName()), authenticationService.getUser(vHostForm.getUsername()),vHostForm);
         momService.setPermission(authenticationService.getUser(principal.getName()), authenticationService.getUser(vHostForm.getUsername()),vHostForm);
-        authenticationService.createPermission(vHostForm);
+        momService.writeSkript();
 
         return "permission";
     }

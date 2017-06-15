@@ -38,6 +38,7 @@ public class MessagingController {
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public String sendWeather(@ModelAttribute("weatherdata") @Validated WeatherData weatherData, BindingResult result, Model model){
         System.out.println(weatherData.toString());
+
         return "index";
     }
 

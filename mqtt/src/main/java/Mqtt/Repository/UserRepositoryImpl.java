@@ -230,15 +230,12 @@ public class UserRepositoryImpl implements UserRepository {
             resultSet  = statement.executeUpdate(query);
 
 
-        } catch (SQLException e)
+        }
+        catch (SQLException e)
         {
             //System.out.println("Insert Operation failed:\n" + e.getMessage());						//Internal
             return("Insert Operation failed:\n" + e.getMessage());
         }
-
-
-
-
         return "Successfull Insert Operation - Table User - Rowamount: " + resultSet;
     }
 
@@ -257,9 +254,6 @@ public class UserRepositoryImpl implements UserRepository {
             return ("Attribute vHost Name - primary Key - expected value");
         }
 
-
-
-
         //MYSQL Query
         Statement statement;
         String query;
@@ -277,16 +271,11 @@ public class UserRepositoryImpl implements UserRepository {
 
             resultSet  = statement.executeUpdate(query);
 
-
         } catch (SQLException e)
         {
             //System.out.println("Insert Operation failed:\n" + e.getMessage());						//Internal
             return("Insert Operation failed:\n" + e.getMessage());
         }
-
-
-
-
         return "Successfull Insert Operation - Table User - Rowamount: " + resultSet;
     }
 

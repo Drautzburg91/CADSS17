@@ -14,8 +14,9 @@ public interface AuthenticationService {
 
     String createUser(String username, String password);
     String createUser(String username, String password, String additionalInformation);
-    void createPermission(VHost vHost);
+    void addPermission(String username, String vHost);
     List<User> getUserList();
     User getUser(String username);
+    List<VHost> getVhosts();
 
 }
