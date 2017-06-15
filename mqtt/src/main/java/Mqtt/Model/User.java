@@ -1,7 +1,6 @@
 package Mqtt.Model;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Sebastian Thümmel on 13.06.2017.
@@ -12,7 +11,17 @@ public class User {
     private String password;
     private String passwordConfirm;
     private List<VHost> vHostList;
-    private boolean isAdmin;
+    private boolean admin;
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
+
 
 
     public String getUsername() {
@@ -47,11 +56,4 @@ public class User {
         this.vHostList = vHostList;
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
-    }
-
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
-    }
 }

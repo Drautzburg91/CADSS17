@@ -128,7 +128,7 @@ public class UserRepositoryImpl implements UserRepository {
             return ("Attribute userName - primary Key - expected value");
         }
 
-        if(password == null || password.length() > 10)
+        if(password == null)
         {
             return ("Attribute passwort - not null - max length: 10");
         }

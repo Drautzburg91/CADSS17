@@ -47,7 +47,7 @@ public class MomServiceImpl implements MomService {
             HashMap<String, String> jsonMap = new HashMap<>();
             jsonMap.put("password",user.getPassword());
             if(user.isAdmin()){
-                jsonMap.put("tags", "administrator");
+                jsonMap.put("tags","administrator");
             } else {
                 jsonMap.put("tags", "");
             }
@@ -79,7 +79,7 @@ public class MomServiceImpl implements MomService {
             connection.setRequestProperty("X-Requested-With", "Curl");
             connection.setRequestMethod("PUT");
             connection.setDoOutput(true);
-            String userpass = "cadadmin:cadadmin";
+            String userpass = user.getUsername()+":"+user.getPassword();
             String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
             connection.setRequestProperty("Authorization", basicAuth);
             OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
@@ -117,7 +117,7 @@ public class MomServiceImpl implements MomService {
             connection.setRequestProperty("X-Requested-With", "Curl");
             connection.setRequestMethod("PUT");
             connection.setDoOutput(true);
-            String userpass = "cadadmin:cadadmin";
+            String userpass = user.getUsername()+":"+user.getPassword();
             String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
             connection.setRequestProperty("Authorization", basicAuth);
             OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());

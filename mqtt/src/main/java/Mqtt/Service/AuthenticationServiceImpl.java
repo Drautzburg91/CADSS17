@@ -25,24 +25,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public String createUser(String username, String password) {
-        return this.userRepository.insertSystemUser(username,bCryptPasswordEncoder.encode(password));
-    }
-
     public void addPermission(String username, String vHost){
         createVhost(vHost);
         this.userRepository.insertAssigned(username,vHost, null);
     }
 
     @Override
-    public String createUser(String username, String password, String additionalInformation) {
-        boolean isAdmin = additionalInformation.equalsIgnoreCase("Administrator");
-        if(isAdmin){
-            return this.userRepository.insertSystemUser(username,bCryptPasswordEncoder.encode(password),"Administrator");
+    public String createUser(User user) {
+        if(user.isAdmin()){
+            return this.userRepository.insertSystemUser(user.getUsername(),bCryptPasswordEncoder.encode(user.getPassword()),"Administrator");
         } else {
-            return this.userRepository.insertSystemUser(username,bCryptPasswordEncoder.encode(password));
+            return this.userRepository.insertSystemUser(user.getUsername(),bCryptPasswordEncoder.encode(user.getPassword()));
         }
-
     }
 
     private void createVhost(String vHost) {

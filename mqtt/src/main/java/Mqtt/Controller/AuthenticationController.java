@@ -50,7 +50,7 @@ public class AuthenticationController {
         if(bindingResult.hasErrors()){
             return "registration";
         }
-        String status = authenticationService.createUser(userForm.getPassword(),userForm.getUsername());
+        String status = authenticationService.createUser(userForm);
         if(status.equals("Successfull")){
             momService.addUser(authenticationService.getUser(principal.getName()), userForm);
             momService.writeSkript();
