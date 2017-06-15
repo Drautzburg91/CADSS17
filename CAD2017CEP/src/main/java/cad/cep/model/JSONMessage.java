@@ -16,7 +16,7 @@ public class JSONMessage implements IMessage{
 	private String weatherIcon;
 	private String currentWeather;
 	private int currentWeatherId;
-	private int humitidy;
+	private int humidity;
 	private int pressure;
 	private double windspeed;
 	private double windDeg;
@@ -122,12 +122,12 @@ public class JSONMessage implements IMessage{
 		this.windspeed = windspeed;
 	}
 
-	public int getHumitidy() {
-		return humitidy;
+	public int getHumidity() {
+		return humidity;
 	}
 
-	public void setHumitidy(int humilidy) {
-		this.humitidy = humilidy;
+	public void setHumidity(int humilidy) {
+		this.humidity = humilidy;
 	}
 
 	public int getPressure() {
@@ -185,7 +185,7 @@ public class JSONMessage implements IMessage{
 //		this.setTimestamp(this.getTimestamp());
 		this.setCurrentWeather(copy.getCurrentWeather());
 		this.setCurrentWeatherId(copy.getCurrentWeatherId());
-		this.setHumitidy(copy.getHumitidy());
+		this.setHumidity(copy.getHumidity());
 		this.setPlz(copy.getPlz());
 		this.setTemperature(copy.getTemperature());
 		this.setPressure(copy.getPressure());

@@ -30,10 +30,10 @@ public final class CEPFactory {
 		sender = newSender;
 	}
 	private static void addSpecialWarning(EsperService service) {
-		String tropical = "select * from JSONMessage where humitidy >= 90";
+		String tropical = "select * from JSONMessage where humidity >= 90";
 		service.createStatement(tropical, (newData, oldData)->{
 			JSONMessage message = (JSONMessage) newData[0].getUnderlying();
-			sendWarning(message.getPlz(), "Tropical", "T1", "Humitidy is over 90");
+			sendWarning(message.getPlz(), "Tropical", "T1", "Humidity is over 90");
 		});
 	}
 	private static void addUpdateEvent(EsperService service) {

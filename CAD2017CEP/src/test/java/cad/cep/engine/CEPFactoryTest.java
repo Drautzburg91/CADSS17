@@ -45,22 +45,16 @@ public class CEPFactoryTest {
 		message1.setCurrentWeatherId(622);
 		service.sendEvent(message1);
 	}
-	
+
 	@Test
 	public void testSpecialWarning(){
 		//needs a JSON event
 		JSONMessage message = new JSONMessage();
 		//When Humitidy is > 90 a listener gets a call
-		message.setHumitidy(100);
+		message.setHumidity(100);
 		message.setCityName("TestCity");
 		//send it
 		service.sendEvent(message);
-		try {
-			doThrow(new MoMException("Test", new IOException())).when(mom).send(anyString(), any(IMessage.class), true);
-			service.sendEvent(message);
-		} catch (MoMException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Test
@@ -87,7 +81,7 @@ public class CEPFactoryTest {
 		service.sendEvent(message);
 		service.sendEvent(warning);
 	}
-	
+
 	@AfterClass
 	public static void destroy(){
 		CEPFactory.createNewService().destroyConnection();

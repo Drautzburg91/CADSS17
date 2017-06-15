@@ -33,7 +33,7 @@ public class JSONMessageTest {
 		message.setCityName("a");
 		message.setCurrentWeather("b");
 		message.setCurrentWeatherId(0);
-		message.setHumitidy(1);
+		message.setHumidity(1);
 		message.setLatitude(12.6);
 		message.setLongitude(12.0);
 		message.setPlz("1");
@@ -51,7 +51,7 @@ public class JSONMessageTest {
 		assertEquals("a", message.getCityName());
 		assertEquals("b", message.getCurrentWeather());
 		assertEquals(0, message.getCurrentWeatherId());
-		assertEquals(1, message.getHumitidy());
+		assertEquals(1, message.getHumidity());
 		//equals dosen´t work with double thanks to processors doing stupid stuff
 		assertTrue(message.getLatitude() >= 12.6);
 		assertTrue (message.getLongitude() >= 12.0);
