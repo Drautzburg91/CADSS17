@@ -26,6 +26,9 @@ public class WeeklyForcast implements IMessage{
 	public IMessage createMessage(byte[] body, String topic) {
 		try {
 			JsonParser parser = new JsonParser();
+		
+			System.out.println("BODY:"+	new String(body));
+			if(topic.contains("today")){}else if(topic.contains("weekly")){
 			JsonElement element = parser.parse(new String(body));
 			System.out.println(element);
 			JsonArray array = element.getAsJsonArray();
@@ -53,10 +56,11 @@ public class WeeklyForcast implements IMessage{
 				day.setMinTemperature(min.getAsInt());
 				AVGWeather.addEntryToDay(day);
 				days.add(day);
+				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Das ist der Fehler" + e);
 		}
 		Set<Day> averageDays = new LinkedHashSet<>();
 		for (Day day : days) {

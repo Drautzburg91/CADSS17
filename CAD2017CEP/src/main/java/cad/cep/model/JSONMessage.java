@@ -20,7 +20,7 @@ public class JSONMessage implements IMessage{
 	private int pressure;
 	private double windspeed;
 	private double windDeg;
-	private int temperature;
+	private double temperature;
 	private int temperatureMax;
 	private int temperatureMin;
 	private String topic;
@@ -66,11 +66,11 @@ public class JSONMessage implements IMessage{
 
 
 
-	public int getTemperature() {
+	public double getTemperature() {
 		return temperature;
 	}
 
-	public void setTemperature(int temperature) {
+	public void setTemperature(double temperature) {
 		this.temperature = temperature;
 	}
 
@@ -168,8 +168,10 @@ public class JSONMessage implements IMessage{
 	@Override
 	public IMessage createMessage(byte[] body, String topic) {
 		Gson gson = new GsonBuilder().create();
+		
 		JSONMessage fromJson = gson.fromJson(new String(body), this.getClass());
 		fromJson.setTopic(topic);
+		System.out.println("######################################################");
 		return this.copy(fromJson);
 	}
 	

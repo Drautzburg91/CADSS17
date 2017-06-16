@@ -44,15 +44,20 @@ public class CallBack implements MqttCallback{
 				System.out.println("got");
 				System.err.println(new String(payload));
 				try {
+				if(topic.contains("today")){
 				JSONMessage json = new JSONMessage();
 				json.createMessage(payload, topic);
 //				json.setTopic(topic);
 				control.sendEvent(json);
-			} catch (Exception e) {
+				}else if(topic.contains("weekly")){
 				WeeklyForcast forcast = new WeeklyForcast();
 				forcast.createMessage(payload, topic);
 				MoMSender sender = new MoMSender();
 				sender.send(forcast.getPlz()+"/weekly/CEP", forcast, true);
+				}
+			} catch (Exception e) {
+			e.printStackTrace();
+				
 			}
 	}
 

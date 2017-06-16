@@ -39,7 +39,7 @@ public class CEPFactoryTest {
 	public void testWInterWarning(){
 		JSONMessage message1 = new JSONMessage();
 		message1.setPlz("111111");
-		message1.setTemperature(-100);
+		message1.setTemperature(-100.0);
 		service.sendEvent(message1);
 		service.sendEvent(message1);
 		message1.setCurrentWeatherId(622);
@@ -63,7 +63,7 @@ public class CEPFactoryTest {
 		JSONMessage message = new JSONMessage();
 		message.setPlz("111111");
 		message.setCurrentWeatherId(801);
-		message.setTemperature(26);
+		message.setTemperature(26.0);
 		service.sendEvent(message);
 	}
 	@Test
@@ -76,7 +76,7 @@ public class CEPFactoryTest {
 		JSONMessage warning = new JSONMessage();
 		warning.setCityName("TestCity");
 		warning.setPlz("1111111");
-		warning.setTemperature(30);
+		warning.setTemperature(30.0);
 		warning.setPressure(30);
 		service.sendEvent(message);
 		service.sendEvent(warning);

@@ -1,0 +1,8 @@
+---
+applications:
+- name: CEP-CF-CAD
+  memory: 1024M
+  path: /Users/paul/CADSS17/CAD2017CEP/target/CAD2017CEP-0.0.3-SNAPSHOT-jar-with-dependencies.jar
+  buildpack: https://github.com/cloudfoundry/java-buildpack.git#v3.15
+  timeout: 60
+  health-check-type: none
