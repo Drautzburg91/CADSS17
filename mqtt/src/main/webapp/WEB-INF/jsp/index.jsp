@@ -141,7 +141,7 @@
                             </div>
                         </div>
                     </spring:bind>
-
+                    <input type="hidden"  name="${_csrf.parameterName}"   value="${_csrf.token}"/>
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
                             <button type="submit" class="btn-lg btn-primary pull-right">Send generated data</button>
@@ -157,6 +157,7 @@
                         </div>
                     </div>
                 </div>
+                <input type="hidden"  name="${_csrf.parameterName}"   value="${_csrf.token}"/>
             </form>
 
         </div>
