@@ -13,7 +13,6 @@ public final class MomFactory {
 	 * Instantiates a new mom factory.
 	 */
 	private MomFactory(){/* not needed */}
-
 	/**
 	 * Creates a new Mom object.
 	 *

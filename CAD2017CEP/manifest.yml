@@ -6,3 +6,7 @@ applications:
   buildpack: https://github.com/cloudfoundry/java-buildpack.git#v3.15
   timeout: 60
   health-check-type: none
+  env: 
+    MOM_HOST: ec2-34-210-210-13.us-west-2.compute.amazonaws.com
+    MOM_PW: cadCEP
+    MOM_USER: weatherTenantOne:cadCEP
