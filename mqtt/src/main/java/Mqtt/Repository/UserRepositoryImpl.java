@@ -72,7 +72,7 @@ public class UserRepositoryImpl implements UserRepository {
 
         try {
             //connection =  DriverManager.getConnection(default_reader);
-            connection 	 =	DriverManager.getConnection("jdbc:mysql://" + "database4cad-us-east-2b.cc1ormgk3ins.us-east-2.rds.amazonaws.com" + ":" + "3306" + "/" + "WeatherSystemDatabase", "CAD_MASTER_JDBC", "HTWGhtwg");
+            connection 	 =	DriverManager.getConnection("jdbc:mysql://" + "database4cad-us-east-2b.cc1ormgk3ins.us-east-2.rds.amazonaws.com" + ":" + "3306" + "/" + "WeatherSystemDatabase", System.getenv("CAD_DB_USER"), System.getenv("CAD_DB_PASSWORD"));
         }
         catch (SQLException e)
         {
