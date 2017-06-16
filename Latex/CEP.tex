@@ -5,14 +5,14 @@
 Das Ziel der Anwendung ist es, die Daten welche an die MoM gesendet wurden auszulesen und dann weiterzuverabeiten. Dabei wird mithilfe einer Complex Event Process Engine dann nach besonderen Ereignissen gesucht. Sollte ein solches eintreffen wird eine Warnung an alle Clients über ein besonderes Topic gesendet. Die Anwendung soll sich dabei ein die 12 Faktoren einer Cloud Anwendung halten. Ein weiteres Ziel ist, dass die Anwendung in jeder Cloud laufen kann und nicht abhängig von einer bestimmten Cloud ist. 
 
 \section{Umsetzungsentscheidungen}
-Als Complex Process Engine wurde Esper ausgewählt. Da Esper eine Java API besitzt und die MOM ebenenfalls über eine Javaschnittstelle verfügt (Siehe Kapitel \ref{rabbitmq}) kann Esper leicht mit den anderen Komponenten der Anwendung verbunden werden. Esper besitzt zudem eine ausführliche Dokumentation, was die Umsetzung deutlich erleichtert hat. Es gibt neben Esper andere Engines welche ebenfalls mit Java verbunden werden können. Eine davon ist Apache Spark. Spark wird von Amazon direkt unterstüzt und eine eigene Engine welche nur noch mit Statements befüllt werden muss angeboten. Wir haben uns aber gegen Spark entschieden, da es zum einen uns stärker an die Amazon Cloud binden würde und zum anderen die Amazon Spark Engine sehr viel abnimmt und so Kontrolle über das Verhalten der Anwendung nimmt. 
+Als Complex Process Engine wurde Esper ausgewählt. Da Esper eine Java API besitzt und die MOM ebenenfalls über eine Javaschnittstelle verfügt (Siehe Kapitel \ref{rabbitmq}) kann Esper leicht mit den anderen Komponenten der Anwendung verbunden werden. Esper besitzt zudem eine ausführliche Dokumentation, was die Umsetzung deutlich erleichtert hat. Es gibt neben Esper andere Engines welche ebenfalls mit Java verbunden werden können. Eine davon ist Apache Spark. Spark wird von Amazon direkt unterstüzt und ist eine eigene Engine welche nur noch mit Statements befüllt werden muss angeboten. Wir haben uns aber gegen Spark entschieden, da es zum einen uns stärker an die Amazon Cloud binden würde und zum anderen die Amazon Spark Engine sehr viel abnimmt und so Kontrolle über das Verhalten der Anwendung nimmt. 
 \\
 Die Anwendung wurde mit Java geschrieben, da es mit Java leicht ist die verschiedenen Komponenten der Anwendung zu verbinden. Java kann überall laufen, sofern eine JVM vorhanden ist. Dadurch haben wir sichergestellt, dass die Anwendung auf jeder Cloud laufen kann. Zusätzlich ist Java die Programmiersprache in der unsere Gruppe die meiste Erfahrung besitzt.   
 
 \section{Esper}
 Esper ist eine CEP Engine welche von EsperTech entwickelt wurde. Esper ist eine open source Anwendung. Eine Kommerzielle Lizenz wird nur benötigt, wenn die Anwendung weiterverkauft werden soll. Esper arbeitet mit Statements, Listener und Consumption Modes. Esper speichert die eingehenden Events in einer eigenen Datenbank ab und löscht diese von selbst wenn sie nicht mehr benötigt werden. Espers Datenbank wird beim abschalten der Anwendung gelöscht. Esper ist in der Lage verschiedene unabhängige Engines gleichzeitig Laufen zu lassen. 
 \\ 
-Die Statements basieren auf SQL. Es ist möglich Statements mit Listener zu verknüpfen. Zusätzlich wird der Consumption Mode über die Statements angegeben. Statements können auch verwendet werden um einen Kontext anzugeben. Das wird aber in dieser Anwendung nicht benötigt, daher wird darauf nicht näher eingegangen. In einen Statement wird immer angegeben was genau gescuht wird, woher es kommen soll und was für Filterbedingungen vorhanden sind. Dabei kann in der from-Klausel auch ein Muster stehen. So kann Esper für die Mustererkennung verwendet werden. Die Statements werden auf jedes Event im Eventstrom angewendet. Sollte ein Statement zutreffen wird der dazugehörige Listener aufgerufen. Dieser kann auf die ausgewählten Werte zugreifen. Der Listner kann selbst eigene Events absenden. Der Consumption Mode legt fest ob ein weiterer Listener auf das Event zugreifen kann. Es kann auch festgelegt werden ob ein Längen oder Zeitfenster die Zahl der zuberücksichtigen Events einschränlen soll.   
+Die Statements basieren auf SQL. Es ist möglich Statements mit Listener zu verknüpfen. Zusätzlich wird der Consumption Mode über die Statements angegeben. Statements können auch verwendet werden um einen Kontext anzugeben. Das wird aber in dieser Anwendung nicht benötigt, daher wird darauf nicht näher eingegangen. In einen Statement wird immer angegeben was genau gesucht wird, woher es kommen soll und was für Filterbedingungen vorhanden sind. Dabei kann in der from-Klausel auch ein Muster stehen. So kann Esper für die Mustererkennung verwendet werden. Die Statements werden auf jedes Event im Eventstrom angewendet. Sollte ein Statement zutreffen wird der dazugehörige Listener aufgerufen. Dieser kann auf die ausgewählten Werte zugreifen. Der Listner kann selbst eigene Events absenden. Der Consumption Mode legt fest ob ein weiterer Listener auf das Event zugreifen kann. Es kann auch festgelegt werden ob ein Längen oder Zeitfenster die Zahl der zuberücksichtigen Events einschränlen soll.   
 
 \section{Umsetzung}
 Die Anwendung wird von der InformationLifeFlow Klasse gesteuert. Diese stellt die Main-klasse der Anwendung dar und ließt beim Start die Postlleitzahlen der Städte aus. Danach wird eine Verbindung zu einer MoM erstellt. Für jede Postleitzahl wird ein sogennanter MoMReader erstellt. Diese sind eigene Thread welche für ein bestimmtes Topic auf eingehende Nachrichten warted. Der MoMSender ist das Gegenstück dazu. Der Sender sendet Nachrichten zurück zur MoM damit diese von Clients gelesen werden können. Das Klassendiagramm zeigt die Methoden von der Mainklasse und dem Reader.
@@ -22,14 +22,14 @@ Die Anwendung wird von der InformationLifeFlow Klasse gesteuert. Diese stellt di
 	\caption{Klassendiagramm der Steuerungsklassen}
 	\label{img:flowDiagramm}
 \end{figure} 
-Die MoM wird mithilfe einer Factory Klasse erstellt. Diese erstellt beim ersten Aufruf eine MoM und gibt diese bei jeden Aufruf wieder zurück. Derzeit unterstüzt die Anwendung nur eine MQTTMoM. Mithilfe des IMoM interfaces kann aber jederzeit eine weitere MoM hinzugefügt werden. Die MQTT MoM benötigt einen Hostpfad, einen Usernamen und ein Passwort, Diese werden von der Factory aus den Umgebungsvariablen ausgelesen und dann der MoM weitergegeben. Die MoM öffenet eine Verbindung ist dannach in deer Lage Nachrichten zu senden oder zu Empfangen. Jede Empfangene Nachricht wird von einer CallBack-Methode ausgewertet. Diese überprüft was für ein Typ die Nachricht besitzt und behandelt diese dann entsprechenend. Das bedeutet ein Forcast wird direkt weitergeleitet während einer Tagesmeldung weiter an die CEP Engine gesendet wird. Das folgende Klassendiagramm zeigt die Komponenten der MoMverbindung.
+Die MoM wird mithilfe einer Factory Klasse erstellt. Diese erstellt beim ersten Aufruf eine MoM und gibt diese bei jeden Aufruf wieder zurück. Derzeit unterstüzt die Anwendung nur eine MQTTMoM. Mithilfe des IMoM interfaces kann aber jederzeit eine weitere MoM hinzugefügt werden. Die MQTT MoM benötigt einen Hostpfad, einen Usernamen und ein Passwort, Diese werden von der Factory aus den Umgebungsvariablen ausgelesen und dann der MoM weitergegeben. Die MoM öffenet eine Verbindung ist dannach in der Lage Nachrichten zu senden oder zu Empfangen. Jede Empfangene Nachricht wird von einer CallBack-Methode ausgewertet. Diese überprüft was für ein Typ die Nachricht besitzt und behandelt diese dann entsprechenend. Das bedeutet ein Forcast wird umgeformt und weitergeleitet während einer Tagesmeldung weiter an die CEP Engine gesendet wird. Beim Umformen des Forcasts wird auch die maximale Temperatur, die minimale Temperatur und das durchschnittswetter für jeden Tag ermittelt. Das folgende Klassendiagramm zeigt die Komponenten der MoMverbindung.
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\textwidth]{Bilder/MoMKopmponents.png}
 	\caption{Klassendiagramm der MoM Komponenten}
 	\label{img:MoMDiagramm}
 \end{figure} 
-Die Anwendung kennt verschiedene Nachrichtentypen. Die Nachrichten die eingehen sind entweder eine Nachricht vom Typ "JSONMessage" oder von Typ "WeejkyForcast". Die JSOnMessage stellt dabei die Nachricht für den aktuellen Wetterstand dar. Das sind die häufigsten Nachrichten die eingehen. Wie der Name schon andeutet kommen die Nachrichten in einen JSON-Format an das direkt mithilfe von GSON in eine Instanz der Klasse umgeformt wird. Die WeeklyForcast Nachrichten kommen zwar auch in einen JSON-Format an müssen aber nochmal umgewandelt und gefiltert werden, bis die benötigte Nachricht entsteht. Diese Nachrichten kommen deutlich seltener bei der Anwendung an da diese einen Abschätzung der nächsten Tage darstellt. Die JSONMessage wird zur weiteren Auswertung an die CEP Engine übergeben. Der Wochenbericht wird direkt weitergesendet. Im Folgenden Klassendiagramm werden die Nachrichten mit ihren Methoden gezeigt. 
+Die Anwendung kennt verschiedene Nachrichtentypen. Die Nachrichten die eingehen sind entweder eine Nachricht vom Typ "JSONMessage" oder von Typ "WeejkyForcast". Die JSOnMessage stellt dabei die Nachricht für den aktuellen Wetterstand dar. Das sind die häufigsten Nachrichten die eingehen. Wie der Name schon andeutet kommen die Nachrichten in einen JSON-Format an das direkt mithilfe von GSON in eine Instanz der Klasse umgeformt wird. Die WeeklyForcast Nachrichten kommen zwar auch in einen JSON-Format an müssen aber nochmal umgewandelt und gefiltert werden, bis die benötigte Nachricht entsteht. Diese Nachrichten kommen deutlich seltener bei der Anwendung an da diese einen Abschätzung der nächsten Tage darstellt. Die JSONMessage wird zur weiteren Auswertung an die CEP Engine übergeben. Der Wochenbericht wird direkt weiterverarbeitet. Im Folgenden Klassendiagramm werden die Nachrichten mit ihren Methoden gezeigt. 
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\textwidth]{Bilder/News.png}
@@ -54,30 +54,28 @@ Sollte die CEP Engine etwas finden wird ein Alert gesendet. Diese Nachrichten be
      \hline 
      S1&Gutes Wetter: Es scheint die Sonne und es hat über 25 Grad\\
      \hline
-     H1&Herzinfakt Warnung: Für Herzkranke zu starker Temperatur ansteig\\
+      H1&Herzinfakt Warnung: Für Herzkranke starke Luftdruck schwankungen\\
      \hline
-      H2&Herzinfakt Warnung: Für Herzkranke starke Luftdruck schwankungen\\
-     \hline
-      H3&Herzinfakt Warnung: Für Herzkranke zu hohe Temperatur (>=25)\\
+      H2&Herzinfakt Warnung: Für Herzkranke zu hohe Temperatur (>=25)\\
      \hline
       \end{tabular}
    \caption{Die Wanung-Codes}\label{tab:WaningCodes}
     \end{minipage}
 \end{table}
-Die CEP Engine wird über die Klasse Engine Control gesteuert. Diese Singleton-Klasse geht sicher das die anderen Klassen zugriff auf von ihnen benötigten Fuktionen der Eingine haben aber dabei nicht mehr zugriff als Notwendig erhaltent. Die Klasse ist ein Singleton um sicherzugehen das jede Klasse auf die gleiche Engine zugreift. Die Klasse selbst erstellt eine Instanz der Klasse EsperService. Die Instanz wrid über eine Factory erstellt. Die Factory geht sicher das jedes benötigte Statement mit einen Listener verknüpft wird. Die EsperService-Klasse beinhaltet die tatsächliche Esper Engine und stellt einen Wrapper für diese dar. Das folgende Klassendiagramm zeigt die Methoden und die Abhängigkeiten derKlassen.
+Die CEP Engine wird über die Klasse Engine Control gesteuert. Diese Singleton-Klasse geht sicher das die anderen Klassen zugriff auf von ihnen benötigten Fuktionen der Eingine haben aber dabei nicht mehr zugriff als Notwendig erhaltent. Die Klasse ist ein Singleton um sicherzugehen das jede Klasse auf die gleiche Engine zugreift. Die Klasse selbst erstellt eine Instanz der Klasse EsperService. Die Instanz wrid über eine Factory erstellt. Die Factory geht sicher das jedes benötigte Statement mit einen Listener verknüpft wird. Die EsperService-Klasse beinhaltet die tatsächliche Esper Engine und stellt einen Wrapper für diese dar. Das folgende Klassendiagramm zeigt die Methoden und die Abhängigkeiten der Klassen.
  \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\textwidth]{Bilder/Esper.png}
 	\caption{Das Klassendiagramm der CEP Klassen}
 	\label{img:esperDiagramm}
 \end{figure} 
-Die Esper Statements sorgen dafür das Muster in den eingehenden Wetterdaten erkannt werden und reagieren mit passenden Nachrichten auf diese. Die Statements werden von der CEPFactory der Engine hinzugefügt. Jede eingehende Nachricht wird von midestens einen Statement erfasst. Der Entsprechende Listener sorgt dafür das die Clients die Daten erhalten und gibt eine Ausgabe aus. dabei gibt es kein Fenster oder Consumption Mode. Jede Nachricht wird von diesen Statement erfasst und es dürfen auch weitere Statements greifen. Das Statement sieht wie folgt aus: 
+Die Esper Statements sorgen dafür das Muster in den eingehenden Wetterdaten erkannt werden und reagieren mit passenden Nachrichten auf diese. Die Statements werden von der CEPFactory der Engine hinzugefügt. Jede eingehende Nachricht wird von midestens einen Statement erfasst. Der Entsprechende Listener sorgt dafür das die Clients die Daten erhalten und gibt eine Ausgabe aus. Dabei gibt es kein Fenster oder Consumption Mode. Jede Nachricht wird von diesen Statement erfasst und es dürfen auch weitere Statements greifen. Das Statement sieht wie folgt aus: 
 \begin{lstlisting}
 select * from JSONMessage
 \end{lstlisting}
 Ein weiteres Statement prüft ob die Luftfeuchtigkeit zu hoch ist. Bei einer hohen Luftfeuchtigkeit liegen tropische Verhältniesse vor, welche in Deutschland eher ungewöhnlich wären. Da alle unsere Wetterdaten aus Deutschland stammen ist es daher wichtig die Clients über eine solche besonderheit zu informieren. Auch dafür gibt es kein Fenster und keinen Consumption Mode. Treten die Bedingungen ein, liegt also eine Luftfeuchtigkeit von über 90 vor, wird ein Alert gesendet. Es dürfen aber auch andere Ereignisse ausgewertet werden.  Die Nachricht erhält den Code T1. 
 \begin{lstlisting}
-select * from JSONMessage where humitidy >= 90
+select * from JSONMessage where humidity >= 90
 \end{lstlisting}
 Einige Warnungen sind vorallen im Winter wichtig. Dabei geht es um Schneefall, niedrige Temperaturen und Frost. Die erste Winternachricht W1 warnt über eine Frostgefahr. Dabei werden zwei JSONMessages ausgewertet ob sie nacheinander ins System gekommen sind, dabei aus dem gleichen Ort stammen und Temperaturen unter 0 Grad angeben. Es werden zwei aufeinander folgende Nachrichten benötigt, da Wasser nicht sofort gefriert sondern Zeit braucht. Wenn also zwei Messungen eine neagtive Temperatur angeben, hatte das Wasser Zeit zu gefrieren. Sollte auf eine Nachricht mti negativer Temperatur eine Nachricht mit positiever Temperatur oder 0 Grad folgen, wird davon die erste Nachricht entfernt da das Wasser nicht genug zeit zum gefrieren hatte. Das Statement sieht wie folgt aus: 
 \begin{lstlisting}
@@ -97,14 +95,8 @@ Für den Sommer gibt es eine eigene Warnung. Diese warnt den Nutzer vor sehr gut
 \begin{lstlisting}
 select * from JSONMessage where temperature > 25 and currentWeatherId >= 800
 \end{lstlisting}
-Die letzte Warnungskategorie beschäftigt sich mit herzrisiko. Die Anwendung ist keine Medizinische Anwendung und folgt auch nicht den denentsprechenden Richtlinien. Daher kann die Anwendung nicht eine genaue Aussage darüber treffen ob ein Herzkranker Tabletten nehmen muss. Die Anwendung kann aber Aussgaben darüber treffen was laut Statistiken gefährlich für Menschen mit Herzproblemen werden könnte. Das stellt aber keine Empfehlung Medikamente zu nehmen dar. Es soll die Nutzer nur darauf hinweisen das sie sich Gedanken machen sollten, ob sie davpn betroffen werden können. Die erste Warnung deckt dabei einen Temperatur anstieg von über 5 Grad ab. Dabei gilt ähnlich wie bei der Frostchance, dass zwei Nachrichten hintereinander in die Kategorie gallen müssen bevor eine Warnung kommt. 
-\begin{lstlisting}
-select * from pattern[d1=JSONMessage ->
-d2=JSONMessage
-(d1.plz = d2.plz and d2.temperature - d1.temperature >=5)
- where timer:within(24 hours)]
-\end{lstlisting} 
-Dieses Statement beinhaltet diesesmal ein Zeitfenster. Die Nachrichten müssen innerhalb von 24 Stunden erfolgen sonst werden sie nicht ausgewertet, Dafür können zwischen drinnen andere schwankungen passieren. Sprich es darf um 12:00 Uhr eine Meldung von 24 Grad kommen um 13:00 Uhr von 27 Grad und am nächsten Tag um 11:00 Uhr eine Meldung von 30 Grad. Die Anwendung würde immernoch einen Alarm senden. Ein ähnliches Statement gibt es auch für den Luftdruck.Schwankt dieser zu stark kann es für einige Menschen ein höheres herzinfaktrisiko geben.  Das Statment sieht wie folgt aus.
+Die letzte Warnungskategorie beschäftigt sich mit Herzinfaktrisiken. Die Anwendung ist keine Medizinische Anwendung und folgt auch nicht den denentsprechenden Richtlinien. Daher kann die Anwendung nicht eine genaue Aussage darüber treffen ob ein Herzkranker Tabletten nehmen muss. Die Anwendung kann aber Aussgaben darüber treffen was laut Statistiken gefährlich für Menschen mit Herzproblemen werden könnte. Das stellt aber keine Empfehlung Medikamente zu nehmen dar. Es soll die Nutzer nur darauf hinweisen das sie sich Gedanken machen sollten, ob sie davon betroffen werden können. 
+ Schwankt der Luftdruck zu strark, kann bei einigen Menschen es zu einen Herzinfakt kommen. Daher gibt es ein Statement welches überprüft ob in den letzten 30 Minuten eine starke Schwankung stattgefunden hat. Wenn eine Meldung in den Eventstream gelangt wird diese aufbewahrt bis das Zeitfenster abgelaufen ist oder das Muster erkannt wurde. Das Statement sieht wie folgt aus:
 
 \begin{lstlisting}
 select * from pattern[d1=JSONMessage ->
@@ -113,8 +105,7 @@ d2=JSONMessage
  (p2.pressure - p1.pressure <-5 or 
 p1.pressure - p2.pressure <-10))
  where timer:within(30 min)]
-\end{lstlisting} 
-Die ersten beiden Statements dieser Kategorie sind W1 und W2. W3 beschäftigt sich mit der Gefahr einer zu hohen Temperatur. Sollte diese über 25 Grad sein kann es in eingien Fällen das herzinfaktrisiko erhöhen. Das Statement dazu entspricht den anderen Updatestatements. 
+\end{lstlisting} Das Statement W2 beschäftigt sich mit der Gefahr einer zu hohen Temperatur. Sollte diese über 25 Grad sein kann es in eingien Fällen das herzinfaktrisiko erhöhen. Das Statement dazu entspricht den anderen Updatestatements. 
 
 \begin{lstlisting}
 select * from JSONMessage wgere temperature >=25
@@ -125,25 +116,25 @@ Sobald die Anwendung gestartet wurde, ließt diese alle ihr bekannten Städte au
 \section{Erfüllte Anforderungen}
 Die Anwendung muss sich natürlich an die Anforderungen des 12-Faktor App Standards halten. Die erste Anforderung Codebase wird dadurch erfüllt das die Anwendung selbständig und alleine Funktionieren kann. Die anderen Komponenten, wie zum Beispiel die Wetter API sind nicht notwendig. Sie wurden nur mit entwickelt um ein Vollständiges Scenario darstellen zu können. Die einzige notwendige andere komponente ist eine MoM. Dabei kann die MoM aber jederzeit ausgetauscht werden. Die MoM wurde auch nicht von uns entwickelt sondern nur auf dem Server aufgesetzt. 
 \\
-Die Abhänigkeiten werden mit Gradle verwaltet. Jede Benötigte Bibliothek wird einfach als Dependency hinzugefügt und diese wird, mit allen von dieser Benötigten Bibliotheken, runtergeladen und im Buildpath hinzugefügt. Neue Versionen oder Abhänigkeiten können einfach mit einer Zeile mehr in der Konfiguration hinzugefügt werden. Es wird nichts an Code Verwendet was nicht entweder von Java selbst kommt (Version 1.8) oder aus einer in Gradle definierten Bibilothek vorhanden ist. Die Anwendung geht niemals davon aus das etwas implizit vorhanden ist.
+Die Abhänigkeiten werden mit Maven verwaltet. Jede Benötigte Bibliothek wird einfach als Dependency hinzugefügt und diese wird, mit allen von dieser Benötigten Bibliotheken, runtergeladen und im Buildpath hinzugefügt. Neue Versionen oder Abhänigkeiten können einfach mit einer Zeile mehr in der Konfiguration hinzugefügt werden. Es wird nichts an Code Verwendet was nicht entweder von Java selbst kommt (Version 1.8) oder aus einer in Maven definierten Bibilothek vorhanden ist. Die Anwendung geht niemals davon aus das etwas implizit vorhanden ist.
 \\
-Die bekannten Postleitzahlen, die Addresse der MoM, der Nutzername und das Passworrt sind alle in Umgebungsvariablen festgelegt. Die einzige Konsigurationsdatei im Pronjekt ist die Gradlekonfiguration. Diese hat aber mit der laufenden Anwendung nach dem erstellen des Builds nichts mehr zu tun. 
+Die Addresse der MoM, der Nutzername und das Passworrt sind alle in Umgebungsvariablen festgelegt. Die einzige Konsigurationsdatei im Projekt ist die pom.xml. Diese hat aber mit der laufenden Anwendung nach dem erstellen des Builds nichts mehr zu tun. 
 \\
 Die Anwendung verwendet als anderen Service nur die MoM. Diese wird über eine API angesprochen. Die API ist allgemeingültig für jede MoM, sofern sie MQTT unterstüzt. 
 \\
-Der Relasebuild kann nur von Jenkins erstellt werden. Dieses erstellt alle zusätzlichen für eine veröffentlichte Version benötigten Datein. Jenkins erlangt den Code über das Github Repository. 
+Der Relasebuild kann nur von Jenkins erstellt werden. Dieses erstellt alle zusätzlichen für eine veröffentlichte Version benötigten Datein. Jenkins erlangt den Code über das Github Repository. Zu den Dateien gehört unter anderen die Konfiguration für das Deployment auf der Cloud.
 \\
-Säntliche Daten werden nur Temporer von der CEP Engine gespeichert. Die Anwendung legt keine Files an welche länger als die Ausführungszeit auf dem Server vorhanden sind. Daten die nicht mehr vorhanden sind, werden aucb nicht mehr aufgerfuen. Die CEP kennt nur die Temporär gespeicherten Daten. jede Datei die nicht mehr gespeichert ist, wird von der Engine nicht mehr berücksichtigt. 
+Säntliche Daten werden nur kurzeitig von der CEP Engine gespeichert. Die Anwendung legt keine Files an welche länger als die Ausführungszeit auf dem Server vorhanden sind. Daten die nicht mehr vorhanden sind, werden auch nicht mehr aufgerufen. Die CEP kennt nur die Temporär gespeicherten Daten. jede Datei die nicht mehr gespeichert ist, wird von der Engine nicht mehr berücksichtigt. 
 \\
 Die Anwendung braucht nur eine JVM zum Laufen. Ansonsten wird davon ausgegangen das über die Amazon-Cloud oder die Cloud eines anderen Anbieters über eine Einstellung die Anwendung mit einen Port verknüpft werden kann. 
 \\
 Es werden verschiedene Threads verwendet. Diese werden aber nicht wegen der zum skalieren verwendet, sondern um sicherzugehen das eine Nachricht ausgewertet werden kann während eine andere gesendet wird. Es soll also nur die Ausführungszeit verschiedener nebenläufig ausführbarer Schritte optimiert werden. 
 \\
-Es macht keinen unterschied ob di Anwendung normal geschlossen wurde oder abgestürzt ist. Die CEP Engine und die MoM Verbindung werden geschlossen und können ohne Probleme wieder geöffnet werden. Wenn eine Verbindung wieder gebraucht wird, wird diese automatsich wieder geöffnet. Nur die bisherigen Muster gehen Verloren wenn die Anwendung plötzlich abstürtzt. Wenn die Anwendung nicht läuft, kann sie aber auch keine Warnungen versenden. Daher ist es dann egal ob ein Muster vorhanden ist. Wenn die Anwendung neu gestartet wird, wird das Muster weidererkannt. Zumindest wenn die Situation noch besteht.  
+Es macht keinen unterschied ob di Anwendung normal geschlossen wurde oder abgestürzt ist. Die CEP Engine und die MoM Verbindung werden geschlossen und können ohne Probleme wieder geöffnet werden. Wenn eine Verbindung wieder gebraucht wird, wird diese automatsich wieder geöffnet. Nur die bisherigen Muster gehen Verloren wenn die Anwendung plötzlich abstürtzt. Wenn die Anwendung nicht läuft, kann sie aber auch keine Warnungen versenden. Daher ist es dann egal ob ein Muster vorhanden ist. Wenn die Anwendung neu gestartet wird, wird das Muster wiedererkannt. Da ohnehin jede Minute Daten in die MoM gelangen kann es also nur zu einer Verzögerung von bis zu zwei Minuten + die Ausfallzeit kommen. Zumindest wenn die Situation noch besteht.  
 \\
 TODO: Absatz über Deployment
 \\
-Es werden keine Log-Dateien angelegt. Die Anwendug gibt Meldugnen über den Output- und den ErrorStream aus. An einer anderen Stelle muss daraus ein Log oder eine sonstige Auswertung erfolgen. 
+Es werden keine Log-Dateien angelegt. Die Anwendug gibt Mledungen über den Output- und den ErrorStream aus. An einer anderen Stelle muss daraus ein Log oder eine sonstige Auswertung erfolgen. 
 \\
 TODO Admin Process absatz
 \\
@@ -157,7 +148,7 @@ In der folgenden Tabelle werden die Anforderungen nochtmal zusammengefasst darge
      \textbf{ID}&\textbf{Anforderung}&\textbf{Validierungs Element}&\textbf{Erfüllt}\\\hline
      1.&Codebase&Andere Komponenten sind nur für das Testszenario da. Deployment verschiederner Versionen über Repo möglich&Ja\\
       \hline
-     2.&Abhängigkeiten&Abhängigkeiten werden über Gradle verwaltet&Ja\\
+     2.&Abhängigkeiten&Abhängigkeiten werden über Maven verwaltet&Ja\\
      \hline
      3.&Konfiguration&Bis auf Buildconfigurations gibt es keine Konfigurationsdatei. Alles andere über Umgebungsvariablen&Ja\\
      \hline
