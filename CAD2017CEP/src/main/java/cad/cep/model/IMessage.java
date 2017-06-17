@@ -7,13 +7,20 @@ package cad.cep.model;
 public interface IMessage {
 
 	/**
-	 * Creates the message.
+	 * Creates the message. This Method creates a new message object from a byte array,
 	 *
-	 * @param body the body
-	 * @return the i message
+	 * @param body the body as byte array
+	 * @param topic the topic form which the message is send
+	 * @return the new message object
 	 */
 	IMessage createMessage(byte[] body, String topic);
 	
+	/**
+	 * Copy this message to another
+	 *
+	 * @param toCopy the message to copy
+	 * @return the copied message
+	 */
 	IMessage copy(IMessage toCopy);
 	
 }

@@ -1,7 +1,5 @@
 package cad.cep.mom;
 
-import java.util.Properties;
-
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -10,19 +8,21 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import cad.cep.exceptions.MoMException;
 import cad.cep.model.IMessage;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class RabbitMom.
  */
 public class MQTTMom implements IMoM{
 
+	/** The client. */
 	private MqttClient client;
 
 	/**
 	 * Instantiates a new rabbit mom.
 	 *
-	 * @param host the host
-	 * @throws MoMException the mo M exception
+	 * @param host the host address
+	 * @param user the user the user id
+	 * @param pw the pw the user password. 
+	 * @throws MoMException the MoM exception
 	 */
 	protected MQTTMom(String host, String user, String pw) throws MoMException {
 			try {
@@ -46,7 +46,6 @@ public class MQTTMom implements IMoM{
 			client.setCallback(new CallBack());
 			client.subscribe(topic);
 		} catch (Exception e) {
-			// TODO Logging
 			throw new MoMException("Cannot read topic: " +topic, e);
 		}
 		return null;
@@ -62,7 +61,6 @@ public class MQTTMom implements IMoM{
 			payload.setRetained(retained);
 			client.publish(queue, payload);
 		} catch (Exception e) {
-			//TODO LOGING
 			throw new MoMException("Can not send message", e);
 		}
 	}
@@ -79,6 +77,10 @@ public class MQTTMom implements IMoM{
 			throw new MoMException("Cannot close connection", e);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see cad.cep.mom.IMoM#reConnect()
+	 */
 	public void reConnect() throws MoMException{
 		try {
 			client.reconnect();

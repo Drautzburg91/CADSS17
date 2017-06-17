@@ -3,7 +3,6 @@ package cad.cep.model;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.espertech.esper.client.soda.AvgProjectionExpression;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -12,16 +11,29 @@ import com.google.gson.JsonParser;
 
 import cad.cep.milf.util.AVGWeather;
 
+/**
+ * The Class WeeklyForcast.
+ */
 public class WeeklyForcast implements IMessage{
 	
+	/** The days. */
 	private Set<Day> days = new LinkedHashSet<>();
 	
+	/** The plz. */
 	private String plz;
 	
+	/**
+	 * Gets the plz.
+	 *
+	 * @return the plz
+	 */
 	public String getPlz(){
 		return this.plz;
 	}
 
+	/* (non-Javadoc)
+	 * @see cad.cep.model.IMessage#createMessage(byte[], java.lang.String)
+	 */
 	@Override
 	public IMessage createMessage(byte[] body, String topic) {
 		try {
@@ -64,18 +76,24 @@ public class WeeklyForcast implements IMessage{
 		}
 		Set<Day> averageDays = new LinkedHashSet<>();
 		for (Day day : days) {
-			averageDays.add(AVGWeather.getCalculatetCast(day.getPlz(), day.getDate()));
+			averageDays.add(AVGWeather.getCalculatedCast(day.getPlz(), day.getDate()));
 		}
 		days = averageDays;
 		return this;
 	}
 
+	/* (non-Javadoc)
+	 * @see cad.cep.model.IMessage#copy(cad.cep.model.IMessage)
+	 */
 	@Override
 	public IMessage copy(IMessage toCopy) {
 		//FOrcast should not be copied
 		return toCopy;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString(){
 		Gson gson = new GsonBuilder().create();
 		return gson.toJson(this);

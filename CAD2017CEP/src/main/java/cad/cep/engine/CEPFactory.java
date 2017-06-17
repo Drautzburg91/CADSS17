@@ -5,11 +5,22 @@ import cad.cep.milf.MoMSender;
 import cad.cep.model.Alert;
 import cad.cep.model.JSONMessage;
 
+/**
+ * A factory for creating CEP Engines.
+ */
 public final class CEPFactory {
 
+	/** The service. */
 	private static EsperService service;
+	
+	/** The sender. */
 	private static MoMSender sender;
 
+	/**
+	 * Creates a new CEP Engine or returns the existing one.
+	 *
+	 * @return the esper service which can be used to call methods for the esper engine
+	 */
 	protected static EsperService createNewService(){
 		if(service != null){
 			return service;
@@ -26,9 +37,20 @@ public final class CEPFactory {
 		return service;
 	}
 
+	/**
+	 * Switch MoMSender if you need to send messages in another mom.
+	 *
+	 * @param newSender the new sender
+	 */
 	public static void switchSender(MoMSender newSender){
 		sender = newSender;
 	}
+	
+	/**
+	 * Adds the special warning to the Engine. These Warnings are for unusual weather.
+	 *
+	 * @param service the service which needs the warning
+	 */
 	private static void addSpecialWarning(EsperService service) {
 		String tropical = "select * from JSONMessage where humidity >= 90";
 		service.createStatement(tropical, (newData, oldData)->{
@@ -36,6 +58,12 @@ public final class CEPFactory {
 			sendWarning(message.getPlz(), "Tropical", "T1", "Humidity is over 90");
 		});
 	}
+	
+	/**
+	 * Adds the update event. This event checks every new Message.
+	 *
+	 * @param service the service which needs the warning
+	 */
 	private static void addUpdateEvent(EsperService service) {
 		String statementQuery ="select * from JSONMessage";
 		service.createStatement(statementQuery, (newData, oldData) ->{
@@ -49,6 +77,12 @@ public final class CEPFactory {
 			}
 		});
 	}
+	
+	/**
+	 * Adds the winter warnings. These warnings are needed to check for low temperatures, frost or snow.
+	 *
+	 * @param service the service which needs the warning
+	 */
 	public static void addWinterWarnings(EsperService service){
 		String frostRisk = "select * from pattern[m1=JSONMessage ->m2=JSONMessage(m1.plz = m2.plz and m1.temperature < 0 and m2.temperature < 0) where timer:within(1 hour)]";
 		service.createStatement(frostRisk, (newData, oldData)->{
@@ -68,6 +102,14 @@ public final class CEPFactory {
 		});
 	}
 	
+	/**
+	 * Send warning. Sends the warning to the MoM. It uses the MoMSender of this class. 
+	 *
+	 * @param plz the plz of the city which the warning is for
+	 * @param title the title of the warning
+	 * @param code the code of the warning
+	 * @param message the message for the client
+	 */
 	private static void sendWarning(String plz, String title, String code, String message){
 		try{
 			Alert alert = new Alert(title, code, message);
@@ -78,8 +120,12 @@ public final class CEPFactory {
 		}
 	}
 
+	/**
+	 * Adds the summer warnings. These "warnings" are for good weather, heat and other summer releated things
+	 *
+	 * @param service the service which needs the warning
+	 */
 	private static void addSummerWarnings(EsperService service){
-		//TODO define good swimming weather
 		String goSwimming = "Select * from JSONMessage where temperature >25 and currentWeatherId >= 800 and currentWeatherId <=804";
 		service.createStatement(goSwimming, (newData, oldData)->{
 			JSONMessage message = (JSONMessage) newData[0].getUnderlying();
@@ -88,11 +134,15 @@ public final class CEPFactory {
 
 	}
 
+	/**
+	 * Adds the hearth risk statement. 
+	 *
+	 * @param service the service which needs the warning
+	 */
 	private static void addHearthRiskStatement(EsperService service){
 		String pressureSwitchRisk = "select * from pattern[p1=JSONMessage -> p2=JSONMessage(p1.plz = p2.plz and (p1.pressure - p2.pressure <-10 or p2.pressure - p1.pressure <-10 )) where timer:within(30 min)]"; 
 		service.createStatement(pressureSwitchRisk, (newData, oldData)->{
 			System.out.println("WARING pressure changes to much");
-			//gets the message for today
 			JSONMessage message = (JSONMessage) newData[0].get("p2");
 			sendWarning(message.getPlz(), "HearthRisk", "H1", "Pressure changes to rapitly, please take medication if needed");
 			System.out.println("At " + message.getPlz());

@@ -1,14 +1,21 @@
 package cad.cep.milf;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import cad.cep.exceptions.MoMException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class InformationLifeFlow.
+ */
 public class InformationLifeFlow {
 
+	/**
+	 * The main method. Reads the hardcoded PLZ and creates new Reader to read for messages.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		List<String> plzs = new ArrayList<>();
 		plzs.add("24103");
@@ -39,6 +46,12 @@ public class InformationLifeFlow {
 		
 	}
 
+	/**
+	 * Add a new reader.
+	 *
+	 * @param topic the topic
+	 * @return the MoM reader
+	 */
 	private static MoMReader addnewReader(String topic){
 		try {
 			MoMReader reader = new MoMReader(topic);

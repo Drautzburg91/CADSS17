@@ -1,31 +1,39 @@
 package cad.cep.engine;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-
-import java.io.IOException;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
-import cad.cep.exceptions.MoMException;
 import cad.cep.milf.MoMSender;
-import cad.cep.model.IMessage;
 import cad.cep.model.JSONMessage;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class CEPFactoryTest.
+ */
 public class CEPFactoryTest {
 
+	/** The service. */
 	private EsperService service;
+	
+	/** The mom. */
 	private MoMSender mom;
+	
+	/**
+	 * Prepeare test.
+	 */
 	@Before
 	public void prepeareTest(){
 		service = CEPFactory.createNewService();
 		mom = mock(MoMSender.class);
 		CEPFactory.switchSender(mom);
 	}
+	
+	/**
+	 * Test event sending.
+	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testEventSending() {
 		//Create JSON Message to send
@@ -35,6 +43,10 @@ public class CEPFactoryTest {
 		//if no exception Test is successfull
 		service.sendEvent(null);
 	}
+	
+	/**
+	 * Test W inter warning.
+	 */
 	@Test
 	public void testWInterWarning(){
 		JSONMessage message1 = new JSONMessage();
@@ -46,6 +58,9 @@ public class CEPFactoryTest {
 		service.sendEvent(message1);
 	}
 
+	/**
+	 * Test special warning.
+	 */
 	@Test
 	public void testSpecialWarning(){
 		//needs a JSON event
@@ -57,6 +72,9 @@ public class CEPFactoryTest {
 		service.sendEvent(message);
 	}
 
+	/**
+	 * Test summer warning.
+	 */
 	@Test
 	public void testSummerWarning(){
 		//need JSON Object
@@ -66,6 +84,10 @@ public class CEPFactoryTest {
 		message.setTemperature(26.0);
 		service.sendEvent(message);
 	}
+	
+	/**
+	 * Test hearth risk warning.
+	 */
 	@Test
 	public void testHearthRiskWarning(){
 		JSONMessage message = new JSONMessage();
@@ -82,6 +104,9 @@ public class CEPFactoryTest {
 		service.sendEvent(warning);
 	}
 
+	/**
+	 * Destroy.
+	 */
 	@AfterClass
 	public static void destroy(){
 		CEPFactory.createNewService().destroyConnection();

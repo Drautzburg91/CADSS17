@@ -1,13 +1,12 @@
 package cad.cep.exceptions;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MoMException.
  */
 public class MoMException extends Exception{
 
 	/**
-	 * Instantiates a new mo M exception.
+	 * Instantiates a new MoM exception.
 	 *
 	 * @param message the message
 	 * @param e the e

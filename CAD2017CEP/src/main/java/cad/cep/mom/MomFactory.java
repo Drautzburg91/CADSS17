@@ -2,12 +2,12 @@ package cad.cep.mom;
 
 import cad.cep.exceptions.MoMException;
 
-// TODO: Auto-generated Javadoc
 /**
  * A factory for creating Mom objects.
  */
 public final class MomFactory {
 
+	/** The mqtt mom. */
 	private static MQTTMom mqttMom;
 	/**
 	 * Instantiates a new mom factory.
@@ -16,8 +16,8 @@ public final class MomFactory {
 	/**
 	 * Creates a new Mom object.
 	 *
-	 * @return the i mo M
-	 * @throws MoMException the mo M exception
+	 * @return the new MoM instance
+	 * @throws MoMException the MoM exception
 	 */
 	public static IMoM createOrLoadMom() throws MoMException{
 		try{

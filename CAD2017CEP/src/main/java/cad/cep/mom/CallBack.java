@@ -10,18 +10,34 @@ import cad.cep.milf.MoMSender;
 import cad.cep.model.JSONMessage;
 import cad.cep.model.WeeklyForcast;
 
+/**
+ * The Class CallBack.
+ */
 public class CallBack implements MqttCallback{
 	
-	 private EngineControl control;
+	 /** The control. */
+ 	private EngineControl control;
 
+	/**
+	 * Instantiates a new call back.
+	 */
 	public CallBack() {
 		control = EngineControl.getInstance();
 	}
-	 public CallBack(EngineControl control){
+	 
+ 	/**
+ 	 * Instantiates a new call back.
+ 	 *
+ 	 * @param control the control
+ 	 */
+ 	public CallBack(EngineControl control){
 		this.control = control;
 		 
 	 }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.paho.client.mqttv3.MqttCallback#connectionLost(java.lang.Throwable)
+	 */
 	@Override
 	public void connectionLost(Throwable cause) {
 			try {
@@ -31,6 +47,9 @@ public class CallBack implements MqttCallback{
 			}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.paho.client.mqttv3.MqttCallback#messageArrived(java.lang.String, org.eclipse.paho.client.mqttv3.MqttMessage)
+	 */
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 			byte[] payload = message.getPayload();
@@ -61,6 +80,9 @@ public class CallBack implements MqttCallback{
 			}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.paho.client.mqttv3.MqttCallback#deliveryComplete(org.eclipse.paho.client.mqttv3.IMqttDeliveryToken)
+	 */
 	@Override
 	public void deliveryComplete(IMqttDeliveryToken token) {
 		System.out.println(token.getMessageId());

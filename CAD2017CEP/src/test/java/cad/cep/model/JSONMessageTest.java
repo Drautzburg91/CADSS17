@@ -1,36 +1,40 @@
 package cad.cep.model;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
+// TODO: Auto-generated Javadoc
+/**
+ * The Class JSONMessageTest.
+ */
 public class JSONMessageTest {
 
 /**
-* Sascha die test stimmen nicht da Temperature ist kein int sondern ein Double 
-
-	/*@Test
-	public void testSetMethods() {
-		JSONMessage message = new JSONMessage();
-		this.setTestValues(message);
-		this.testGetMethods(message);
-	}
-	@Test
-	public void testCopy(){
-		JSONMessage message = new JSONMessage();
-		this.setTestValues(message);
-		JSONMessage copy = new JSONMessage();
-		copy.copy(message);
-		this.testGetMethods(copy);
-	}
-	@Test
-	public void testFromBytes(){
-		JSONMessage message = new JSONMessage();
-		this.setTestValues(message);
-		JSONMessage fromBytes = new JSONMessage();
-		fromBytes.createMessage(message.toString().getBytes(), message.getTopic());
-		this.testGetMethods(fromBytes);
-	}*/
+ * Sascha die test stimmen nicht da Temperature ist kein int sondern ein Double 
+ * 
+ * 	/*@Test
+ * 	public void testSetMethods() {
+ * 		JSONMessage message = new JSONMessage();
+ * 		this.setTestValues(message);
+ * 		this.testGetMethods(message);
+ * 	}
+ *
+ * @param message the new test values
+ * @Test 	public void testCopy(){
+ * 		JSONMessage message = new JSONMessage();
+ * 		this.setTestValues(message);
+ * 		JSONMessage copy = new JSONMessage();
+ * 		copy.copy(message);
+ * 		this.testGetMethods(copy);
+ * 	}
+ * @Test 	public void testFromBytes(){
+ * 		JSONMessage message = new JSONMessage();
+ * 		this.setTestValues(message);
+ * 		JSONMessage fromBytes = new JSONMessage();
+ * 		fromBytes.createMessage(message.toString().getBytes(), message.getTopic());
+ * 		this.testGetMethods(fromBytes);
+ * 	}
+ */
 
 	private void setTestValues(JSONMessage message) {
 		message.setCityName("a");
@@ -50,6 +54,11 @@ public class JSONMessageTest {
 		message.setWindspeed(09.20);
 	}
 	
+	/**
+	 * Test get methods.
+	 *
+	 * @param message the message
+	 */
 	private void testGetMethods(JSONMessage message){
 		assertEquals("a", message.getCityName());
 		assertEquals("b", message.getCurrentWeather());

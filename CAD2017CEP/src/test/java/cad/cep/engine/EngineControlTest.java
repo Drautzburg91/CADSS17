@@ -7,8 +7,15 @@ import org.junit.Test;
 
 import cad.cep.model.JSONMessage;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class EngineControlTest.
+ */
 public class EngineControlTest {
 
+	/**
+	 * Engine test.
+	 */
 	@Test
 	public void EngineTest() {
 		
