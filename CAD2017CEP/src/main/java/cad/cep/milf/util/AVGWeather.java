@@ -51,8 +51,8 @@ public class AVGWeather {
 	 */
 	private static Day calculate(String key, String date) {
 		List<Day> currentDays = days.get(key);
-		int minTemp = Integer.MAX_VALUE;
-		int maxTemp = Integer.MIN_VALUE;
+		double minTemp = Integer.MAX_VALUE;
+		double maxTemp = Integer.MIN_VALUE;
 		List<WeatherWrapper> wrappers = new ArrayList<>();
 		for (Day day : currentDays) {
 			if(!day.getDate().equals(date)){

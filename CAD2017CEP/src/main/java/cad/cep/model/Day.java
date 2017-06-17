@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 public class Day implements Comparable<Day>{
 
 	/** The temperature. */
-	private int temperature;
+	private double temperature;
 	
 	/** The city name. */
 	private String cityName;
@@ -30,10 +30,10 @@ public class Day implements Comparable<Day>{
 	private String date;
 	
 	/** The temperature max. */
-	private int temperatureMax;
+	private double temperatureMax;
 	
 	/** The temperature min. */
-	private int temperatureMin;
+	private double temperatureMin;
 	
 	/** The Constant FROMAT. */
 	private static final SimpleDateFormat FROMAT = new SimpleDateFormat("yyyy-MM-dd");
@@ -43,7 +43,7 @@ public class Day implements Comparable<Day>{
 	 *
 	 * @return the temperature
 	 */
-	public int getTemperature() {
+	public double getTemperature() {
 		return temperature;
 	}
 
@@ -52,7 +52,7 @@ public class Day implements Comparable<Day>{
 	 *
 	 * @param temperature the new temperature
 	 */
-	public void setTemperature(int temperature) {
+	public void setTemperature(double temperature) {
 		this.temperature = temperature;
 	}
 
@@ -170,7 +170,7 @@ public class Day implements Comparable<Day>{
 	 *
 	 * @return the max temperature
 	 */
-	public int getMaxTemperature() {
+	public double getMaxTemperature() {
 		return temperatureMax;
 	}
 
@@ -179,7 +179,7 @@ public class Day implements Comparable<Day>{
 	 *
 	 * @param maxTemperature the new max temperature
 	 */
-	public void setMaxTemperature(int maxTemperature) {
+	public void setMaxTemperature(double maxTemperature) {
 		this.temperatureMax = maxTemperature;
 	}
 
@@ -188,7 +188,7 @@ public class Day implements Comparable<Day>{
 	 *
 	 * @return the min temperature
 	 */
-	public int getMinTemperature() {
+	public double getMinTemperature() {
 		return temperatureMin;
 	}
 
@@ -197,17 +197,8 @@ public class Day implements Comparable<Day>{
 	 *
 	 * @param minTemperature the new min temperature
 	 */
-	public void setMinTemperature(int minTemperature) {
+	public void setMinTemperature(double minTemperature) {
 		this.temperatureMin = minTemperature;
-	}
-
-	/**
-	 * Gets the fromat.
-	 *
-	 * @return the fromat
-	 */
-	public static SimpleDateFormat getFromat() {
-		return FROMAT;
 	}
 
 	/* (non-Javadoc)
@@ -217,7 +208,7 @@ public class Day implements Comparable<Day>{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + (date.hashCode());
 		result = prime * result + ((plz == null) ? 0 : plz.hashCode());
 		return result;
 	}

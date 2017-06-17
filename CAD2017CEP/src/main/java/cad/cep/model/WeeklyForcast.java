@@ -62,16 +62,15 @@ public class WeeklyForcast implements IMessage{
 				day.setDate(date.getAsString());
 				day.setPlz(plz.getAsString());
 				this.plz = plz.getAsString();
-				day.setTemperature(temperature.getAsInt());
+				day.setTemperature(temperature.getAsDouble());
 				day.setCurrentWeather(currentWeather.getAsString());
-				day.setMaxTemperature(maxTemp.getAsInt());
-				day.setMinTemperature(min.getAsInt());
+				day.setMaxTemperature(maxTemp.getAsDouble());
+				day.setMinTemperature(min.getAsDouble());
 				AVGWeather.addEntryToDay(day);
 				days.add(day);
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			System.out.println("Das ist der Fehler" + e);
 		}
 		Set<Day> averageDays = new LinkedHashSet<>();
