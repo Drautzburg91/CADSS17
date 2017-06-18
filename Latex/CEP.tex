@@ -1,20 +1,20 @@
-\chapter{Complex Event Process}\label{cep}
+\section{Complex Event Process}\label{cep}
 
 
-\section{Zielsetzung}
+\subsection{Zielsetzung}
 Das Ziel der Anwendung ist es, die Daten welche an die MoM gesendet wurden auszulesen und dann weiterzuverabeiten. Dabei wird mithilfe einer Complex Event Process Engine dann nach besonderen Ereignissen gesucht. Sollte ein solches eintreffen wird eine Warnung an alle Clients über ein besonderes Topic gesendet. Die Anwendung soll sich dabei ein die 12 Faktoren einer Cloud Anwendung halten. Ein weiteres Ziel ist, dass die Anwendung in jeder Cloud laufen kann und nicht abhängig von einer bestimmten Cloud ist. 
 
-\section{Umsetzungsentscheidungen}
+\subsection{Umsetzungsentscheidungen}
 Als Complex Process Engine wurde Esper ausgewählt. Da Esper eine Java API besitzt und die MOM ebenenfalls über eine Javaschnittstelle verfügt (Siehe Kapitel \ref{rabbitmq}) kann Esper leicht mit den anderen Komponenten der Anwendung verbunden werden. Esper besitzt zudem eine ausführliche Dokumentation, was die Umsetzung deutlich erleichtert hat. Es gibt neben Esper andere Engines welche ebenfalls mit Java verbunden werden können. Eine davon ist Apache Spark. Spark wird von Amazon direkt unterstüzt und ist eine eigene Engine welche nur noch mit Statements befüllt werden muss angeboten. Wir haben uns aber gegen Spark entschieden, da es zum einen uns stärker an die Amazon Cloud binden würde und zum anderen die Amazon Spark Engine sehr viel abnimmt und so Kontrolle über das Verhalten der Anwendung nimmt. 
 \\
 Die Anwendung wurde mit Java geschrieben, da es mit Java leicht ist die verschiedenen Komponenten der Anwendung zu verbinden. Java kann überall laufen, sofern eine JVM vorhanden ist. Dadurch haben wir sichergestellt, dass die Anwendung auf jeder Cloud laufen kann. Zusätzlich ist Java die Programmiersprache in der unsere Gruppe die meiste Erfahrung besitzt.   
 
-\section{Esper}
+\subsection{Esper}
 Esper ist eine CEP Engine welche von EsperTech entwickelt wurde. Esper ist eine open source Anwendung. Eine Kommerzielle Lizenz wird nur benötigt, wenn die Anwendung weiterverkauft werden soll. Esper arbeitet mit Statements, Listener und Consumption Modes. Esper speichert die eingehenden Events in einer eigenen Datenbank ab und löscht diese von selbst wenn sie nicht mehr benötigt werden. Espers Datenbank wird beim abschalten der Anwendung gelöscht. Esper ist in der Lage verschiedene unabhängige Engines gleichzeitig Laufen zu lassen. 
 \\ 
 Die Statements basieren auf SQL. Es ist möglich Statements mit Listener zu verknüpfen. Zusätzlich wird der Consumption Mode über die Statements angegeben. Statements können auch verwendet werden um einen Kontext anzugeben. Das wird aber in dieser Anwendung nicht benötigt, daher wird darauf nicht näher eingegangen. In einen Statement wird immer angegeben was genau gesucht wird, woher es kommen soll und was für Filterbedingungen vorhanden sind. Dabei kann in der from-Klausel auch ein Muster stehen. So kann Esper für die Mustererkennung verwendet werden. Die Statements werden auf jedes Event im Eventstrom angewendet. Sollte ein Statement zutreffen wird der dazugehörige Listener aufgerufen. Dieser kann auf die ausgewählten Werte zugreifen. Der Listner kann selbst eigene Events absenden. Der Consumption Mode legt fest ob ein weiterer Listener auf das Event zugreifen kann. Es kann auch festgelegt werden ob ein Längen oder Zeitfenster die Zahl der zuberücksichtigen Events einschränlen soll.   
 
-\section{Umsetzung}
+\subsection{Umsetzung}
 Die Anwendung wird von der InformationLifeFlow Klasse gesteuert. Diese stellt die Main-klasse der Anwendung dar und ließt beim Start die Postlleitzahlen der Städte aus. Danach wird eine Verbindung zu einer MoM erstellt. Für jede Postleitzahl wird ein sogennanter MoMReader erstellt. Diese sind eigene Thread welche für ein bestimmtes Topic auf eingehende Nachrichten warted. Der MoMSender ist das Gegenstück dazu. Der Sender sendet Nachrichten zurück zur MoM damit diese von Clients gelesen werden können. Das Klassendiagramm zeigt die Methoden von der Mainklasse und dem Reader.
 \begin{figure}[htbp]
 	\centering
@@ -25,7 +25,7 @@ Die Anwendung wird von der InformationLifeFlow Klasse gesteuert. Diese stellt di
 Die MoM wird mithilfe einer Factory Klasse erstellt. Diese erstellt beim ersten Aufruf eine MoM und gibt diese bei jeden Aufruf wieder zurück. Derzeit unterstüzt die Anwendung nur eine MQTTMoM. Mithilfe des IMoM interfaces kann aber jederzeit eine weitere MoM hinzugefügt werden. Die MQTT MoM benötigt einen Hostpfad, einen Usernamen und ein Passwort, Diese werden von der Factory aus den Umgebungsvariablen ausgelesen und dann der MoM weitergegeben. Die MoM öffenet eine Verbindung ist dannach in der Lage Nachrichten zu senden oder zu Empfangen. Jede Empfangene Nachricht wird von einer CallBack-Methode ausgewertet. Diese überprüft was für ein Typ die Nachricht besitzt und behandelt diese dann entsprechenend. Das bedeutet ein Forcast wird umgeformt und weitergeleitet während einer Tagesmeldung weiter an die CEP Engine gesendet wird. Beim Umformen des Forcasts wird auch die maximale Temperatur, die minimale Temperatur und das durchschnittswetter für jeden Tag ermittelt. Das folgende Klassendiagramm zeigt die Komponenten der MoMverbindung.
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.5\textwidth]{Bilder/MoMKopmponents.png}
+	\includegraphics[width=0.5\textwidth]{Bilder/MoMKomponents.png}
 	\caption{Klassendiagramm der MoM Komponenten}
 	\label{img:MoMDiagramm}
 \end{figure} 
@@ -111,9 +111,9 @@ p1.pressure - p2.pressure <-10))
 select * from JSONMessage wgere temperature >=25
 \end{lstlisting}
  Zu jeden Eintrag in der Tabelle \ref{tab:WaningCodes} gibt es ein eigenes Statement. Dazu gibt es ein Statement um jede Nachricht zu erfassen. Dabei werden keine unique Consumptionmodes verwendet da eine Nachricht mehrere Statements auslösen kann. Es kann zum Beispiel gutes Badewetter, ein hoher Luftddruck und eine hohe Luftfeuchtigkeit gleichzeitig eintreten. Genauso wie eine Nachricht nicht im Eventstream bis zum erreichen eines Fensterendes oder eines Musters blockiert werden kann. Während die erste Nachricht darauf wartet wegen der temperatur Schwankungen festgehalten zu werden, kann eine andere Nachricht eingehen die in Kompination mit der ersten Nachricht ein anderes Muster erfüllt.  
-\section{Ablauf}
+\subsection{Ablauf}
 Sobald die Anwendung gestartet wurde, ließt diese alle ihr bekannten Städte aus. Für jede Postleitzahl werden zwei Reader-threads erstellt. Einer davon wartet auf alle Nachrichten unter den Topic plz/today und der andere wartet auf alle Nachrichten unter dem Topic plz/weekly. Damit der Reader die Nachrichten auch erhält muss eine Verbindung zur MoM erstellt werden. Dafür wird die Adresse und die Credentials für die MoM aus den Umgebungsvariablen ausgelesen. Die Nachrichten kommen in einen JSON Format an. Dieses Format wird versucht in eine Instanz der Klasse JSONMessage umzuwandeln. Klappt das nicht wird verscuht daraus eine WeeklyForcast Nachricht zu machen. Klappt das auch nicht gibt die Anwendugn eine Fehlermeldung aus und ignoriert die Nachricht, Jede JSONMessage wird als Event den Eventstream der CEP weitergegeben. Sollte die Engine eine Besonderheit finden wird eine Warnung an plz/alert gesendet. Auf jedenfall wird die Nachricht an plz/today/cep weitergeleitet. Die Wochenvorhersage wird an plz/weekly/cep gesendet.  
-\section{Erfüllte Anforderungen}
+\subsection{Erfüllte Anforderungen}
 Die Anwendung muss sich natürlich an die Anforderungen des 12-Faktor App Standards halten. Die erste Anforderung Codebase wird dadurch erfüllt das die Anwendung selbständig und alleine Funktionieren kann. Die anderen Komponenten, wie zum Beispiel die Wetter API sind nicht notwendig. Sie wurden nur mit entwickelt um ein Vollständiges Scenario darstellen zu können. Die einzige notwendige andere komponente ist eine MoM. Dabei kann die MoM aber jederzeit ausgetauscht werden. Die MoM wurde auch nicht von uns entwickelt sondern nur auf dem Server aufgesetzt. 
 \\
 Die Abhänigkeiten werden mit Maven verwaltet. Jede Benötigte Bibliothek wird einfach als Dependency hinzugefügt und diese wird, mit allen von dieser Benötigten Bibliotheken, runtergeladen und im Buildpath hinzugefügt. Neue Versionen oder Abhänigkeiten können einfach mit einer Zeile mehr in der Konfiguration hinzugefügt werden. Es wird nichts an Code Verwendet was nicht entweder von Java selbst kommt (Version 1.8) oder aus einer in Maven definierten Bibilothek vorhanden ist. Die Anwendung geht niemals davon aus das etwas implizit vorhanden ist.
