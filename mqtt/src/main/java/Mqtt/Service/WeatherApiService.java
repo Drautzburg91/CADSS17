@@ -120,9 +120,8 @@ public class WeatherApiService implements MessagingService {
 				message = new MqttMessage(jsonInString.getBytes());
 				System.out.println(jsonInString);
 				client.publish("weekly", message);
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+				
+			
 			} catch (MqttPersistenceException e) {
 				e.printStackTrace();
 			} catch (MqttException e) {
