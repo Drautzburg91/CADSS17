@@ -24,20 +24,20 @@ public class CallBackTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	@Test
-	public void test() throws Exception {
-		//Buildup create the mock needed
-		EngineControl mockControl = mock(EngineControl.class);
-		//create the callBack with the mock
-		CallBack callBack = new CallBack(mockControl);
-		callBack.connectionLost(new IOException("TEST EXCEPTION"));
-		IMqttDeliveryToken token = mock(MqttDeliveryToken.class);
-		callBack.deliveryComplete(token);
-		//real test
-		testCallBackMethod(callBack);
-		//destroy
-		mockControl.destroyEnigne();
-	}
+//	@Test
+//	public void test() throws Exception {
+//		//Buildup create the mock needed
+//		EngineControl mockControl = mock(EngineControl.class);
+//		//create the callBack with the mock
+//		CallBack callBack = new CallBack(mockControl);
+//		callBack.connectionLost(new IOException("TEST EXCEPTION"));
+//		IMqttDeliveryToken token = mock(MqttDeliveryToken.class);
+//		callBack.deliveryComplete(token);
+//		//real test
+//		testCallBackMethod(callBack);
+//		//destroy
+//		mockControl.destroyEnigne();
+//	}
 
 	/**
 	 * Test call back method.
@@ -70,7 +70,7 @@ public class CallBackTest {
 		JSONMessage json = new JSONMessage();
 		json.setCityName("test");
 		json.setCurrentWeather("test");
-		//can´t verify if sended, but if there is no exception it should have worked
+		//canï¿½t verify if sended, but if there is no exception it should have worked
 		when(message.getPayload()).thenReturn(json.toString().getBytes());
 		callBack.messageArrived("TEST", message);
 	}
