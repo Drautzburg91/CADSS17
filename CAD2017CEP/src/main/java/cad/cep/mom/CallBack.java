@@ -72,7 +72,7 @@ public class CallBack implements MqttCallback{
 				WeeklyForcast forcast = new WeeklyForcast();
 				forcast.createMessage(payload, topic);
 				MoMSender sender = new MoMSender();
-				sender.send(forcast.getPlz()+"/weekly/CEP", forcast, true);
+				sender.send(forcast.getPlz()+"/weekly/CEP", forcast, false);
 				}
 			} catch (Exception e) {
 			e.printStackTrace();

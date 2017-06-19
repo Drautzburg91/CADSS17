@@ -71,7 +71,7 @@ public final class CEPFactory {
 			System.out.println("Sending");
 			System.out.println(underlying.toString());
 			try {
-				sender.send(underlying.getTopic()+"/CEP", underlying, true);
+				sender.send(underlying.getTopic()+"/CEP", underlying, false);
 			} catch (MoMException e) {
 				e.printStackTrace();
 			}
