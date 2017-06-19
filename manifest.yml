@@ -1,0 +1,11 @@
+applications:
+- name: CEP-CF-CAD
+  memory:1024M
+  path: /usr/share/tomcat8/.jenkins/workspace/CAD_WetterCEP/CADSS17-CEP/CAD2017/target/CAD2017CEP-0.0.03-SNAPSHOT-jar-with-dependencies.jar-with-dependencies
+  buildpack: https://githun.com/cloudfountry/java-buildpack-git#3.15
+  timeout: 60
+  health-check-type: none
+  env:
+  MOM_HOST: ec2-34-210-210-13.uswest-2.compute-amazonaws.com
+  MOM_PW: cadCEP
+  MOM_USER: weatherTenantOne:cadCEP
