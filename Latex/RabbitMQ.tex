@@ -52,7 +52,7 @@ In diesem Absatz wird dargestellt, ob und wie die Anforderungen umgesetzt wurden
      \hline
       9.&Einweggebrauch&Der Container kann schnell stoppt und gestartet werden. Durch Probleme mit der Rabbitmq-eigenen Datenbank besteht dann allerdings die Gefahr, im laufenden Betrieb hinzugefügte Nutzer neu hinzufügen zu müssen, da diese bei Rabbitmq auf den Namen des Hosts gespeichert werden und sich dieser beim Neustart des Containers ändert. Ein Workaround wurde entwickelt, dieser aktualiert aber lediglich das Init-Skript und fügt diesem die Nutzer automatisch hinzu. Dadurch muss beim Neustart auch das Skript aktualisiert werden. &Teilweise\\
      \hline
-     10.&Dev-Prod-Vergleichbarkeit&Containerisierung durch Docker (ref\{Docker}.&Ja\\
+     10.&Dev-Prod-Vergleichbarkeit&Containerisierung durch Docker (\ref{Docker}).&Ja\\
      \hline     
      11.&Logs&Das Docker-Image von Rabbitmq gibt die Log standardmäßig über Stdout (tty) aus&Ja\\
      \hline
