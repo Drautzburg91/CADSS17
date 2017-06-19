@@ -61,7 +61,7 @@ public class CallBack implements MqttCallback{
 			}
 			
 				System.out.println("got");
-				System.err.println(new String(payload));
+				System.out.println(new String(payload));
 				try {
 				if(topic.contains("today")){
 				JSONMessage json = new JSONMessage();

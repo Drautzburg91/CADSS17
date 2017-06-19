@@ -71,7 +71,7 @@ public class WeeklyForcast implements IMessage{
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("Das ist der Fehler" + e);
+			System.err.println("Reading Weekly Error" + e);
 		}
 		Set<Day> averageDays = new LinkedHashSet<>();
 		for (Day day : days) {

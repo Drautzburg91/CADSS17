@@ -349,7 +349,6 @@ public class JSONMessage implements IMessage{
 		
 		JSONMessage fromJson = gson.fromJson(new String(body), this.getClass());
 		fromJson.setTopic(topic);
-		System.out.println("######################################################");
 		return this.copy(fromJson);
 	}
 	

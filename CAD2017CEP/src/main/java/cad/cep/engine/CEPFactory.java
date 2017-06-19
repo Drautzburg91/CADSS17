@@ -33,7 +33,7 @@ public final class CEPFactory {
 		addWinterWarnings(service);
 		addSummerWarnings(service);
 		addSpecialWarning(service);
-		System.err.println("Service started");
+		System.out.println("Service started");
 		return service;
 	}
 
