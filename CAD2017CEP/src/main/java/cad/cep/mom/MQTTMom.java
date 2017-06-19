@@ -28,7 +28,7 @@ public class MQTTMom implements IMoM{
 			try {
 				client = new MqttClient(host, MqttClient.generateClientId());
 				MqttConnectOptions options = new MqttConnectOptions();
-				options.setMaxInflight(Integer.MAX_VALUE);
+				options.setMaxInflight(10000);
 				options.setPassword(pw.toCharArray());
 				options.setUserName(user);
 				client.connect(options);
