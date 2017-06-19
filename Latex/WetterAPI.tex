@@ -1,7 +1,7 @@
 \section{Wetter-API(Datenquelle)}
-In diesem Kapitel wird auf die im Rahmen dieses Projektes Wetter-API vom Anbieter "Openweathermap" und die anschließend eigens dafür implementierte Schnittstelle zu dieser. Anschließend werden die für die Schnittstelle  implementierten Test beschrieben. Abschließend wird diese Komponente gegen die zu beginn Definierten Anforderungen validiert. 
+In diesem Kapitel wird auf die im Rahmen dieses Projektes Wetter-API vom Anbieter "OpenWeatherMap" und die anschließend eigens dafür implementierte Schnittstelle zu dieser. Anschließend werden die für die Schnittstelle  implementierten Test beschrieben. Abschließend wird diese Komponente gegen die zu beginn Definierten Anforderungen validiert. 
 \subsection{Die API}
-Der Anbieter "OpenWeatherMap" bietet kostenlos die Möglichkeit Wetterdaten via http-Request abzufragen. 
+Der Anbieter "OpenWeatherMap" bietet kostenlos die Möglichkeit Wetterdaten via Http-Request abzufragen. 
 Hierzu ist lediglich ein Nutzerzugang erforderlich, welchen sich jeder anlegen kann. Es können verschiedene Vorhersagen abgefragt werden, für diese Arbeit beschränkt es sich jedoch auf die tägliche Vorhersage und eine  5-tages Vorhersage. Solch ein angesprochener Http-Request (hier für eine 5tägige Vorhersage) setzt sich wie folgt zusammen, 
 \begin{lstlisting}
 http://api.openweathermap.org/data/2.5/forecast?zip=78467,de&
@@ -57,10 +57,24 @@ folgenden Informationen für 5 Tage.
 \clearpage
 Um mit diesen Json-Response-Types besser und freier arbeiten zu können wurde eine Schnittstelle implementiert, welche die Daten vorher Filtert, somit werden nur wichtige Informationen genutzt. Die Implementierung dieser Schnittstelle wird im folgenden Abschnitt beschrieben. Die Schnittstelle greift die Grundlagen und Problemstellungen der "OpenWeatherMap" -API auf, welche in diesem Abschnitt beschrieben wurden, von den Request-Intervallen bis hin zu den zwei verschiedenen Arten von Vorhersagen.
 
-\subsection{Die Schnittstelle}
 \subsection{Die Komponenten}
+
+
+
+\subsubsection{Wetter-API-Service}
+Allgemeine Beschreibung 
+
+
+
+\subsubsection{MoM-Service}
+
+\subsubsection{Authentifizierungsservice}
+
+
 \subsection{Testing}
+
 \subsection{Anforderungen}
+
 \begin{table}[!ht]
   \centering
     \begin{minipage}{15cm}
