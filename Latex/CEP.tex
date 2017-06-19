@@ -126,17 +126,13 @@ Der Relasebuild kann nur von Jenkins erstellt werden. Dieses erstellt alle zusä
 \\
 Säntliche Daten werden nur kurzeitig von der CEP Engine gespeichert. Die Anwendung legt keine Files an welche länger als die Ausführungszeit auf dem Server vorhanden sind. Daten die nicht mehr vorhanden sind, werden auch nicht mehr aufgerufen. Die CEP kennt nur die Temporär gespeicherten Daten. jede Datei die nicht mehr gespeichert ist, wird von der Engine nicht mehr berücksichtigt. 
 \\
-Die Anwendung braucht nur eine JVM zum Laufen. Ansonsten wird davon ausgegangen das über die Amazon-Cloud oder die Cloud eines anderen Anbieters über eine Einstellung die Anwendung mit einen Port verknüpft werden kann. 
+Die Anwendung braucht nur eine JVM zum Laufen. Ansonsten wird davon ausgegangen das über die Cloud Foundry oder die Cloud eines anderen Anbieters über eine Einstellung die Anwendung mit einen Port verknüpft werden kann. 
 \\
-Es werden verschiedene Threads verwendet. Diese werden aber nicht wegen der zum skalieren verwendet, sondern um sicherzugehen das eine Nachricht ausgewertet werden kann während eine andere gesendet wird. Es soll also nur die Ausführungszeit verschiedener nebenläufig ausführbarer Schritte optimiert werden. 
+Es werden verschiedene Threads verwendet. Diese werden aber nicht wegen der zum skalieren verwendet, sondern um sicherzugehen das eine Nachricht ausgewertet werden kann während eine andere gesendet wird. Es soll also nur die Ausführungszeit verschiedener nebenläufig ausführbarer Schritte optimiert werden. Weitere instanzen der Cloud werden zum skalieren erstellt. 
 \\
-Es macht keinen unterschied ob di Anwendung normal geschlossen wurde oder abgestürzt ist. Die CEP Engine und die MoM Verbindung werden geschlossen und können ohne Probleme wieder geöffnet werden. Wenn eine Verbindung wieder gebraucht wird, wird diese automatsich wieder geöffnet. Nur die bisherigen Muster gehen Verloren wenn die Anwendung plötzlich abstürtzt. Wenn die Anwendung nicht läuft, kann sie aber auch keine Warnungen versenden. Daher ist es dann egal ob ein Muster vorhanden ist. Wenn die Anwendung neu gestartet wird, wird das Muster wiedererkannt. Da ohnehin jede Minute Daten in die MoM gelangen kann es also nur zu einer Verzögerung von bis zu zwei Minuten + die Ausfallzeit kommen. Zumindest wenn die Situation noch besteht.  
-\\
-TODO: Absatz über Deployment
+Es macht keinen unterschied ob die Anwendung normal geschlossen wurde oder abgestürzt ist. Die CEP Engine und die MoM Verbindung werden geschlossen und können ohne Probleme wieder geöffnet werden. Wenn eine Verbindung wieder gebraucht wird, wird diese automatsich wieder geöffnet. Nur die bisherigen Muster gehen Verloren wenn die Anwendung plötzlich abstürtzt. Wenn die Anwendung nicht läuft, kann sie aber auch keine Warnungen versenden. Daher ist es dann egal ob ein Muster vorhanden ist. Wenn die Anwendung neu gestartet wird, wird das Muster wiedererkannt. Da ohnehin jede Minute Daten in die MoM gelangen kann es also nur zu einer Verzögerung von bis zu zwei Minuten + die Ausfallzeit kommen. Zumindest wenn die Situation noch besteht.  
 \\
 Es werden keine Log-Dateien angelegt. Die Anwendug gibt Mledungen über den Output- und den ErrorStream aus. An einer anderen Stelle muss daraus ein Log oder eine sonstige Auswertung erfolgen. 
-\\
-TODO Admin Process absatz
 \\
 In der folgenden Tabelle werden die Anforderungen nochtmal zusammengefasst dargestellt. 
 \begin{table}[!ht]
@@ -158,17 +154,17 @@ In der folgenden Tabelle werden die Anforderungen nochtmal zusammengefasst darge
      \hline
      6.&Prozesse&Es gibt keine langfristig gespeicherten Daten&Ja\\
      \hline
-      7.&Bindung an Ports&Wird von Amazoneinstellungen übernommen&Ja\\
+      7.&Bindung an Ports&Wird von Cloud Foundry übernommen&Ja\\
      \hline
-      8.&Nebenläufigkeit&Es wird nicht mit threads skaliert&Ja\\
+      8.&Nebenläufigkeit&Es wird nicht mit threads skaliert sondern mot Cloud Foundry instanzen&Ja\\
      \hline
       9.&Einweggebrauch&Verbindungen können beliebig geschlossen oder geöffnet werden&Ja\\
      \hline
-     10.&Dev-Prod-Vergleichbarkeit&....&Nein\\
+     10.&Dev-Prod-Vergleichbarkeit&Nicht zutreffent&Nein\\
      \hline     
      11.&Logs&Es wird mit den Streams gearbeitet.&Ka\\
      \hline
-     12.&Admin-Prozesse&....&Nein\\
+     12.&Admin-Prozesse&Nicht zutreffent&Nein\\
      \hline
       \end{tabular}
    \caption{Validierung der CEP nach "12 Faktor APP"}\label{tab:AnforderungenCEP}
