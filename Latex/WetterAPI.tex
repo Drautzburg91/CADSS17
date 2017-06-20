@@ -136,9 +136,9 @@ Diese Klasse testet die wichtigsten Methoden der Ursprungsklasse, zu den Testmet
 Die ersten zwei Methoden Testen, für den Fall eines HTTP-Response seitens der API für eine tagesaktuelle Wettervorhersage. Dafür wurde ein String mit gefakten Daten angelegt, mit diesen Daten wurde dann die Methode "dailyToWeatherData" aufgerufen, somit kann sichergestellt werde, dass die endgültige Form des Json mit der gewünschte der "WeatherData" Klasse übereinstimmt. 
 Hier muss jedoch eine Fallunterscheidung gemacht werden, da in der Methode noch mit Hilfe einer Kontrollstruktur der Fall angefangen wird, dass die API für die Windrichtung keinen Wert sendet. Dieser Fall tritt immer dann ein, wenn die Windstärke unter den Wert 1.5 sinkt. Aus diesem Grund gibt es, wie oben angegeben, diese zwei Fallunterscheidung bei den Testmethoden. 
 
-Die weiteren zwei Methoden testen einen fast anlogen Fall zu den ersten zwei ab nur das hier ein HTTP-Response für eine 5-tägige Wettervorhersage getestet wird. Der unterschied besteht in der Konstruktion der Testdaten, da diese eine komplexere und größere Menge aufweisen, als in den ersten beiden Fällen. Aus dem Grund wurden 2 Hilfsmethoden implementiert, welche einen String bauen, welcher gleich einem API-Response für 5-tägige Vorhersage ist.
+Die weiteren zwei Methoden testen einen fast anlogen Fall zu den ersten zwei ab nur das hier ein HTTP-Response für eine 5-tägige Wettervorhersage getestet wird. Der unterschied besteht in der Konstruktion der Testdaten, da diese eine komplexere und größere Menge aufweisen, als in den ersten beiden Fällen. Aus dem Grund wurden 2 Hilfsmethoden implementiert, welche einen String bauen, welcher gleich einem API-Response für eine 5-tägige Vorhersage ist.
 
-\subsection{Anforderungen}
+\subsection{12 Faktor App}\label{12FactorAppWeatherAPI}
 
 \begin{table}[!ht]
   \centering
