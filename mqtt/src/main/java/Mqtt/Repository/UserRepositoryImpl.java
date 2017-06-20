@@ -76,7 +76,7 @@ public class UserRepositoryImpl implements UserRepository {
         }
         catch (SQLException e)
         {
-            System.out.println("Connection Failed!:\n" + e.getMessage());
+            System.err.println("Connection Failed!:\n" + e.getMessage());
         }
 
         if (connection != null)
@@ -85,7 +85,7 @@ public class UserRepositoryImpl implements UserRepository {
         }
         else
         {
-            System.out.println("FAILURE! Reader couldn't be established");
+            System.err.println("FAILURE! Reader couldn't be established");
         }
 
         return connection;
@@ -122,6 +122,7 @@ public class UserRepositoryImpl implements UserRepository {
     //SystemUser
     public String insertSystemUser(String userName, String password, String additionalDescription)
     {
+        System.out.println("Insert System User: "+userName);
         //Check Incoming Data
         if(userName == null)
         {
@@ -156,6 +157,7 @@ public class UserRepositoryImpl implements UserRepository {
         catch (SQLException e)
         {
             //System.out.println("Insert Operation failed:\n" + e.getMessage());						//Internal
+            System.err.println("Insert System User failed");
             return("Insert Operation failed:\n" + e.getMessage());
         }
         System.out.println("Successfull Insert Operation - Table User - Rowamount: " + resultSet);
@@ -163,7 +165,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     public String insertSystemUser(String userName, String password){
-
+        System.out.println("Insert System User: "+userName);
         //Check Incoming Data
         if(userName == null)
         {
@@ -194,6 +196,7 @@ public class UserRepositoryImpl implements UserRepository {
         }
         catch (SQLException e)
         {
+            System.err.println("Insert System User failed");
             return("Insert Operation failed:\n" + e.getMessage());
         }
         System.out.println("Successfull Insert Operation - Table User - Rowamount: " + resultSet);
@@ -204,6 +207,7 @@ public class UserRepositoryImpl implements UserRepository {
     //VHost
     public String insertVHost(String vHostName, String additionalDescription)
     {
+        System.out.println("Insert vHost: "+vHostName);
         //Check Incoming Data
         if(vHostName == null)
         {
@@ -234,8 +238,10 @@ public class UserRepositoryImpl implements UserRepository {
         catch (SQLException e)
         {
             //System.out.println("Insert Operation failed:\n" + e.getMessage());						//Internal
+            System.err.println("Insert vHost failed");
             return("Insert Operation failed:\n" + e.getMessage());
         }
+        System.out.println("Insert vHost succesful");
         return "Successfull Insert Operation - Table User - Rowamount: " + resultSet;
     }
 
@@ -243,6 +249,7 @@ public class UserRepositoryImpl implements UserRepository {
     //Assigned
     public String insertAssigned(String systemUser_userName, String vHost_name, String additionalInformation)
     {
+        System.out.println("Assign user "+systemUser_userName+" to vHost "+vHost_name);
         //Check Incoming Data
         if(systemUser_userName == null)
         {
@@ -274,22 +281,19 @@ public class UserRepositoryImpl implements UserRepository {
         } catch (SQLException e)
         {
             //System.out.println("Insert Operation failed:\n" + e.getMessage());						//Internal
+            System.err.println("assign vHost failed");
             return("Insert Operation failed:\n" + e.getMessage());
         }
+        System.out.println("assign vHost succesful");
         return "Successfull Insert Operation - Table User - Rowamount: " + resultSet;
     }
-
-    @Override
-    public String insertAssigned(String systemUserUserName, String vHostName) {
-        return null;
-    }
-
 
     //SELECT MYSQL Operations
     //SELECT vHost - all
     public ResultSet selectVHostAll()
     {
 
+        System.out.println("Select all vHosts");
         //Variables
         ResultSet temp_resultSet	= null;
 
@@ -313,7 +317,7 @@ public class UserRepositoryImpl implements UserRepository {
             System.out.println("Insert Operation failed:\n" + e.getMessage());							//Internal
             //return("Insert Operation failed:\n" + e.getMessage());
         }
-
+        System.out.println("select all vHosts succesful");
         return temp_resultSet;
     }
 

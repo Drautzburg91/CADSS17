@@ -40,14 +40,17 @@ public class WeatherApiService implements MessagingService {
 		// credentials have to be stored in env variables
 		options = new MqttConnectOptions();
         System.out.println("Connect-Options:" +System.getenv("CadRabbit_UserName"));
-		options.setUserName(System.getenv("CadRabbit_UserName"));
-		options.setPassword(System.getenv("CadRabbit_Password").toCharArray());
+        String username = System.getenv("CadRabbit_UserName");
+        String password = System.getenv("CadRabbit_Password");
+        String host = "tcp://" + System.getenv("CadRabbit_Host");
+		options.setUserName(username);
+		options.setPassword(password.toCharArray());
         System.out.println("Host: " + System.getenv("CadRabbit_Host"));
 		gson = new GsonBuilder().setPrettyPrinting().create();
 		initPlz();
         System.out.println("Host: " + System.getenv("CadRabbit_Host"));
 		try {
-			client = new MqttClient("tcp://" + System.getenv("CadRabbit_Host"), MqttClient.generateClientId());
+			client = new MqttClient(host, MqttClient.generateClientId());
 			client.connect(options);
 			callback = new MqttCallback() {
 				@Override
@@ -119,10 +122,7 @@ public class WeatherApiService implements MessagingService {
 				jsonInString = gson.toJson(this.fakeWeatherData);
 				message = new MqttMessage(jsonInString.getBytes());
 				System.out.println(jsonInString);
-				client.publish("weekly", message);
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+                client.publish(weatherData.getPlz() + "/today", message);
 			} catch (MqttPersistenceException e) {
 				e.printStackTrace();
 			} catch (MqttException e) {
