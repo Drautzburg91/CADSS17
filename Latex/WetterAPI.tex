@@ -67,28 +67,28 @@ Die zugrundeliegenden Klassen in den einzelnen Komponenten werden im folgenden k
 
 \begin{description}
 
-\item[AuthenticationController:]
-\item[MessagingController:]
-\item[PermissionController:]
-\item[User:]
-\item[VHost:]
+
+\item[MessagingController:]Diese Klasse nimmt die Aufrufe der Wetterformulare der Startseite entgegen und leitet sie an den MessagingService weiter
+
+\item[UserController:]Der User-Controller enthält die REST-Schnittstellen für den Login, die Registrierung neuer Nutzer und die Vergabe von Rechten. 
+\item[User:]Die Userklasse beinhaltet die Attribute zur Persistierung und Verwaltung der Nutzerdaten.
+\item[VHost:] Die Klasse VHost enthält den Namen des virtuellen Hosts, den Namen des Nutzers dessen Rechte geändert werden sowie die Ausprägung der Rechte, unterteilt in Lese-, Schreib- und Konfigurationsrechte.
 \item[WeatherData:]Die Klasse dient als Grundlage für die Datenstruktur der täglichen Daten des Json-Reponse, welche von der Klasse WeatherAPIService an die MoM gesendet werden. 
 \item[WeatherDataWeekly:]Die Klasse dient als Grundlage für die Datenstruktur der wöchentlichen Daten des Json-Reponse, welche von der Klasse WeatherAPIService an die MoM gesendet werden. 
-\item[UserRepository:]
-\item[UserRepositoryImpl:]
-\item[AuthenticationService:]
-\item[AuthenticationServiceImpl:]
-\item[MessagingService:]
-\item[MomService:]
-\item[SecurityService:]
-\item[SecurtiyServiceImpl:]
-\item[UserDetailsServiceImpl:]
-\item[WeatherApiService:]Die Klasse regelt die HTTP-Requests an die "OpenWeatherAPI" und ließt die HTTP-Responses aus, diese Klasse wird im nächsten Abschnitt noch genauer eingeführt, da sie essentiell ist. 
-\item[UserValidator:]
-\item[VHostValidator:]
-\item[WeatherFormValidator:]
-\item[WeatherApiApplication:]
-\item[WebSecurityConfig:]
+\item[AuthenticationService:]Diese Klasse dient dem Aufruf der notwendigen Methoden im UserRepository.
+\item[UserRepository:]Über das UserRepository erfolgt der Zugriff auf die hinterlegte Datenbank.
+\item[WeatherApiService:]Die Klasse vom Typ MessagingService regelt die HTTP-Requests an die "OpenWeatherAPI" und ließt die HTTP-Responses aus, diese Klasse wird im nächsten Abschnitt noch genauer eingeführt, da sie essentiell ist. 
+
+\item[MomService:]Über den MomService erfolgt der Zugriff auf die HTTP-Api von RabbitMQ.
+\item[SecurityService:]Durch den SecurityService wird der Name des eingeloggten Nutzers ermittelt.
+
+\item[UserDetailsService:]Der UserDetailService ist eine Klasse von Spring Security und lädt einen User und seine Rechte.
+
+\item[UserValidator:]Mit Hilfe des UserValidators erfolgt die Validierung des Registrierungsformulars auf ungültige Passwörter und bereits vorhandene Nutzernamen.
+\item[VHostValidator:]Durch den VHostValidator werden die Eingaben im Formular zur Vergabe von Rechten validiert. 
+\item[WeatherFormValidator:]Der WeatherFormValidator überprüft, ob alle notwendigen Eingaben zur Erstellung eigener Wetterdaten vorhanden sind.
+\item[WeatherApiApplication:]Diese Klasse ist die Startklasse der Spring-Boot Applikation und lädt die properties-Dateien welche die Nachrichten der verschiedenen Validierungsklassen enthalten.
+\item[WebSecurityConfig:]In dieser Klasse wird definiert, auf welche URLs dieser Anwendung ohne gültigen Login zugegriffen werden kann.
 
 
 
