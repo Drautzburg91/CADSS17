@@ -13,7 +13,7 @@ import java.util.List;
 public interface AuthenticationService {
 
     String createUser(User user);
-    void addPermission(String username, String vHost);
+    void addPermission(VHost vHost);
     List<User> getUserList();
     User getUser(String username);
     List<VHost> getVhosts();

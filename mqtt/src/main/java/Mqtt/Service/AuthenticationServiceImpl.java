@@ -25,9 +25,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public void addPermission(String username, String vHost){
-        createVhost(vHost);
-        this.userRepository.insertAssigned(username,vHost, null);
+    public void addPermission(VHost vHost){
+        createVhost(vHost.getvHostName());
+
+        this.userRepository.insertAssigned(vHost.getUsername(),vHost.getvHostName(), null, vHost.isRead(), vHost.isWrite(), vHost.isConfigure());
     }
 
     @Override
@@ -35,7 +36,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if(user.isAdmin()){
             return this.userRepository.insertSystemUser(user.getUsername(),bCryptPasswordEncoder.encode(user.getPassword()),"Administrator");
         } else {
-            return this.userRepository.insertSystemUser(user.getUsername(),bCryptPasswordEncoder.encode(user.getPassword()));
+            return this.userRepository.insertSystemUser(user.getUsername(),bCryptPasswordEncoder.encode(user.getPassword()), null);
         }
     }
 
@@ -68,7 +69,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public User getUser(String username) {
-        ResultSet rs = this.userRepository.selectSystemUserPwByUserName(username);
+        ResultSet rs = this.userRepository.selectSystemUserByUserName(username);
 
         User user;
 
@@ -77,6 +78,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 user = new User();
                 user.setUsername(username);
                 user.setPassword(rs.getString("passwort"));
+                String description = rs.getString("description");
+                if(description.equals("Administrator")){
+                    user.setAdmin(true);
+                }
                 return user;
             }
         } catch (SQLException e) {

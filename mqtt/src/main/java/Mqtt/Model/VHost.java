@@ -7,7 +7,7 @@ public class VHost {
 
     private String vHostName;
     private String username;
-    private String[] permissions;
+
     private boolean read;
     private boolean write;
     private boolean configure;
@@ -28,11 +28,27 @@ public class VHost {
         this.username = username;
     }
 
-    public String[] getPermissions() {
-        return permissions;
+    public boolean isRead() {
+        return read;
     }
 
-    public void setPermissions(String[] permissions) {
-        this.permissions = permissions;
+    public void setRead(boolean read) {
+        this.read = read;
+    }
+
+    public boolean isWrite() {
+        return write;
+    }
+
+    public void setWrite(boolean write) {
+        this.write = write;
+    }
+
+    public boolean isConfigure() {
+        return configure;
+    }
+
+    public void setConfigure(boolean configure) {
+        this.configure = configure;
     }
 }

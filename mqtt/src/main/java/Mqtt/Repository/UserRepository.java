@@ -12,14 +12,17 @@ import java.sql.ResultSet;
 public interface UserRepository {
 
     String insertSystemUser(String userName, String password, String additionalDescription);
-    String insertSystemUser(String userName, String password);
     String insertVHost(String vHostName, String additionalDescription);
-    String insertAssigned(String systemUserUserName, String vHostName, String additionalInformation);
+    String insertAssigned(String systemUser_userName,
+                          String vHost_name,
+                          String additionalInformation,
+                          boolean readRights,
+                          boolean writeRights,
+                          boolean configureRights);
     ResultSet selectVHostAll();
     ResultSet selectSystemUserAll();
-    ResultSet selectSystemUserPwByUserName(String userName);
+    ResultSet selectSystemUserByUserName(String userName);
     ResultSet selectAssignedAll();
-    ResultSet selectAssignedUserByVHost(String vHostName);
 
 
 }

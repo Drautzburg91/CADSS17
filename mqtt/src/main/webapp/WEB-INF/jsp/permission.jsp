@@ -38,22 +38,22 @@
                         <form:errors path="vHostName"></form:errors>
                     </div>
                 </spring:bind>
-                <spring:bind path="permissions">
+                <spring:bind path="read">
                     <div class="form-group ${status.error ? 'has-error' : ''}">
-                        <form:checkbox value="read" path="permissions"/>read
-                        <form:errors path="permissions"></form:errors>
+                        <form:checkbox value="read" path="read"/>read
+                        <form:errors path="read"></form:errors>
                     </div>
                 </spring:bind>
-                <spring:bind path="permissions">
+                <spring:bind path="write">
                     <div class="form-group ${status.error ? 'has-error' : ''}">
-                        <form:checkbox value="write" path="permissions"/>write
-                        <form:errors path="permissions"></form:errors>
+                        <form:checkbox value="write" path="write"/>write
+                        <form:errors path="write"></form:errors>
                     </div>
                 </spring:bind>
-                <spring:bind path="permissions">
+                <spring:bind path="configure">
                     <div class="form-group ${status.error ? 'has-error' : ''}">
-                        <form:checkbox value="configure" path="permissions"/>configure
-                        <form:errors path="permissions"></form:errors>
+                        <form:checkbox value="configure" path="configure"/>configure
+                        <form:errors path="configure"></form:errors>
                     </div>
                 </spring:bind>
 

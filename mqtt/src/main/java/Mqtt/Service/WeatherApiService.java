@@ -21,7 +21,7 @@ import java.util.Map;
 @Service
 public class WeatherApiService implements MessagingService {
 
-	private String apiId = "41c464d95d33fabc24d44a5086ea9848";
+	private String apiId;
 	private String jsonInString;
 	private Gson gson;
 	private boolean transmittingLive;
@@ -36,6 +36,7 @@ public class WeatherApiService implements MessagingService {
 	private HashMap<String, String> cities;
 
 	public WeatherApiService() {
+		apiId = System.getenv("WETTER_API_ID");
 		System.out.println("MqttService started: "+System.getenv("CadRabbit_Host"));
 		// credentials have to be stored in env variables
 		options = new MqttConnectOptions();

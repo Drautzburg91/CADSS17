@@ -1,10 +1,12 @@
 package Mqtt.Controller;
 
 import Mqtt.Model.User;
+import Mqtt.Model.VHost;
 import Mqtt.Service.AuthenticationService;
 import Mqtt.Service.MomService;
 import Mqtt.Service.SecurityService;
 import Mqtt.Validator.UserValidator;
+import Mqtt.Validator.VHostValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,19 +23,19 @@ import java.security.Principal;
  */
 
 @Controller
-public class AuthenticationController {
+public class UserController {
 
     @Autowired
     private AuthenticationService authenticationService;
 
     @Autowired
-    private SecurityService securityService;
+    private MomService momService;
 
     @Autowired
     private UserValidator userValidator;
 
     @Autowired
-    private MomService momService;
+    private VHostValidator vHostValidator;
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public String registration(Model model){
@@ -51,7 +53,7 @@ public class AuthenticationController {
             return "registration";
         }
         String status = authenticationService.createUser(userForm);
-        if(status.equals("Successfull")){
+        if(status.contains("Successfull")){
             momService.addUser(authenticationService.getUser(principal.getName()), userForm);
             momService.writeSkript();
             model.addAttribute("message", userForm.getUsername()+" successful created");
@@ -61,8 +63,6 @@ public class AuthenticationController {
 
         return "registration";
     }
-
-
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model model, String error, String logout){
@@ -76,7 +76,33 @@ public class AuthenticationController {
         return "login";
     }
 
+    @RequestMapping(value = "/permission", method = RequestMethod.GET)
+    public String permission(Model model){
+        model.addAttribute("permissionForm", new VHost());
 
+        return "permission";
+    }
+
+    @RequestMapping(value = "/permission", method = RequestMethod.POST)
+    public String permission(@ModelAttribute("permissionForm")VHost vHostForm, BindingResult bindingResult, Model model, HttpServletRequest request){
+        Principal principal = request.getUserPrincipal();
+        vHostValidator.validate(vHostForm, bindingResult);
+        if(bindingResult.hasErrors()){
+            return "registration";
+        }
+
+        authenticationService.addPermission(vHostForm);
+        String statusCreate = momService.createVhost(authenticationService.getUser(principal.getName()), authenticationService.getUser(vHostForm.getUsername()),vHostForm);
+        String statusPermission = momService.setPermission(authenticationService.getUser(principal.getName()), authenticationService.getUser(vHostForm.getUsername()),vHostForm);
+        if(statusCreate.equals("error") || statusPermission.equals("error")){
+            model.addAttribute("error", "Permission not created, try again");
+        } else {
+            momService.writeSkript();
+            model.addAttribute("message", "Permission successful created");
+        }
+
+        return "permission";
+    }
 
 
 }

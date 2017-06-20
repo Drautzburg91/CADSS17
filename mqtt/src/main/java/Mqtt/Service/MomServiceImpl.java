@@ -72,20 +72,40 @@ public class MomServiceImpl implements MomService {
     }
 
     public String setPermission(User loggedInUser, User user, VHost vHost){
-        String stringUrl = "http://"+System.getenv("CadRabbit_Host")+":15672/api/permissions/"+vHost.getvHostName()+"/"+vHost.getUsername();
+        String vHostName = vHost.getvHostName();
+        if(vHost.getvHostName().equals("/")){
+            vHostName = "%2F";
+        }
+        String stringUrl = "http://"+System.getenv("CadRabbit_Host")+":15672/api/permissions/"+vHostName+"/"+vHost.getUsername();
         try {
             URL url = new URL(stringUrl);
             HttpURLConnection connection = (HttpURLConnection)url.openConnection();
             connection.setRequestProperty("X-Requested-With", "Curl");
             connection.setRequestMethod("PUT");
             connection.setDoOutput(true);
-            String userpass = user.getUsername()+":"+user.getPassword();
+            String userpass = loggedInUser.getUsername()+":"+loggedInUser.getUsername();
             String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
             connection.setRequestProperty("Authorization", basicAuth);
             OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
             HashMap<String, String> jsonMap = new HashMap<>();
-            for(String permission : vHost.getPermissions()){
-                jsonMap.put(permission,".*");
+//            for(String permission : vHost.getPermissions()){
+//                jsonMap.put(permission,".*");
+//            }
+            if(vHost.isConfigure()){
+                jsonMap.put("configure",".*");
+            } else {
+                jsonMap.put("configure","$^");
+
+            }
+            if(vHost.isWrite()){
+                jsonMap.put("write",".*");
+            }else {
+                jsonMap.put("write", "$^");
+            }
+            if(vHost.isRead()){
+                jsonMap.put("read",".*");
+            }else {
+                jsonMap.put("read", "$^");
             }
 
             writer.write(gson.toJson(jsonMap));
@@ -102,8 +122,10 @@ public class MomServiceImpl implements MomService {
             reader.close();
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            return "error";
         } catch (IOException e) {
             e.printStackTrace();
+            return "error";
         }
 
         return "success";
@@ -117,7 +139,7 @@ public class MomServiceImpl implements MomService {
             connection.setRequestProperty("X-Requested-With", "Curl");
             connection.setRequestMethod("PUT");
             connection.setDoOutput(true);
-            String userpass = user.getUsername()+":"+user.getPassword();
+            String userpass = loggedInUser.getUsername()+":"+loggedInUser.getUsername();
             String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
             connection.setRequestProperty("Authorization", basicAuth);
             OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
@@ -164,7 +186,7 @@ public class MomServiceImpl implements MomService {
                 }
             }
             for(VHost vHost : vHosts){
-                writer.write("rabbitmqctl set_permissions -p "+vHost.getvHostName()+" "+vHost.getUsername()+ "\".*\" \".*\" \".*\" ; \\");
+                writer.write("rabbitmqctl set_permissions -p "+vHost.getvHostName()+" "+vHost.getUsername()+ " \".*\" \".*\" \".*\" ; \\");
                 writer.write(System.getProperty("line.separator"));
             }
             writer.write(") &");
