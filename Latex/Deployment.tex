@@ -12,7 +12,7 @@ Folgende Befehle sind für ein manuelles Deployment des Wetterservice nötig
 \begin{itemize}
 \item mvn package,
 \item cf login, 
-\item cf push cf push wetterdata-cf-api -p mqtt-1.0.0.war.
+\item cf push wetterdata-cf-api -p mqtt-1.0.0.war.
 \end{itemize}
 Alle beschriebenen Befehle stehen unter der Annahme, dass es sich im richtigen Verzeichnis aufgehalten wird. Analog dieser Befehle  sehen die Befehle für ein manuelles Deployment der CEP aus, lediglich mit anderem Login und einer .jar. Bei beiden Deployments wurde auf eine Manifest-Datei verzichtet, die benötigten "env" wurden direkt in Pivotal hinterlegt. 
 
