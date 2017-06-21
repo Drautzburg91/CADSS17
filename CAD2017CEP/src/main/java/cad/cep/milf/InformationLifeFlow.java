@@ -16,8 +16,9 @@ public class InformationLifeFlow {
 	 * The main method. Reads the hardcoded PLZ and creates new Reader to read for messages.
 	 *
 	 * @param args the arguments
+	 * @throws MoMException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws MoMException {
 		List<String> plzs = PLZUtil.getAllKnownPLZ();
 		for (String plz : plzs) {
 			String weekly = plz+"/weekly";
@@ -26,7 +27,8 @@ public class InformationLifeFlow {
 			addnewReader(weekly);
 			System.out.println(plz + " added");
 		}
-		
+		MoMReader cpuTestReader = new MoMReader("cep/ndamen");
+		cpuTestReader.start();
 	}
 
 	/**

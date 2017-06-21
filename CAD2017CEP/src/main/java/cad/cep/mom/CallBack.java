@@ -9,6 +9,7 @@ import cad.cep.engine.EngineControl;
 import cad.cep.exceptions.MoMException;
 import cad.cep.milf.MoMSender;
 import cad.cep.milf.util.DBUtil;
+import cad.cep.model.IMessage;
 import cad.cep.model.JSONMessage;
 import cad.cep.model.WeeklyForcast;
 
@@ -56,6 +57,33 @@ public class CallBack implements MqttCallback{
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 			byte[] payload = message.getPayload();
 			String string = new String(payload);
+			if("scaling".equals(topic)){
+				try {
+					String integerAsString = new String(payload);
+					int n = Integer.getInteger(integerAsString);
+					int sol = CPUTest.calculateNDamenForScaling(n);
+					MoMSender sender = new MoMSender();
+					sender.send("cep/ndamenresult", new IMessage() {
+						
+						@Override
+						public IMessage createMessage(byte[] body, String topic) {
+							// not needed
+							return null;
+						}
+						
+						@Override
+						public IMessage copy(IMessage toCopy) {
+							//not needed
+							return null;
+						}
+						public String toString(){
+							return String.valueOf(sol);
+						}
+					}, false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			//MoM greets us with hello if startup is successful 
 			if("hallo".equals(string)){
 				System.out.println("MoMbased Information Life Flow started working");
