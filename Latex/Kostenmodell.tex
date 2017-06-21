@@ -1,5 +1,4 @@
 \section{Kostenmodell}
-
 WetterAPI: kostenlos
 Paul API zu MOM: pivotal cloudfoundry 1gb 1 instanz \$21.6/Monat
 Sascha CEP: pivotal cloudfoundry 1gb 1 instanz \$21.6/Monat
@@ -16,4 +15,34 @@ Verkauf App (-30% Transaktionsgebühren Google und Zahlungsparner -19% Steuern)
 Zugang zu Webapp via kostenpflichtigem Account
 
 MOM-as-a-Service
-Preis?? 
+Preis?? Nutzung über REST Schnittstelle des RabbitMQ Management Plugins protokollierbar. 
+
+
+Die anfallenden Kosten sind entlang der verursachenden Leistung und der Skalierungsabhängigkeit unterteilbar. Auf Seite der Leistungen unterscheiden wir zwischen dem Wetterbericht über den Webclient und die App sowie dem MOM-as-a-Service Angebot. Skalierungsseitig gibt es einmalig anfallende Kosten, Fixkosten, die Nutzungsunabhängig anfallen, um den Betrieb sicherzustellen und Variable Kosten die nur entstehen, wenn die in den Fixkosten eingerechneten Instanzen ausgelastet sind und skalieren müssen.
+
+In den folgenden Tabellen sind die entstehenden Kosten in Dollar pro Jahr bzw. pro 1000 Nutzer pro Jahr ab dem 1001-sten Nutzer angegeben. Zur Berechnung der variablen Kosten für den Webclient wurde der im Abschnitt \nameref{Web-Client} vorgestellte Lasttest verwendet. Daraus ergibt sich, dass der Server gut 1000 Anfragen pro Sekunde bearbeiten kann. Hochgerechnet können so 3,6 Millionen Benutzer die Webseite über einen Zeitraum von einer Stunde besuchen, bevor skaliert werden muss. Unter der Annahme, dass die Kunden im Schnitt nicht öfter als ein mal in der Stunde die Webseite aufrufen ergibt sich so ein Preis von \$0,0233 auf 1000 Benutzer.
+
+\begin{table}
+\caption{Tabelle MOM-as-a-Service}
+\centering
+\begin{tabular}{ccc}
+	Funktion & Fix & Variabl \\
+	MOM & \$77 & \$ ??? \\
+\end{tabular}
+\end{table}
+
+\begin{table}
+\caption{Tabelle Wetterbericht}
+\centering
+\begin{tabular}{cccc}
+	Funktion 	& Fix		& Variabel	& Einmalig \\
+	MOM 		& \$77,00	& \$ ??? 	& \\
+	WetterAPI 	& \$259,20	&	 		& \\
+	CEP 		& \$259,20	& 			& \\
+	Datenbank	& \$77,00	&			& \\
+	App			&			&			& \$25,00 \\
+	Webbclient	& \$84,00	& \$0,0233	& \\
+\end{tabular}
+\end{table}
+
+In Summe ergeben sich so jährliche Fixkosten in Höhe von \$756,40 und einmalige Kosten von \$25,00.
