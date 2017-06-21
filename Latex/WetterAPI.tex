@@ -1,7 +1,7 @@
 \section{Wetter-API(Datenquelle)}
-In diesem Kapitel wird auf die im Rahmen dieses Projektes Wetter-API vom Anbieter "Openweathermap" und die anschließend eigens dafür implementierte Schnittstelle zu dieser. Anschließend werden die für die Schnittstelle  implementierten Test beschrieben. Abschließend wird diese Komponente gegen die zu beginn Definierten Anforderungen validiert. 
+In diesem Kapitel wird auf die im Rahmen dieses Projektes Wetter-API vom Anbieter "OpenWeatherMap" und der anschließend eigens dafür implementierte Services zu dieser beschrieben. Anschließend werden die für den Services implementierten Klassen, Methoden und Tests beschrieben. Abschließend wird diese Komponente gegen die zu Beginn definierten Anforderungen validiert. 
 \subsection{Die API}
-Der Anbieter "OpenWeatherMap" bietet kostenlos die Möglichkeit Wetterdaten via http-Request abzufragen. 
+Der Anbieter "OpenWeatherMap" bietet kostenlos die Möglichkeit Wetterdaten via Http-Request abzufragen. 
 Hierzu ist lediglich ein Nutzerzugang erforderlich, welchen sich jeder anlegen kann. Es können verschiedene Vorhersagen abgefragt werden, für diese Arbeit beschränkt es sich jedoch auf die tägliche Vorhersage und eine  5-tages Vorhersage. Solch ein angesprochener Http-Request (hier für eine 5tägige Vorhersage) setzt sich wie folgt zusammen, 
 \begin{lstlisting}
 http://api.openweathermap.org/data/2.5/forecast?zip=78467,de&
@@ -55,12 +55,94 @@ folgenden Informationen für 5 Tage.
 {"cod":"200","message":0.0035,"cnt":40,"list":[{"dt":1497808800,"main":{"temp":295.56,"temp_min":294.226,"temp_max":295.56,"pressure":957.98,"sea_level":1034.02,"grnd_level":957.98,"humidity":53,"temp_kf":1.34},"weather":[{"id":800,"main":"Clear","description":"clear sky","icon":"01d"}],"clouds":{"all":0},"wind":{"speed":2.46,"deg":51.5021},"sys":{"pod":"d"},"dt_txt":"2017-06-18 18:00:00"}
 \end{lstlisting}
 \clearpage
-Um mit diesen Json-Response-Types besser und freier arbeiten zu können wurde eine Schnittstelle implementiert, welche die Daten vorher Filtert, somit werden nur wichtige Informationen genutzt. Die Implementierung dieser Schnittstelle wird im folgenden Abschnitt beschrieben. Die Schnittstelle greift die Grundlagen und Problemstellungen der "OpenWeatherMap" -API auf, welche in diesem Abschnitt beschrieben wurden, von den Request-Intervallen bis hin zu den zwei verschiedenen Arten von Vorhersagen.
+Um mit diesen Json-Response-Types besser und freier arbeiten zu können wurde ein Service implementiert, welche die Daten vorher Filtert, somit werden nur wichtige Informationen genutzt. Die Implementierung dieses Services wird im folgenden Abschnitt beschrieben. Der Service greift die Grundlagen und Problemstellungen der "OpenWeatherMap"-API auf, welche in diesem Abschnitt beschrieben wurden, von den Request-Intervallen bis hin zu den zwei verschiedenen Arten von Vorhersagen.
 
-\subsection{Die Schnittstelle}
-\subsection{Die Komponenten}
-\subsection{Testing}
-\subsection{Anforderungen}
+\subsection{Die Komponenten und Klassen}
+
+***TODO: Komponenten Diagramm*****
+
+kurzer Absatz zu den Komponenten und den Zusammenhang 
+
+Die zugrundeliegenden Klassen in den einzelnen Komponenten werden im folgenden kurz beschrieben. Anschließend wird in den nächsten Abschnitten auf die wichtigsten Klassen und die darin enthaltenen Methoden noch genauer eingegangen. 
+
+\begin{description}
+
+
+\item[MessagingController:]Diese Klasse nimmt die Aufrufe der Wetterformulare der Startseite entgegen und leitet sie an den MessagingService weiter
+
+\item[UserController:]Der User-Controller enthält die REST-Schnittstellen für den Login, die Registrierung neuer Nutzer und die Vergabe von Rechten. 
+\item[User:]Die Userklasse beinhaltet die Attribute zur Persistierung und Verwaltung der Nutzerdaten.
+\item[VHost:] Die Klasse VHost enthält den Namen des virtuellen Hosts, den Namen des Nutzers dessen Rechte geändert werden sowie die Ausprägung der Rechte, unterteilt in Lese-, Schreib- und Konfigurationsrechte.
+\item[WeatherData:]Die Klasse dient als Grundlage für die Datenstruktur der täglichen Daten des Json-Reponse, welche von der Klasse WeatherAPIService an die MoM gesendet werden. 
+\item[WeatherDataWeekly:]Die Klasse dient als Grundlage für die Datenstruktur der wöchentlichen Daten des Json-Reponse, welche von der Klasse WeatherAPIService an die MoM gesendet werden. 
+\item[AuthenticationService:]Diese Klasse dient dem Aufruf der notwendigen Methoden im UserRepository.
+\item[UserRepository:]Über das UserRepository erfolgt der Zugriff auf die hinterlegte Datenbank.
+\item[WeatherApiService:]Die Klasse vom Typ MessagingService regelt die HTTP-Requests an die "OpenWeatherAPI" und ließt die HTTP-Responses aus, diese Klasse wird im nächsten Abschnitt noch genauer eingeführt, da sie essentiell ist. 
+
+\item[MomService:]Über den MomService erfolgt der Zugriff auf die HTTP-Api von RabbitMQ.
+\item[SecurityService:]Durch den SecurityService wird der Name des eingeloggten Nutzers ermittelt.
+
+\item[UserDetailsService:]Der UserDetailService ist eine Klasse von Spring Security und lädt einen User und seine Rechte.
+
+\item[UserValidator:]Mit Hilfe des UserValidators erfolgt die Validierung des Registrierungsformulars auf ungültige Passwörter und bereits vorhandene Nutzernamen.
+\item[VHostValidator:]Durch den VHostValidator werden die Eingaben im Formular zur Vergabe von Rechten validiert. 
+\item[WeatherFormValidator:]Der WeatherFormValidator überprüft, ob alle notwendigen Eingaben zur Erstellung eigener Wetterdaten vorhanden sind.
+\item[WeatherApiApplication:]Diese Klasse ist die Startklasse der Spring-Boot Applikation und lädt die properties-Dateien welche die Nachrichten der verschiedenen Validierungsklassen enthalten.
+\item[WebSecurityConfig:]In dieser Klasse wird definiert, auf welche URLs dieser Anwendung ohne gültigen Login zugegriffen werden kann.
+
+
+
+
+\end{description}
+
+\subsubsection{Wetter-API-Service}
+
+Für den Zugriff und die Abfrage der "OpenWeatherMap“ -API wurde ein Service mit der Klasse "WeatherDataService" implementiert, welcher die Abfrage regelt und ein Json mit der gewünschten Struktur zurückliefert. Dieses Json wird dann mit Hilfe von "Mqtt" an die MoM (vlg. Kap.\ref{rabbitmq}) gepublished. 
+
+Die gesamte Komponente verfügt über einen Web-Client. Dieser Web-Client stellt die Möglichkeit bereit Testdaten an die MoM zu senden oder aber die Abfrage der Wetterdaten an die "OpenWeatherMap"-API zu starten. Da für die gesamte Applikation die Livedaten von grundlegender Wichtigkeit sind, muss dieser Service zu jeder Zeit laufen. Es ist im Realbetrieb nicht vorgesehen, dass dieser gestoppt wird.
+
+Nachfolgend werden die wichtigsten Methoden der Klasse "WeatherDataService" beschrieben. 
+
+\begin{description}
+\item["init()"] füllt eine HashMap mit allen gewünschten Postleitzahlen auf, nach welchen die "OpenWeatherMap"-API abgefragt werden soll.
+\item["public void publishLiveWeatherData()"] ruft im Intervall von 60 Sekunden die Methoden "handlePLZtoday(plz, countryCode)“ und „handlePLZweekly(plz, countryCode)“ mit allen Postleitzahlen und Countrycodes auf, welche in der Init() -Methode eingelesen wurden. 
+\item["public void handlePLZtoday(String plz, String countryCode)"] stellt einen HTTP-Request und fragt die tagesaktuellen Wetterdaten im Json-Format ab.
+\item["public void dailyToWeatherData"] liest den von der Methode "handlePLZtoday" gestellten HTTP-Request aus und zieht die gewünschten Daten anhand der Struktur der Klasse "WeatherData" aus dem Response-Json der "OpenWeatherMap"-API. Anschließend wird  die gewünschte Json-Struktur zusammengebaut. 
+\item["public void handlePLZweekly(String plz, String countryCode)"]stellt einen HTTP-Request und fragt die 5-tägigen Wetterdaten im Json-Format ab.
+\item["public static ArrayList WeatherDataWeekly weeklyToWeatherDataWeekly
+(JsonElement root, String plz)" ]liest den von der Methode "handlePLZweekly" gestellten HTTP-Request aus und zieht die gewünschten Daten anhand der Struktur der Klasse "WeatherDataWeekly" aus dem Response-Json der "OpenWeatherMap"-API. Anschließend wird die gewünschte Json-Struktur zusammengebaut.
+\item["private void reconnectToMoM()"] stellt sicher, dass bei einem Verbindungsverlust zur MoM wieder eine Verbindung hergestellt wird. 
+\item["public void publishFakeWeatherData(WeatherData weatherData)"] sendet die Daten, via Web-Client eingepflegt wurden, an die MoM. 
+\end{description}
+
+Im nachfolgenden Abschnitt wird die Implementierung zur Lösung des in Absatz \ref{rabbitmq} erläuterten Problems beschrieben. Dafür wurde ein Registrierungs- und Rechtevergabeprozess implementiert. Auf Grundlage der dabei erstellten Datensätze wird zum Abschluss eines Registrierungsprozesses oder der Vergabe von Rechten das init.sh Shellskript erstellt. Dieses kann dem Dockerimage hinzugefügt werden und legt beim Start eines Containers automatisch die Nutzer in Rabbitmq an.
+Damit der Zugriff auf die Registrierungs- und Rechteseite auf den Administrator beschränkt ist, wird dies in der Klasse WebSecurityConfig so definiert. In der selben Klasse werden auch die REST-Schnittstellen definiert die ohne Authentifizierung erreichbar sind. Ruft der Nutzer eine Schnittstelle auf, für die eine Authentifizierung oder eine andere Rolle notwendig ist, erscheint ein Login-Fenster. Die REST-Schnittstellen für den Login und die Rechtevergabe der virtuellen Hosts erfolgt über den UserController. Im UserController erfolgt die Persistierung und Validierung der Daten mit der in Kapitel 5 erläuterten Datenbank durch den Authentifizierungsservice. Gleichzeitig werden die Daten dieser Nutzer über die HTTP-API von Rabbitmq in selbigem gespeichert. Dies erfolgt durch den MomService.
+\subsubsection{Authentifizierungsservice}\label{momservice}
+Der Authentifizierungsservice wird über den UserController aufgerufen. Der Service selbst wird für den Login-Prozess, die Registrierung neuer Nutzer und die Rechtevergabe für die virtuellen Hosts aufgerufen. Der Login-Prozess wird dabei vollständig von Spring Security übernommen. Wird ein neuer Nutzer registriert, erfolgt zuerst die Validierung der eingebenen Daten durch den UserValidator. Dabei wird geprüft, ob der Nutzer bereits vorhanden ist und das Passwort mit dem Bestätigungs Passwort übereinstimmt. Bei einer fehlerhaften Eingabe oder einem bereits vorhandenen Nutzer wird die entsprechende Ausgabe auf der Weboberfläche ausgegeben. War die Validierung erfolgreich, wird die Methode createUser(userForm) aufgerufen. Diese ruft die Methode insertSystemUser(Username, encodedPassword, Description) auf. Die Verschlüsselung des Passworts erfolgt über den BCryptPasswordEncoder von Spring Security. Im UserReposity werden die notwendigen SQL Statements aufgerufen, um den Nutzer in der Datenbank zu sichern. Die Vergabe von Rechten für virtuelle Hosts erfolgt über die Methode addPermission(vHostForm) des Authentifizierungsservices. Die vHostForm wird vorab durch den VHostValidator geprüft, ob der zugewiesene Nutzer bereits existiert. Anschließend erfolgt der Aufruf der addPermission-Methode und die Speicherung der Rechte des Nutzers für den virtuellen Host in der Datenbank über das UserRepository.
+\subsubsection{MoM-Service}
+Neben den Speicherung der Nutzer und Berechtigungen in der Datenbank müssen diese ebenfalls im Rabbitmq gespeichert werden. Dies erfolgt im Mom-Service. Der Service enthält dazu die Methoden addUser(loggedInUser, userToSave), setPermission(loggedInUser, userToSave, vHost) und createVHost(loggedInUser, vHost). Diese Methoden greifen über definierte Schnittstellen der HTTP-API auf Rabbitmq zu. Die Variable loggedInUser wird benötigt, um mit dessen Zugangsdaten über einen curl-Request die notwendigen Schnittstellen aufzurufen. Dies ist nur möglich, wenn der eingeloggte Nutzer Administrator-Rechte auf der Rabbitmq-Instanz hat. Zusätzlich enthält der Mom-Service die Methode writeScript(). Durch diese Methode werden die aktuellen Nutzer und ihre Rechte aus der Datenbank geladen und als rabbitmqctl-Aufruf im init-Skript für das Containerimage gespeichert. Das Skript kann in ein Repository für das Containerimage gespeichert werden. Beim der Ausführung des Dockerfiles  wird das Skript als Startpunkt für den Container definiert. Wird der Container gestartet, erfolgt die Ausführung des Skripts und die Nutzer werden gemeinsam mit den aus der Datenbank ermittelten Berechtigungen beim Start des Containers angelegt. Auf das Deployment des Dockercontainers wird in Absatz \ref{Docker} noch genauer eingegangen.
+
+
+
+
+%\subsection{Testing}
+%Im Rahmen des Testings wurde für die Klasse "WeatherAPIService" eine Testklasse "WeatherAPIServiceTest" angelegt. 
+%Diese Klasse testet die wichtigsten Methoden der Ursprungsklasse, zu den Testmethoden gehören,
+
+%\begin{itemize}
+%\item "testAPICallTodayWithoutWindDeg()"
+%\item "testAPICallTodayWithWindDeg()"
+%\item "testAPICallWeeklyWithoutWindDeg()"
+%\item "testAPICallWeeklyWithWindDeg()"
+%\end{itemize}
+
+%Die ersten zwei Methoden Testen, für den Fall eines HTTP-Response seitens der API für eine tagesaktuelle Wettervorhersage. Dafür wurde ein String mit gefakten Daten angelegt, mit diesen Daten wurde dann die Methode "dailyToWeatherData" aufgerufen, somit kann sichergestellt werde, dass die endgültige Form des Json mit der gewünschte der "WeatherData" Klasse übereinstimmt. 
+%Hier muss jedoch eine Fallunterscheidung gemacht werden, da in der Methode noch mit Hilfe einer Kontrollstruktur der Fall %angefangen wird, dass die API für die Windrichtung keinen Wert sendet. Dieser Fall tritt immer dann ein, wenn die Windstärke unter den Wert 1.5 sinkt. Aus diesem Grund gibt es, wie oben angegeben, diese zwei Fallunterscheidung bei den Testmethoden. 
+
+%Die weiteren zwei Methoden testen einen fast anlogen Fall zu den ersten zwei ab nur das hier ein HTTP-Response für eine 5-tägige Wettervorhersage getestet wird. Der unterschied besteht in der Konstruktion der Testdaten, da diese eine komplexere und größere Menge aufweisen, als in den ersten beiden Fällen. Aus dem Grund wurden 2 Hilfsmethoden implementiert, welche einen String bauen, welcher gleich einem API-Response für eine 5-tägige Vorhersage ist.
+
+\subsection{12 Faktor App}\label{12FactorAppWeatherAPI}
+
 \begin{table}[!ht]
   \centering
     \begin{minipage}{15cm}
@@ -68,27 +150,27 @@ Um mit diesen Json-Response-Types besser und freier arbeiten zu können wurde ei
       \begin{tabular}{*{3}{|l|p{5.0cm}|p{5.0cm}}}\hline
       \multicolumn{4}{|c|}{\cellcolor[RGB]{200,200,200}Validierung nach "12 Faktor APP"} \\\hline
      \textbf{ID}&\textbf{Anforderung}&\textbf{Validierungs Element}&\textbf{Erfüllt}\\\hline
-     1.&Codebase&....&Nein\\
+     1.&Codebase&Andere Komponenten sind nur für das Testszenario da. Deployment verschiedener Versionen über Repo möglich&Ja\\
       \hline
-     2.&Abhängigkeiten&....&Nein\\
+     2.&Abhängigkeiten&Zugriff auf die Datenbank und die "OpenWeatherMap"-API sind in eigenen Klassen isoliert&Ja\\
      \hline
-     3.&Konfiguration&....&Nein\\
+     3.&Konfiguration&Credentials werden über Umgebungsvariablen im Jenkings-Server verwaltet&Ja\\
      \hline
-     4.&Unterstützende Dienste&....&Nein\\
+     4.&Unterstützende Dienste&Credentials der "OpenWeatherMap"-API werden über die Umgebungsvariablen im Jenkins-Server verwaltet&Ja\\
      \hline 
-     5.&Build, release, run&....&Nein\\
+     5.&Build, release, run&Wird über einen Jenkins-Server verwaltet&Ja\\
      \hline
-     6.&Prozesse&....&Nein\\
+     6.&Prozesse&Wird via Web-Gui gestartet&Ja\\
      \hline
-      7.&Bindung an Ports&....&Nein\\
+      7.&Bindung an Ports&Die Ports werden von Pivotal verwaltet&Ja\\
      \hline
-      8.&Nebenläufigkeit&....&Nein\\
+      8.&Nebenläufigkeit&Es könnte zu jeder Zeit eine neue Instanz auf Pivotal gestartet werden, jedoch bedarf es bei dieser Komponente keiner Skalierung&Ja\\
      \hline
       9.&Einweggebrauch&....&Nein\\
      \hline
      10.&Dev-Prod-Vergleichbarkeit&....&Nein\\
      \hline     
-     11.&Logs&....&Nein\\
+     11.&Logs&Pivotal gibt die Logs standardmäßig über Stdout aus&Ja\\
      \hline
      12.&Admin-Prozesse&....&Nein\\
      \hline
@@ -97,4 +179,3 @@ Um mit diesen Json-Response-Types besser und freier arbeiten zu können wurde ei
     \end{minipage}
 \end{table}
 
-ToDo: Verweis auf 12 Faktor APP Standard !!! 

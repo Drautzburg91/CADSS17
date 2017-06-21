@@ -29,7 +29,7 @@ Die MoM wird mithilfe einer Factory Klasse erstellt. Diese erstellt beim ersten 
 	\caption{Klassendiagramm der MoM Komponenten}
 	\label{img:MoMDiagramm}
 \end{figure} 
-Die Anwendung kennt verschiedene Nachrichtentypen. Die Nachrichten die eingehen sind entweder eine Nachricht vom Typ "JSONMessage" oder von Typ "WeejkyForcast". Die JSOnMessage stellt dabei die Nachricht für den aktuellen Wetterstand dar. Das sind die häufigsten Nachrichten die eingehen. Wie der Name schon andeutet kommen die Nachrichten in einen JSON-Format an das direkt mithilfe von GSON in eine Instanz der Klasse umgeformt wird. Die WeeklyForcast Nachrichten kommen zwar auch in einen JSON-Format an müssen aber nochmal umgewandelt und gefiltert werden, bis die benötigte Nachricht entsteht. Diese Nachrichten kommen deutlich seltener bei der Anwendung an da diese einen Abschätzung der nächsten Tage darstellt. Die JSONMessage wird zur weiteren Auswertung an die CEP Engine übergeben. Der Wochenbericht wird direkt weiterverarbeitet. Im Folgenden Klassendiagramm werden die Nachrichten mit ihren Methoden gezeigt. 
+Die Anwendung kennt verschiedene Nachrichtentypen. Die Nachrichten die eingehen sind entweder eine Nachricht vom Typ "JSONMessage" oder von Typ "WeeklyForcast". Die JSONMessage stellt dabei die Nachricht für den aktuellen Wetterstand dar. Das sind die häufigsten Nachrichten die eingehen. Wie der Name schon andeutet kommen die Nachrichten in einen JSON-Format an das direkt mithilfe von GSON in eine Instanz der Klasse umgeformt wird. Die WeeklyForcast Nachrichten kommen zwar auch in einen JSON-Format an müssen aber nochmal umgewandelt und gefiltert werden, bis die benötigte Nachricht entsteht. Diese Nachrichten kommen deutlich seltener bei der Anwendung an da diese einen Abschätzung der nächsten Tage darstellt. Die JSONMessage wird zur weiteren Auswertung an die CEP Engine übergeben. Der Wochenbericht wird direkt weiterverarbeitet. Im Folgenden Klassendiagramm werden die Nachrichten mit ihren Methoden gezeigt. 
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\textwidth]{Bilder/News.png}
@@ -69,7 +69,7 @@ Die CEP Engine wird über die Klasse Engine Control gesteuert. Diese Singleton-K
 	\caption{Das Klassendiagramm der CEP Klassen}
 	\label{img:esperDiagramm}
 \end{figure} 
-Die Esper Statements sorgen dafür das Muster in den eingehenden Wetterdaten erkannt werden und reagieren mit passenden Nachrichten auf diese. Die Statements werden von der CEPFactory der Engine hinzugefügt. Jede eingehende Nachricht wird von midestens einen Statement erfasst. Der Entsprechende Listener sorgt dafür das die Clients die Daten erhalten und gibt eine Ausgabe aus. Dabei gibt es kein Fenster oder Consumption Mode. Jede Nachricht wird von diesen Statement erfasst und es dürfen auch weitere Statements greifen. Das Statement sieht wie folgt aus: 
+Die Esper Statements sorgen dafür das Muster in den eingehenden Wetterdaten erkannt werden und reagieren mit passenden Nachrichten auf diese. Die Statements werden von der CEPFactory der Engine hinzugefügt. Jede eingehende Nachricht wird von midestens einen Statement erfasst. Der Entsprechende Listener sorgt dafür das die Clients die Daten erhalten und gibt eine Ausgabe aus. Zusätzlich werden die Daten in der Datenbank gespeichert. Dabei gibt es kein Fenster oder Consumption Mode. Jede Nachricht wird von diesen Statement erfasst und es dürfen auch weitere Statements greifen. Das Statement sieht wie folgt aus: 
 \begin{lstlisting}
 select * from JSONMessage
 \end{lstlisting}
@@ -120,23 +120,19 @@ Die Abhänigkeiten werden mit Maven verwaltet. Jede Benötigte Bibliothek wird e
 \\
 Die Addresse der MoM, der Nutzername und das Passworrt sind alle in Umgebungsvariablen festgelegt. Die einzige Konsigurationsdatei im Projekt ist die pom.xml. Diese hat aber mit der laufenden Anwendung nach dem erstellen des Builds nichts mehr zu tun. 
 \\
-Die Anwendung verwendet als anderen Service nur die MoM. Diese wird über eine API angesprochen. Die API ist allgemeingültig für jede MoM, sofern sie MQTT unterstüzt. 
+Die Anwendung verwendet als anderen Service die MoM. Diese wird über eine API angesprochen. Die API ist allgemeingültig für jede MoM, sofern sie MQTT unterstüzt. Die Datenbank wird über eine selbstgeschriebene API angesprochen. Die Art der Datenbank kann über eine neue Klasse ausgetauscht werden, da über ein Interface die Datenbank angesprochen wird. Die Adresse kann auch ausgetauscht werden. 
 \\
 Der Relasebuild kann nur von Jenkins erstellt werden. Dieses erstellt alle zusätzlichen für eine veröffentlichte Version benötigten Datein. Jenkins erlangt den Code über das Github Repository. Zu den Dateien gehört unter anderen die Konfiguration für das Deployment auf der Cloud.
 \\
-Säntliche Daten werden nur kurzeitig von der CEP Engine gespeichert. Die Anwendung legt keine Files an welche länger als die Ausführungszeit auf dem Server vorhanden sind. Daten die nicht mehr vorhanden sind, werden auch nicht mehr aufgerufen. Die CEP kennt nur die Temporär gespeicherten Daten. jede Datei die nicht mehr gespeichert ist, wird von der Engine nicht mehr berücksichtigt. 
+Säntliche Daten werden nur kurzeitig von der CEP Engine gespeichert. Die Anwendung legt keine Files an welche länger als die Ausführungszeit auf dem Server vorhanden sind. Daten die nicht mehr vorhanden sind, werden auch nicht mehr aufgerufen. Die CEP kennt nur die Temporär gespeicherten Daten. jede Datei die nicht mehr gespeichert ist, wird von der Engine nicht mehr berücksichtigt. Daher wird jede eingehende Nachricht zusätzlich in einer Datenbank gespeichert. Wenn die Engine startet werden alle Daten der letzten 24 Stunden geladen und neu gesendet. Auf dieseweise gehen keine Informationen verloren.
 \\
-Die Anwendung braucht nur eine JVM zum Laufen. Ansonsten wird davon ausgegangen das über die Amazon-Cloud oder die Cloud eines anderen Anbieters über eine Einstellung die Anwendung mit einen Port verknüpft werden kann. 
+Die Anwendung braucht nur eine JVM zum Laufen. Ansonsten wird davon ausgegangen das über die Cloud Foundry oder die Cloud eines anderen Anbieters über eine Einstellung die Anwendung mit einen Port verknüpft werden kann. 
 \\
-Es werden verschiedene Threads verwendet. Diese werden aber nicht wegen der zum skalieren verwendet, sondern um sicherzugehen das eine Nachricht ausgewertet werden kann während eine andere gesendet wird. Es soll also nur die Ausführungszeit verschiedener nebenläufig ausführbarer Schritte optimiert werden. 
+Es werden verschiedene Threads verwendet. Diese werden aber nicht wegen der zum skalieren verwendet, sondern um sicherzugehen das eine Nachricht ausgewertet werden kann während eine andere gesendet wird. Es soll also nur die Ausführungszeit verschiedener nebenläufig ausführbarer Schritte optimiert werden. Weitere instanzen der Cloud werden zum skalieren erstellt. 
 \\
-Es macht keinen unterschied ob di Anwendung normal geschlossen wurde oder abgestürzt ist. Die CEP Engine und die MoM Verbindung werden geschlossen und können ohne Probleme wieder geöffnet werden. Wenn eine Verbindung wieder gebraucht wird, wird diese automatsich wieder geöffnet. Nur die bisherigen Muster gehen Verloren wenn die Anwendung plötzlich abstürtzt. Wenn die Anwendung nicht läuft, kann sie aber auch keine Warnungen versenden. Daher ist es dann egal ob ein Muster vorhanden ist. Wenn die Anwendung neu gestartet wird, wird das Muster wiedererkannt. Da ohnehin jede Minute Daten in die MoM gelangen kann es also nur zu einer Verzögerung von bis zu zwei Minuten + die Ausfallzeit kommen. Zumindest wenn die Situation noch besteht.  
-\\
-TODO: Absatz über Deployment
+Es macht keinen unterschied ob die Anwendung normal geschlossen wurde oder abgestürzt ist. Die CEP Engine und die MoM Verbindung werden geschlossen und können ohne Probleme wieder geöffnet werden. Wenn eine Verbindung wieder gebraucht wird, wird diese automatsich wieder geöffnet. Nur die bisherigen Muster gehen Verloren wenn die Anwendung plötzlich abstürtzt. Sobald die Anwendung neu startet werden die Daten der letzten 24 Stunden geladen und neu gesendet. Die Muster können so wiederhergestellt werden. Alles was älter als 24 Stunden ist, ist nicht mehr relevant. 
 \\
 Es werden keine Log-Dateien angelegt. Die Anwendug gibt Mledungen über den Output- und den ErrorStream aus. An einer anderen Stelle muss daraus ein Log oder eine sonstige Auswertung erfolgen. 
-\\
-TODO Admin Process absatz
 \\
 In der folgenden Tabelle werden die Anforderungen nochtmal zusammengefasst dargestellt. 
 \begin{table}[!ht]
@@ -152,23 +148,23 @@ In der folgenden Tabelle werden die Anforderungen nochtmal zusammengefasst darge
      \hline
      3.&Konfiguration&Bis auf Buildconfigurations gibt es keine Konfigurationsdatei. Alles andere über Umgebungsvariablen&Ja\\
      \hline
-     4.&Unterstützende Dienste&Einziger Unterstüztender Dienst ist die MoM. Diese kann mit einer Umgebungsvariable ausgetauscht werden&Ja\\
+     4.&Unterstützende Dienste&Die unterstüzenden Dienste können über Umgebungsvariablen ausgetauscht werden&Ja\\
      \hline 
      5.&Build, release, run&Wird von Jenkins verwaltet&Ja\\
      \hline
      6.&Prozesse&Es gibt keine langfristig gespeicherten Daten&Ja\\
      \hline
-      7.&Bindung an Ports&Wird von Amazoneinstellungen übernommen&Ja\\
+      7.&Bindung an Ports&Wird von Cloud Foundry übernommen&Ja\\
      \hline
-      8.&Nebenläufigkeit&Es wird nicht mit threads skaliert&Ja\\
+      8.&Nebenläufigkeit&Es wird nicht mit threads skaliert sondern mit Cloud Foundry instanzen&Ja\\
      \hline
-      9.&Einweggebrauch&Verbindungen können beliebig geschlossen oder geöffnet werden&Ja\\
+      9.&Einweggebrauch&Verbindungen können beliebig geschlossen oder geöffnet werden ohne das wichtige Daten verloren gehen&Ja\\
      \hline
-     10.&Dev-Prod-Vergleichbarkeit&....&Nein\\
+     10.&Dev-Prod-Vergleichbarkeit&Nicht zutreffent&Nein\\
      \hline     
      11.&Logs&Es wird mit den Streams gearbeitet.&Ka\\
      \hline
-     12.&Admin-Prozesse&....&Nein\\
+     12.&Admin-Prozesse&Nicht zutreffent&Nein\\
      \hline
       \end{tabular}
    \caption{Validierung der CEP nach "12 Faktor APP"}\label{tab:AnforderungenCEP}
