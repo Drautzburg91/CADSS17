@@ -1,26 +1,10 @@
 \section{Kostenmodell}
-WetterAPI: kostenlos
-Paul API zu MOM: pivotal cloudfoundry 1gb 1 instanz \$21.6/Monat
-Sascha CEP: pivotal cloudfoundry 1gb 1 instanz \$21.6/Monat
-Basti MOM: AWS t2.micro Frankfurt \$77/Jahr pro ??? User
-Kim DB: t2.micro Frankfurt \$77/Jahr. Speicherbedarf und somit Skalierung pro Nutzer ist vernachlässigbar gering 
-Georg: \EUR{25} Google Entwickleraccount? Kosten App einstellen/updaten?
-Lukas: \$7/Monat (Hobby) oder \$25 (Standard 1X, erlaubt dann Skalierung) je angefangener 1500 User pro Sekunde
-
-
-Wettervorhersage
-Fixkosten
-Lastabhängige Kosten
-Verkauf App (-30% Transaktionsgebühren Google und Zahlungsparner -19% Steuern)
-Zugang zu Webapp via kostenpflichtigem Account
-
-MOM-as-a-Service
-Preis?? Nutzung über REST Schnittstelle des RabbitMQ Management Plugins protokollierbar. 
-
-
 Die anfallenden Kosten sind entlang der verursachenden Leistung und der Skalierungsabhängigkeit unterteilbar. Auf Seite der Leistungen unterscheiden wir zwischen dem Wetterbericht über den Webclient und die App sowie dem MOM-as-a-Service Angebot. Skalierungsseitig gibt es einmalig anfallende Kosten, Fixkosten, die Nutzungsunabhängig anfallen, um den Betrieb sicherzustellen und Variable Kosten die nur entstehen, wenn die in den Fixkosten eingerechneten Instanzen ausgelastet sind und skalieren müssen.
 
-In den folgenden Tabellen sind die entstehenden Kosten in Dollar pro Jahr bzw. pro 1000 Nutzer pro Jahr ab dem 1001-sten Nutzer angegeben. Zur Berechnung der variablen Kosten für den Webclient wurde der im Abschnitt \nameref{Web-Client} vorgestellte Lasttest verwendet. Daraus ergibt sich, dass der Server gut 1000 Anfragen pro Sekunde bearbeiten kann. Hochgerechnet können so 3,6 Millionen Benutzer die Webseite über einen Zeitraum von einer Stunde besuchen, bevor skaliert werden muss. Unter der Annahme, dass die Kunden im Schnitt nicht öfter als ein mal in der Stunde die Webseite aufrufen ergibt sich so ein Preis von \$0,0233 auf 1000 Benutzer.
+Die RabbitMQ läuft in einem Docker Container bei Amazon Web Services auf einer "t2.micro" Instanz und kostet bei jährlicher Vorauszahlung \$77 pro Jahr (vgl. https://aws.amazon.com/de/ec2/pricing/reserved-instances/pricing/). Ebenfalls auf einer AWS t2.micro Instanz läuft die Datenbank, somit fallen dafür ebenfalls \$77 jährlich an. Der Client zum auslesen der Daten von openweathermap, wie auch das Complex Event Processing, sind bei Pivotal deployed und kosten jeweils \$21,60 im Monat oder \$259,20 im Jahr(vgl. https://aws.amazon.com/de/ec2/pricing/reserved-instances/pricing). 
+
+
+Für die Verteilung und den Betrieb der App fallen keine separaten Kosten an, hier sind jedoch die einmalig fälligen \$25,00 für einen Google Play Developer Zugang zu berücksichtigen. Der bei Heroku gehostete Webclient kostet \$7,00 pro Monat oder \$84,00 im Jahr (vgl. https://www.heroku.com/pricing). Zur Berechnung der variablen Kosten für den Webclient wurde der im Abschnitt \nameref{Web-Client} vorgestellte Lasttest verwendet. Daraus ergibt sich, dass der Server gut 1000 Anfragen pro Sekunde bearbeiten kann. Hochgerechnet können so 3,6 Millionen Benutzer die Webseite über einen Zeitraum von einer Stunde besuchen, bevor skaliert werden muss. Unter der Annahme, dass die Kunden im Schnitt nicht öfter als ein mal in der Stunde die Webseite aufrufen ergibt sich so ein Preis von \$0,0233 auf 1000 Benutzer. In den folgenden Tabellen sind die entstehenden Kosten in Dollar pro Jahr bzw. pro 1000 Nutzer pro Jahr ab dem 1001-sten Nutzer angegeben.
 
 \begin{table}
 \caption{Tabelle MOM-as-a-Service}
@@ -37,12 +21,16 @@ In den folgenden Tabellen sind die entstehenden Kosten in Dollar pro Jahr bzw. p
 \begin{tabular}{cccc}
 	Funktion 	& Fix		& Variabel	& Einmalig \\
 	MOM 		& \$77,00	& \$ ??? 	& \\
+	Datenbank	& \$77,00	&			& \\
 	WetterAPI 	& \$259,20	&	 		& \\
 	CEP 		& \$259,20	& 			& \\
-	Datenbank	& \$77,00	&			& \\
 	App			&			&			& \$25,00 \\
 	Webbclient	& \$84,00	& \$0,0233	& \\
 \end{tabular}
 \end{table}
 
 In Summe ergeben sich so jährliche Fixkosten in Höhe von \$756,40 und einmalige Kosten von \$25,00.
+
+Decken ließen sich diese Kosten beispielsweise über den Verkauf der App, kostenpflichtigen Accounts für den Webclient oder einer Kombination daraus. Hier darf bei der Berechnung nicht vergessen werden, dass Google 30\% Transaktionsgebühren verlangt und anschließend der Umsatz noch zu versteuern ist. Es bleiben demzufolge nach Abzügen noch 56,7\% des Umsatzes um die Kosten zu decken und eine Gewinnmarge zu erzielen. Bei einem Preis in Höhe von \$0,99 wären für eine Kostendeckung 1393 Verkäufe nötig oder 1000 Verkäufe zu einem Preis von \$1,38. Sollen Accounts für den Webclient verkauft werden, fallen neben den Steuern noch Gebühren an Zahlungsdienstleister an. Diese liegen beispielsweise bei Paypal für Mikrozahlungen zwischen 10\% und 12\% plus einer Währungsabhängigen Pauschale: \$0,05 oder \EUR{0,10} (vgl. https://www.paypal.com/de/webapps/mpp/ua/useragreement-full). Mit dem Dollarpreis gerechnet ergeben sich so bei einem Verkaufspreis von \$0,99 1148 benötigte Verkäufe oder 1000 Verkäufe zum Preis von \$1,08.
+
+Neben dem Wetterbericht ist es durch die Multi-tenant-Fähigkeit möglich die Nutzung der MOM als Service anzubieten. Über die REST Schnittstelle des Management-Plugins lässt sich die Nutzung protokollieren und somit Nutzungsbasiert abrechnen.
