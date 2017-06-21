@@ -76,6 +76,19 @@ public final class CEPFactory {
 			while(set.next()){
 				//TODO create new JSONMESSAGE use setter 
 				JSONMessage message = new JSONMessage();
+				
+				message.setCurrentWeatherId(set.getInt("WeatherID"));
+				message.setPlz(Integer.toString(set.getInt("ZipCode")));
+				message.setTemperature(set.getDouble("main_temp"));
+				message.setTemperatureMax(set.getDouble("main_tempMax"));
+				message.setTemperatureMin(set.getDouble("main_tempMin"));
+				message.setPressure((int)(set.getDouble("main_pressure")));
+				message.setHumidity((int)(set.getDouble("main_humidity")));
+				message.setLatitude(set.getDouble("main_seaLevel"));
+				message.setLongitude(set.getDouble("main_grndLevel"));
+				message.setWindDeg(set.getDouble("wind_deg"));
+				message.setWindspeed(set.getDouble("wind_speed"));
+				
 				service.sendEvent(message);
 			}
 		} catch (SQLException e) {
