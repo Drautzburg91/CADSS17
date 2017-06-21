@@ -1,9 +1,16 @@
 package cad.cep.engine;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
+
 import cad.cep.exceptions.MoMException;
 import cad.cep.milf.MoMSender;
+import cad.cep.milf.util.PLZUtil;
 import cad.cep.model.Alert;
 import cad.cep.model.JSONMessage;
+import caddb.CadWeatherSystemDatabaseAPI;
 
 /**
  * A factory for creating CEP Engines.
@@ -12,16 +19,19 @@ public final class CEPFactory {
 
 	/** The service. */
 	private static EsperService service;
-	
+
 	/** The sender. */
 	private static MoMSender sender;
+
+	private static CadWeatherSystemDatabaseAPI database;
 
 	/**
 	 * Creates a new CEP Engine or returns the existing one.
 	 *
 	 * @return the esper service which can be used to call methods for the esper engine
 	 */
-	protected static EsperService createNewService(){
+	protected static EsperService createNewService(CadWeatherSystemDatabaseAPI database){
+		CEPFactory.database = database;
 		if(service != null){
 			return service;
 		}
@@ -34,7 +44,31 @@ public final class CEPFactory {
 		addSummerWarnings(service);
 		addSpecialWarning(service);
 		System.out.println("Service started");
+		if(database.checkDatabaseConnection().contains("failed"));{
+			database = new CadWeatherSystemDatabaseAPI(null);
+		}
+		List<String> plzs = PLZUtil.getAllKnownPLZ();
+		for (String string : plzs) {
+			int city_ZipCode = Integer.valueOf(string);
+			ResultSet set = database.selectWeatherByCityAndTimePeriod(city_ZipCode, new Timestamp(System.currentTimeMillis()-86400000), new Timestamp(System.currentTimeMillis()));
+			readOldEvents(set);
+		}
 		return service;
+	}
+	/**
+	 * TODO KIM HIER WEITERARBEITEN LASSEN
+	 * @param set
+	 */
+	private static void readOldEvents(ResultSet set){
+		try {
+			while(set.next()){
+				//TODO create new JSONMESSAGE use setter 
+				JSONMessage message = new JSONMessage();
+				service.sendEvent(message);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -45,7 +79,7 @@ public final class CEPFactory {
 	public static void switchSender(MoMSender newSender){
 		sender = newSender;
 	}
-	
+
 	/**
 	 * Adds the special warning to the Engine. These Warnings are for unusual weather.
 	 *
@@ -58,7 +92,7 @@ public final class CEPFactory {
 			sendWarning(message.getPlz(), "Tropical", "T1", "Humidity is over 90");
 		});
 	}
-	
+
 	/**
 	 * Adds the update event. This event checks every new Message.
 	 *
@@ -72,12 +106,13 @@ public final class CEPFactory {
 			System.out.println(underlying.toString());
 			try {
 				sender.send(underlying.getTopic()+"/CEP", underlying, false);
+				database.insertWeather(new Timestamp(System.currentTimeMillis()), Integer.valueOf(underlying.getPlz()).intValue(), underlying.getCurrentWeatherId(), underlying.getTemperature(), (double)underlying.getPressure(), (double)underlying.getHumidity() , underlying.getTemperatureMin(), underlying.getTemperatureMax(), underlying.getLatitude(), underlying.getLongitude(), "", underlying.getWindspeed(), underlying.getWindDeg(), "", 0.0, 0.0, null, null);
 			} catch (MoMException e) {
 				e.printStackTrace();
 			}
 		});
 	}
-	
+
 	/**
 	 * Adds the winter warnings. These warnings are needed to check for low temperatures, frost or snow.
 	 *
@@ -101,7 +136,7 @@ public final class CEPFactory {
 			sendWarning(message.getPlz(), "Heavy Snowfall", "W3", "Heavy Snowfall, be carefull");
 		});
 	}
-	
+
 	/**
 	 * Send warning. Sends the warning to the MoM. It uses the MoMSender of this class. 
 	 *

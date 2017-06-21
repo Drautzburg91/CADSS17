@@ -9,6 +9,7 @@ import cad.cep.exceptions.MoMException;
 import cad.cep.milf.MoMSender;
 import cad.cep.model.JSONMessage;
 import cad.cep.model.WeeklyForcast;
+import caddb.CadWeatherSystemDatabaseAPI;
 
 /**
  * The Class CallBack.
@@ -22,7 +23,7 @@ public class CallBack implements MqttCallback{
 	 * Instantiates a new call back.
 	 */
 	public CallBack() {
-		control = EngineControl.getInstance();
+		control = EngineControl.getInstance().init(new CadWeatherSystemDatabaseAPI(null));
 	}
 	 
  	/**
@@ -30,8 +31,8 @@ public class CallBack implements MqttCallback{
  	 *
  	 * @param control the control
  	 */
- 	public CallBack(EngineControl control){
-		this.control = control;
+ 	public CallBack(EngineControl control, CadWeatherSystemDatabaseAPI db){
+		this.control = control.init(db);
 		 
 	 }
 
