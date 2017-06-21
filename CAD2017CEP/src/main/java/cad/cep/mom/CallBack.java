@@ -61,10 +61,8 @@ public class CallBack implements MqttCallback{
 				try {
 					String integerAsString = new String(payload);
 					int n = Integer.parseInt(integerAsString);
-					int sol = CPUTest.calculateNDamenForScaling(n);
-					MQTTMom tempMom = (MQTTMom) MomFactory.createOrLoadMom();
-					System.out.println(sol);
-					tempMom.sendInt(sol, "cep/ndamenresult");
+					CPUTest test = new CPUTest(n);
+					test.run();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
