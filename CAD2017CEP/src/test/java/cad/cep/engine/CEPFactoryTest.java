@@ -1,11 +1,22 @@
 package cad.cep.engine;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
+import cad.cep.db.WeatherRepository;
+import cad.cep.db.WeatherRepositoryImpl;
 import cad.cep.milf.MoMSender;
 import cad.cep.model.JSONMessage;
 
@@ -23,12 +34,21 @@ public class CEPFactoryTest {
 	
 	/**
 	 * Prepeare test.
+	 * @throws SQLException 
 	 */
 	@Before
-	public void prepeareTest(){
-		service = CEPFactory.createNewService();
+	public void prepeareTest() throws SQLException{
+		WeatherRepository dbMock = mock(WeatherRepositoryImpl.class);
+		ResultSet set = mock(ResultSet.class);
+		when(set.next()).thenReturn(true).thenReturn(false);
+		when(set.getDouble(any(String.class))).thenReturn(10.0);
+		when(set.getInt(any(String.class))).thenReturn(1000);
+		when(dbMock.selectWeatherByCityAndTimePeriod(anyInt(), any(Timestamp.class), any(Timestamp.class))).thenReturn(set);
+		service = CEPFactory.createNewService(dbMock);
 		mom = mock(MoMSender.class);
-		CEPFactory.switchSender(mom);
+		List<MoMSender> sender = new ArrayList();
+		sender.add(mom);
+		CEPFactory.switchSender(sender);
 	}
 	
 	/**
@@ -109,7 +129,8 @@ public class CEPFactoryTest {
 	 */
 	@AfterClass
 	public static void destroy(){
-		CEPFactory.createNewService().destroyConnection();
+		WeatherRepository dbMock = mock(WeatherRepositoryImpl.class);
+		CEPFactory.createNewService(dbMock).destroyConnection();
 	}
 
 }

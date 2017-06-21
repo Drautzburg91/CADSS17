@@ -1,7 +1,7 @@
 package cad.cep.engine;
 
+import cad.cep.db.WeatherRepository;
 import cad.cep.model.JSONMessage;
-import caddb.CadWeatherSystemDatabaseAPI;
 
 /**
  * The Class EngineControl.
@@ -21,8 +21,10 @@ public class EngineControl {
 	//not needed
 	}
 	
-	public EngineControl init(CadWeatherSystemDatabaseAPI db){
-		service = CEPFactory.createNewService(db);
+	public EngineControl init(WeatherRepository db){
+		if(service == null){
+			service = CEPFactory.createNewService(db);
+		}
 		return instance;
 	}
 	

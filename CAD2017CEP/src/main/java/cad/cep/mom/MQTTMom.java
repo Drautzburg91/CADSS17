@@ -44,7 +44,8 @@ public class MQTTMom implements IMoM{
 	public final synchronized IMessage readMessageFromTopic(String topic) throws MoMException {
 		try {
 			//one message at the time
-			client.setCallback(new CallBack());
+			CallBack callback = new CallBack();
+			client.setCallback(callback);
 			client.subscribe(topic);
 		} catch (Exception e) {
 			throw new MoMException("Cannot read topic: " +topic, e);

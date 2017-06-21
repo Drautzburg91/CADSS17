@@ -3,16 +3,17 @@ package cad.cep.engine;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
+import cad.cep.db.WeatherRepository;
+import cad.cep.db.WeatherRepositoryImpl;
 import cad.cep.exceptions.MoMException;
 import cad.cep.milf.MoMSender;
 import cad.cep.milf.util.PLZUtil;
 import cad.cep.model.Alert;
 import cad.cep.model.JSONMessage;
 import cad.cep.mom.MomFactory;
-import caddb.CadWeatherSystemDatabaseAPI;
 
 /**
  * A factory for creating CEP Engines.
@@ -23,17 +24,17 @@ public final class CEPFactory {
 	private static EsperService service;
 
 	/** The sender. */
-	private static List<MoMSender> senders;
+	private static List<MoMSender> senders = new ArrayList();
 
-	private static CadWeatherSystemDatabaseAPI database;
+	private static WeatherRepositoryImpl database;
 
 	/**
 	 * Creates a new CEP Engine or returns the existing one.
 	 *
 	 * @return the esper service which can be used to call methods for the esper engine
 	 */
-	protected static EsperService createNewService(CadWeatherSystemDatabaseAPI database){
-		CEPFactory.database = database;
+	protected static EsperService createNewService(WeatherRepository database){
+		database = database;
 		if(service != null){
 			return service;
 		}
@@ -56,14 +57,17 @@ public final class CEPFactory {
 		addSummerWarnings(service);
 		addSpecialWarning(service);
 		System.out.println("Service started");
-		if(database.checkDatabaseConnection().contains("failed"));{
-			database = new CadWeatherSystemDatabaseAPI(null);
-		}
 		List<String> plzs = PLZUtil.getAllKnownPLZ();
 		for (String string : plzs) {
-			int city_ZipCode = Integer.valueOf(string);
-			ResultSet set = database.selectWeatherByCityAndTimePeriod(city_ZipCode, new Timestamp(System.currentTimeMillis()-86400000), new Timestamp(System.currentTimeMillis()));
-			readOldEvents(set);
+			try {
+				int city_ZipCode = Integer.valueOf(string);
+				Timestamp yeasterday = new Timestamp(System.currentTimeMillis()-86400000);
+				ResultSet set = database.selectWeatherByCityAndTimePeriod(city_ZipCode, yeasterday, new Timestamp(System.currentTimeMillis()));
+				readOldEvents(set);
+			} catch (Exception e) {
+				//in case of database error at a specific location
+				System.err.println("Error reading data from" + string);
+			}
 		}
 		return service;
 	}
@@ -131,7 +135,7 @@ public final class CEPFactory {
 			System.out.println(underlying.toString());
 			try {
 				//to see a difference in tennants 
-				for (int i = 0; i < senders.size()-1; i++) {
+				for (int i = 0; i < senders.size(); i++) {
 					MoMSender sender = senders.get(0);
 					underlying.setTemperature(underlying.getTemperature()+i);
 					sender.send(underlying.getTopic()+"/CEP", underlying, false);

@@ -4,12 +4,13 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import cad.cep.db.WeatherRepository;
 import cad.cep.engine.EngineControl;
 import cad.cep.exceptions.MoMException;
 import cad.cep.milf.MoMSender;
+import cad.cep.milf.util.DBUtil;
 import cad.cep.model.JSONMessage;
 import cad.cep.model.WeeklyForcast;
-import caddb.CadWeatherSystemDatabaseAPI;
 
 /**
  * The Class CallBack.
@@ -23,7 +24,7 @@ public class CallBack implements MqttCallback{
 	 * Instantiates a new call back.
 	 */
 	public CallBack() {
-		control = EngineControl.getInstance().init(new CadWeatherSystemDatabaseAPI(null));
+		control = EngineControl.getInstance().init(DBUtil.getDB());
 	}
 	 
  	/**
@@ -31,7 +32,7 @@ public class CallBack implements MqttCallback{
  	 *
  	 * @param control the control
  	 */
- 	public CallBack(EngineControl control, CadWeatherSystemDatabaseAPI db){
+ 	public CallBack(EngineControl control, WeatherRepository db){
 		this.control = control.init(db);
 		 
 	 }
