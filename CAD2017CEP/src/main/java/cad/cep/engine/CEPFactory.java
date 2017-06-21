@@ -3,6 +3,7 @@ package cad.cep.engine;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Iterator;
 import java.util.List;
 
 import cad.cep.exceptions.MoMException;
@@ -10,6 +11,7 @@ import cad.cep.milf.MoMSender;
 import cad.cep.milf.util.PLZUtil;
 import cad.cep.model.Alert;
 import cad.cep.model.JSONMessage;
+import cad.cep.mom.MomFactory;
 import caddb.CadWeatherSystemDatabaseAPI;
 
 /**
@@ -21,7 +23,7 @@ public final class CEPFactory {
 	private static EsperService service;
 
 	/** The sender. */
-	private static MoMSender sender;
+	private static List<MoMSender> senders;
 
 	private static CadWeatherSystemDatabaseAPI database;
 
@@ -35,7 +37,17 @@ public final class CEPFactory {
 		if(service != null){
 			return service;
 		}
-		sender = new MoMSender();
+		//Default sender added
+		MoMSender sender = new MoMSender();
+		senders.add(sender);
+		//for testing puroposes 
+		try {
+			MoMSender otherSender = new MoMSender();
+			otherSender.setMom(MomFactory.createMoMForValues("weatherTenantTwo:cadCEP"));
+			senders.add(otherSender);
+		} catch (MoMException e) {
+			e.printStackTrace();
+		}
 		service = new EsperService();
 		service.registerAdditionalEvent(JSONMessage.class);
 		addUpdateEvent(service);
@@ -76,8 +88,8 @@ public final class CEPFactory {
 	 *
 	 * @param newSender the new sender
 	 */
-	public static void switchSender(MoMSender newSender){
-		sender = newSender;
+	public static void switchSender(List<MoMSender> newSender){
+		senders = newSender;
 	}
 
 	/**
@@ -105,7 +117,12 @@ public final class CEPFactory {
 			System.out.println("Sending");
 			System.out.println(underlying.toString());
 			try {
-				sender.send(underlying.getTopic()+"/CEP", underlying, false);
+				//to see a difference in tennants 
+				for (int i = 0; i < senders.size()-1; i++) {
+					MoMSender sender = senders.get(0);
+					underlying.setTemperature(underlying.getTemperature()+i);
+					sender.send(underlying.getTopic()+"/CEP", underlying, false);
+				}
 				database.insertWeather(new Timestamp(System.currentTimeMillis()), Integer.valueOf(underlying.getPlz()).intValue(), underlying.getCurrentWeatherId(), underlying.getTemperature(), (double)underlying.getPressure(), (double)underlying.getHumidity() , underlying.getTemperatureMin(), underlying.getTemperatureMax(), underlying.getLatitude(), underlying.getLongitude(), "", underlying.getWindspeed(), underlying.getWindDeg(), "", 0.0, 0.0, null, null);
 			} catch (MoMException e) {
 				e.printStackTrace();
@@ -148,7 +165,9 @@ public final class CEPFactory {
 	private static void sendWarning(String plz, String title, String code, String message){
 		try{
 			Alert alert = new Alert(title, code, message);
-			sender.send(String.format("%s/%s", plz, "alert"), alert, false);
+			for (MoMSender sender : senders) {
+				sender.send(String.format("%s/%s", plz, "alert"), alert, false);
+			}
 			System.out.println(alert);
 		}catch(MoMException e){
 			e.printStackTrace();

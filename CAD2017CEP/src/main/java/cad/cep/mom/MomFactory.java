@@ -32,4 +32,13 @@ public final class MomFactory {
 			throw new MoMException("MOM not found", e);
 		}
 	}
+	public static IMoM createMoMForValues(String user) throws MoMException{
+		try {
+			String host = String.format("tcp://%s", System.getenv("MOM_HOST"));
+			String pw = System.getenv("MOM_PW");
+			return new MQTTMom(host, user, pw);
+		} catch (MoMException e) {
+			throw new MoMException("Can not create new MoM", e);
+		}
+	}
 }
