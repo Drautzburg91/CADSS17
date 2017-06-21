@@ -57,7 +57,7 @@ public class CallBack implements MqttCallback{
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 			byte[] payload = message.getPayload();
 			String string = new String(payload);
-			if("scaling".equals(topic)){
+			if("cep/ndamen".equals(topic)){
 				try {
 					String integerAsString = new String(payload);
 					int n = Integer.getInteger(integerAsString);
