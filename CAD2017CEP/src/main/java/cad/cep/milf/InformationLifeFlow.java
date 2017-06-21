@@ -3,8 +3,13 @@ package cad.cep.milf;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+
 import cad.cep.exceptions.MoMException;
 import cad.cep.milf.util.PLZUtil;
+import cad.cep.mom.MQTTMom;
+import cad.cep.mom.MomFactory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -19,6 +24,9 @@ public class InformationLifeFlow {
 	 * @throws MoMException 
 	 */
 	public static void main(String[] args) throws MoMException {
+		addnewReader("cep/ndamen");	
+		MQTTMom tempMom = (MQTTMom) MomFactory.createOrLoadMom();
+		
 		List<String> plzs = PLZUtil.getAllKnownPLZ();
 		for (String plz : plzs) {
 			String weekly = plz+"/weekly";
@@ -27,9 +35,8 @@ public class InformationLifeFlow {
 			addnewReader(weekly);
 			System.out.println(plz + " added");
 		}
-		MoMReader cpuTestReader = new MoMReader("cep/ndamen");
-		cpuTestReader.start();
 	}
+
 
 	/**
 	 * Add a new reader.

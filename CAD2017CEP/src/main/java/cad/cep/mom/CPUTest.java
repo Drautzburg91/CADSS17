@@ -9,6 +9,7 @@ import java.util.Arrays;
 public class CPUTest {
 
 	public static int calculateNDamenForScaling(int n){
+		System.out.println("Calc ");
 		int noSol = 0;
 		int[] x = new int[n];
 		int k = 0;

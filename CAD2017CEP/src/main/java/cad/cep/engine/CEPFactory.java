@@ -118,7 +118,7 @@ public final class CEPFactory {
 		String tropical = "select * from JSONMessage where humidity >= 90";
 		service.createStatement(tropical, (newData, oldData)->{
 			JSONMessage message = (JSONMessage) newData[0].getUnderlying();
-			sendWarning(message.getPlz(), "Tropical", "T1", "Humidity is over 90");
+			sendWarning(message.getPlz(), "Tropical", "T1", "Humidity is over 90", message.getCityName());
 		});
 	}
 
@@ -131,14 +131,16 @@ public final class CEPFactory {
 		String statementQuery ="select * from JSONMessage";
 		service.createStatement(statementQuery, (newData, oldData) ->{
 			JSONMessage underlying = (JSONMessage)newData[0].getUnderlying();
-			System.out.println("Sending");
-			System.out.println(underlying.toString());
 			try {
 				//to see a difference in tennants 
-				for (int i = 0; i < senders.size(); i++) {
-					MoMSender sender = senders.get(0);
-					underlying.setTemperature(underlying.getTemperature()+i);
-					sender.send(underlying.getTopic()+"/CEP", underlying, false);
+				if(underlying.getCityName() != null){
+					System.out.println("Sending");
+					System.out.println(underlying.toString());
+					for (int i = 0; i < senders.size(); i++) {
+						MoMSender sender = senders.get(0);
+						underlying.setTemperature(underlying.getTemperature()+i);
+						sender.send(underlying.getTopic()+"/CEP", underlying, false);
+					}
 				}
 				database.insertWeather(new Timestamp(System.currentTimeMillis()), Integer.valueOf(underlying.getPlz()).intValue(), underlying.getCurrentWeatherId(), underlying.getTemperature(), (double)underlying.getPressure(), (double)underlying.getHumidity() , underlying.getTemperatureMin(), underlying.getTemperatureMax(), underlying.getLatitude(), underlying.getLongitude(), "", underlying.getWindspeed(), underlying.getWindDeg(), "", 0.0, 0.0, null, null);
 			} catch (MoMException e) {
@@ -157,17 +159,17 @@ public final class CEPFactory {
 		service.createStatement(frostRisk, (newData, oldData)->{
 			System.out.println("Its cold");
 			JSONMessage message =(JSONMessage) newData[0].get("m2");
-			sendWarning(message.getPlz(), "Frost", "W1", "There is a frost chance");
+			sendWarning(message.getPlz(), "Frost", "W1", "There is a frost chance", message.getCityName());
 		});
 		String extremeCold = "Select * from JSONMessage where temperature <=-9";
 		service.createStatement(extremeCold, (newData, oldData)->{
 			JSONMessage message = (JSONMessage) newData[0].getUnderlying();
-			sendWarning(message.getPlz(), "Cold", "W2", "The Temperature is " + message.getTemperature() + " wear warm clothing");
+			sendWarning(message.getPlz(), "Cold", "W2", "The Temperature is " + message.getTemperature() + " wear warm clothing", message.getCityName());
 		});
 		String heavySnow = "select * from JSONMessage where currentWeatherId = 622";
 		service.createStatement(heavySnow, (newData, oldData) ->{
 			JSONMessage message = (JSONMessage) newData[0].getUnderlying();
-			sendWarning(message.getPlz(), "Heavy Snowfall", "W3", "Heavy Snowfall, be carefull");
+			sendWarning(message.getPlz(), "Heavy Snowfall", "W3", "Heavy Snowfall, be carefull", message.getCityName());
 		});
 	}
 
@@ -179,13 +181,15 @@ public final class CEPFactory {
 	 * @param code the code of the warning
 	 * @param message the message for the client
 	 */
-	private static void sendWarning(String plz, String title, String code, String message){
+	private static void sendWarning(String plz, String title, String code, String message, String cityName){
 		try{
 			Alert alert = new Alert(title, code, message);
-			for (MoMSender sender : senders) {
-				sender.send(String.format("%s/%s", plz, "alert"), alert, false);
+			if(cityName != null){
+				for (MoMSender sender : senders) {
+					sender.send(String.format("%s/%s", plz, "alert"), alert, false);
+				}
+				System.out.println(alert);
 			}
-			System.out.println(alert);
 		}catch(MoMException e){
 			e.printStackTrace();
 		}
@@ -200,7 +204,7 @@ public final class CEPFactory {
 		String goSwimming = "Select * from JSONMessage where temperature >25 and currentWeatherId >= 800 and currentWeatherId <=804";
 		service.createStatement(goSwimming, (newData, oldData)->{
 			JSONMessage message = (JSONMessage) newData[0].getUnderlying();
-			sendWarning(message.getPlz(), "Nice Day", "S1", "The Weather looks nice, go swimming");
+			sendWarning(message.getPlz(), "Nice Day", "S1", "The Weather looks nice, go swimming", message.getCityName());
 		});
 
 	}
@@ -215,14 +219,14 @@ public final class CEPFactory {
 		service.createStatement(pressureSwitchRisk, (newData, oldData)->{
 			System.out.println("WARING pressure changes to much");
 			JSONMessage message = (JSONMessage) newData[0].get("p2");
-			sendWarning(message.getPlz(), "HearthRisk", "H1", "Pressure changes to rapitly, please take medication if needed");
+			sendWarning(message.getPlz(), "HearthRisk", "H1", "Pressure changes to rapitly, please take medication if needed", message.getCityName());
 			System.out.println("At " + message.getPlz());
 		});
 		String toHotRisk = "select * from JSONMessage where temperature >=25";
 		service.createStatement(toHotRisk, (newData, oldData)->{
 			JSONMessage message = (JSONMessage) newData[0].getUnderlying();
 			System.out.println("TO HOT");
-			sendWarning(message.getPlz(), "HearthRisk", "H2", "Temperature over 25 degree, please take medication if needed");
+			sendWarning(message.getPlz(), "HearthRisk", "H2", "Temperature over 25 degree, please take medication if needed", message.getCityName());
 		});
 	}
 

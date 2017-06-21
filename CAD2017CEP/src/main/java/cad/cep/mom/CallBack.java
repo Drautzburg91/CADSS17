@@ -60,26 +60,11 @@ public class CallBack implements MqttCallback{
 			if("cep/ndamen".equals(topic)){
 				try {
 					String integerAsString = new String(payload);
-					int n = Integer.getInteger(integerAsString);
+					int n = Integer.parseInt(integerAsString);
 					int sol = CPUTest.calculateNDamenForScaling(n);
-					MoMSender sender = new MoMSender();
-					sender.send("cep/ndamenresult", new IMessage() {
-						
-						@Override
-						public IMessage createMessage(byte[] body, String topic) {
-							// not needed
-							return null;
-						}
-						
-						@Override
-						public IMessage copy(IMessage toCopy) {
-							//not needed
-							return null;
-						}
-						public String toString(){
-							return String.valueOf(sol);
-						}
-					}, false);
+					MQTTMom tempMom = (MQTTMom) MomFactory.createOrLoadMom();
+					System.out.println(sol);
+					tempMom.sendInt(sol, "cep/ndamenresult");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

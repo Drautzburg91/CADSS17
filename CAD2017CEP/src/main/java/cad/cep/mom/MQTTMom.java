@@ -4,6 +4,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 
 import cad.cep.exceptions.MoMException;
 import cad.cep.model.IMessage;
@@ -90,5 +91,9 @@ public class MQTTMom implements IMoM{
 			throw new MoMException("reconnect failed", e);
 		}
 	}
-
+	//only needed for cpu test no real method
+	public void sendInt(int send, String topic) throws MqttPersistenceException, MqttException{
+		MqttMessage payload =  new MqttMessage(String.valueOf(send).getBytes());
+		client.publish(topic, payload);
+	}
 }
