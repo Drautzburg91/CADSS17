@@ -47,15 +47,14 @@ Die INSERT  Methoden liefern das Feedback der Datenbankoperation in einem String
 \item String insertDefaultWeather(int WeatherID, String main, String description, String iconReferenz)
 \item String insertCity(int ZipCode, String cityName, Double logitude, Double latitude, int cityID)
 \item String insertUser(String EMail, String userName, String passwort, int mainLocation)
-\item String insertSubcribe(String E_Mail, int ZipCode)
+\item String insertSubcribe(String EMail, int ZipCode)
 \item String insertAlert(int ZipCode, Timestamp timestamp, String title, String code, String message)
 \item String insertWeather(Timestamp TimeStamp, int ZipCode, int WeatherID, 
 				double mainTemp, double mainPressure, double mainHumidity, double mainTempMin,
 				double mainTempMax, double mainSeaLevel, double mainGrndLevel,
 				String windDirection, double windSpeed, double windDeg, String cloudsDesc, double rain3h, 
 				double snow3h, 
-				Timestamp sysSunset, Timestamp sysSunrise
-				)
+				Timestamp sysSunset, Timestamp sysSunrise)
 \end{itemize}
 
 {\bf CEP DB - SELECT }
