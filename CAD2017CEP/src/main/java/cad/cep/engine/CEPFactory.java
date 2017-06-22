@@ -13,6 +13,7 @@ import cad.cep.milf.MoMSender;
 import cad.cep.milf.util.PLZUtil;
 import cad.cep.model.Alert;
 import cad.cep.model.JSONMessage;
+import cad.cep.mom.IMoM;
 import cad.cep.mom.MomFactory;
 
 /**
@@ -46,8 +47,11 @@ public final class CEPFactory {
 		//for testing puroposes 
 		try {
 			MoMSender otherSender = new MoMSender();
-			otherSender.setMom(MomFactory.createMoMForValues("weatherTenantTwo:cadCEP"));
-			senders.add(otherSender);
+			IMoM createMoMForValues = MomFactory.createMoMForValues("weatherTenantTwo:cadCEP");
+			if(createMoMForValues != null){
+				otherSender.setMom(createMoMForValues);
+				senders.add(otherSender);
+			}
 		} catch (MoMException e) {
 			e.printStackTrace();
 		}
