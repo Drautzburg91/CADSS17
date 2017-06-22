@@ -172,7 +172,7 @@ Auf technischer Seite nutzt die Webapplikation die Sprachen PHP, JavaScript, HTM
 \label{img:Einbindung PATH-Variablen}
 \end{lstlisting}
 Die Verbindung zur MOM wird clientseitig über die JavaScript Bibliothek Paho aufgebaut. Paho ist ein Projekt der Eclipse Foundation - bekannt vor allem für die gleichnamige IDE - mit dem Ziel Internet of Things Applikationen die Implementierung des MQTT Protokolls zu vereinfachen. Paho ist für eine ganze Reihe von Sprachen verfügbar, darunter Java, Python, C, C++ und dem hier verwendeten JavaScript. Der Funktionsumfang unterscheidet sich jedoch und so unterstützt die JavaScript Version nicht das Standard MQTT Protokoll, sondern nur eine angepasste Version für WebSockets. Für RabbitMQ lässt sich die Unterstützung von WebSockets über das RabbitMQ Web MQTT Plugin hinzufügen. Dies ermöglicht eine direkte Verbindung zwischen dem Browser des Nutzers und der MOM, ohne weitere Interaktion mit dem Webserver.
-In Kombination mit der Umsetzung als Single Page Application bedeutet dies eine minimale Belastung des Webservers und erlaubt somit eine große Anzahl Nutzer pro Server. Bei Herokus kostenlosem Hostingmodell, welches nur 512 MB RAM und einen Worker bereitstellt waren so bereits in Tests über einen Zeitraum von einer Minute 1500 Aufrufe der Seite pro Sekunde möglich (vgl. Abb.\ref{img:testsettings} und \ref{img:testresults}.
+In Kombination mit der Umsetzung als Single Page Application bedeutet dies eine minimale Belastung des Webservers und erlaubt somit eine große Anzahl Nutzer pro Server. Bei Herokus kostenlosem Hostingmodell, welches nur 512 MB RAM und einen Worker bereitstellt waren so bereits in Tests über einen Zeitraum von einer Minute 1500 Aufrufe der Seite pro Sekunde möglich (vgl. Abb.\ref{img:testsettings} und \ref{img:testresults}).
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=1.0\textwidth]{Bilder/Web-TestSettings.png}
@@ -286,7 +286,7 @@ In diesem Absatz wird in nachfolgender Tabelle dargestellt, ob und wie die Anfor
      \hline
      10. & Dev-Prod-Vergleichbarkeit & Änderungen können vom Entwickler selbst binnen Sekunden deployed werden, zur Entwicklung wird der gleiche Webserver verwendet & Ja\\
      \hline     
-     11. & Logs werden auf stdout geschrieben, von Heroku werden diese erfasst und zum abrufen bereitgestellt  & Ja\\
+     11. & Logs & Logs werden auf stdout geschrieben, von Heroku werden diese erfasst und zum abrufen bereitgestellt  & Ja\\
      \hline
      12. & Admin-Prozesse & Es werden keine Admin-Prozesse benötigt oder verwendet & nicht zutreffend\\
      \hline
