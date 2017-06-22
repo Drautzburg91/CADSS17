@@ -2,7 +2,7 @@
 In diesem Kapitel wird auf die im Rahmen dieses Projektes Wetter-API vom Anbieter "OpenWeatherMap" eingegangen und anschließend eigens dafür implementierte Services zu dieser beschrieben. Anschließend werden die für den Services implementierten Klassen, Methoden und Tests beschrieben. Abschließend wird diese Komponente gegen die zu Beginn definierten Anforderungen validiert. 
 \subsection{Die API}
 Der Anbieter "OpenWeatherMap" bietet kostenlos die Möglichkeit Wetterdaten via HTTP-Request abzufragen. 
-Hierzu ist lediglich ein Nutzerzugang erforderlich, welchen sich jeder anlegen kann. Es können verschiedene Vorhersagen abgefragt werden, für diese Arbeit beschränkt es sich jedoch auf die tägliche Vorhersage und eine  5-tages Vorhersage. Solch ein angesprochener HTTP-Request (hier für eine 5tägige Vorhersage) setzt sich wie folgt zusammen, 
+Hierzu ist lediglich ein Nutzerzugang erforderlich, welchen sich jeder anlegen kann. Es können verschiedene Vorhersagen abgefragt werden, für diese Arbeit beschränkt es sich jedoch auf die tägliche Vorhersage und eine  5-tages Vorhersage. Solch ein angesprochener HTTP-Request (hier für eine 5-tägige Vorhersage) setzt sich wie folgt zusammen, 
 \begin{lstlisting}
 http://api.openweathermap.org/data/2.5/forecast?zip=78467,de&
 APPID=41c464d95d33fabc24d44a5086ea9848
