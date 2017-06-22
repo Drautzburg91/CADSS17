@@ -59,7 +59,7 @@ Beispielsweise übersetzt die Klasse \textbf{Uebersetzung} die verschiedenen Wet
 	\label{img:Case-Uebersetzung}
 \end{lstlisting} 
 
-Bei beginn der Applikation soll, wie in den Anforderungen beschrieben, die Position automatisch durch GPS ermittelt werden. Dazu wurde das von Android bereitgestellte Interface LocationListener verwendet. Dazu müssen die Methoden onLocationChanged(), onProviderDisabled(), onProviderEnabled() und onStatusChanged() implementiert werden. 
+Bei Beginn der Applikation soll, wie in den Anforderungen beschrieben, die Position automatisch durch GPS ermittelt werden. Dazu wurde das von Android bereitgestellte Interface LocationListener verwendet. Dazu müssen die Methoden onLocationChanged(), onProviderDisabled(), onProviderEnabled() und onStatusChanged() implementiert werden. 
 Die wichtigste Methode dabei ist die onLocationChanged(). Diese liefert jedes Mal wenn sich die Position des Smartphones verändert die neue Position zurück. 
 Um nun das Interface LocationListener zu verwenden, ist es notwendig sich den Location Service bei den SystemServices zu holen. Dies geschieht über folgende Codezeile:
   \begin{lstlisting}
@@ -158,7 +158,7 @@ Unterhalb der Navigationsleiste schließt ein farblich abgetrennter Bereich an, 
 Anschließend wird die prognostizierte Höchst- und Tiefsttemperatur über den Wochentagen in einem Diagramm dargestellt und direkt darunter wird eine Wetterdarstellung in Form eines Icons sowie die Höchst- und Tiefsttemperatur textuell dargestellt.
 Am Schluss der Webseite kommt ein Footer, der Platz bietet für rechtliche Informationen.
 
-Technische Umsetzung
+\subsubsection{Technische Umsetzung}
 Auf technischer Seite nutzt die Webapplikation die Sprachen PHP, JavaScript, HTML und css. PHP wird ausschließlich verwendet um die Variablen, welche für die Verbindung zu Message Oriented Middleware benötigt werden, aus den beim Serverhost konfigurierbaren Umgebungsvariablen auszulesen, wie in Abb.\ref{img:Einbindung PATH-Variablen} zu sehen.
 \begin{lstlisting} 
 <script type="text/javascript">
