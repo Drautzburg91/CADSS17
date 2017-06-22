@@ -33,8 +33,10 @@ public final class CEPFactory {
 	 *
 	 * @return the esper service which can be used to call methods for the esper engine
 	 */
-	protected static EsperService createNewService(WeatherRepository database){
-		database = database;
+	protected static EsperService createNewService(WeatherRepository db){
+		database = (WeatherRepositoryImpl) db;
+		System.out.println(db);
+		System.out.println(database);
 		if(service != null){
 			return service;
 		}
@@ -141,9 +143,12 @@ public final class CEPFactory {
 						underlying.setTemperature(underlying.getTemperature()+i);
 						sender.send(underlying.getTopic()+"/CEP", underlying, false);
 					}
+					System.out.println("fuck you");
+					System.out.println(database);
+					database.insertWeather(new Timestamp(System.currentTimeMillis()), Integer.valueOf(underlying.getPlz()).intValue(), underlying.getCurrentWeatherId(), underlying.getTemperature(), (double)underlying.getPressure(), (double)underlying.getHumidity() , underlying.getTemperatureMin(), underlying.getTemperatureMax(), underlying.getLatitude(), underlying.getLongitude(), "", underlying.getWindspeed(), underlying.getWindDeg(), "", 0.0, 0.0, null, null);
 				}
-				database.insertWeather(new Timestamp(System.currentTimeMillis()), Integer.valueOf(underlying.getPlz()).intValue(), underlying.getCurrentWeatherId(), underlying.getTemperature(), (double)underlying.getPressure(), (double)underlying.getHumidity() , underlying.getTemperatureMin(), underlying.getTemperatureMax(), underlying.getLatitude(), underlying.getLongitude(), "", underlying.getWindspeed(), underlying.getWindDeg(), "", 0.0, 0.0, null, null);
-			} catch (MoMException e) {
+			
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		});
