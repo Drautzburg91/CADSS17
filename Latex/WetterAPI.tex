@@ -109,10 +109,10 @@ Nachfolgend werden die wichtigsten Methoden der Klasse "WeatherDataService" besc
 \item["init()"] füllt eine HashMap mit allen gewünschten Postleitzahlen auf, nach welchen die "OpenWeatherMap"-API abgefragt werden soll.
 \item["public void publishLiveWeatherData()"] ruft im Intervall von 60 Sekunden die Methoden "handlePLZtoday(plz, countryCode)“ und „handlePLZweekly(plz, countryCode)“ mit allen Postleitzahlen und Countrycodes auf, welche in der Init() -Methode eingelesen wurden. 
 \item["public void handlePLZtoday(String plz, String countryCode)"] stellt einen HTTP-Request und fragt die tagesaktuellen Wetterdaten im Json-Format ab.
-\item["public void dailyToWeatherData"] liest den von der Methode "handlePLZtoday" gestellten HTTP-Request aus und zieht die gewünschten Daten anhand der Struktur der Klasse "WeatherData" aus dem Response-Json der "OpenWeatherMap"-API. Anschließend wird  die gewünschte Json-Struktur zusammengebaut. 
+\item["public void dailyToWeatherData(...)"] liest den von der Methode "handlePLZtoday" gestellten HTTP-Request aus und zieht die gewünschten Daten anhand der Struktur der Klasse "WeatherData" aus dem Response-Json der "OpenWeatherMap"-API. Anschließend wird  die gewünschte Json-Struktur zusammengebaut. 
 \item["public void handlePLZweekly(String plz, String countryCode)"]stellt einen HTTP-Request und fragt die 5-tägigen Wetterdaten im Json-Format ab.
-\item["public static ArrayList WeatherDataWeekly weeklyToWeatherDataWeekly
-(JsonElement root, String plz)" ]liest den von der Methode "handlePLZweekly" gestellten HTTP-Request aus und zieht die gewünschten Daten anhand der Struktur der Klasse "WeatherDataWeekly" aus dem Response-Json der "OpenWeatherMap"-API. Anschließend wird die gewünschte Json-Struktur zusammengebaut.
+\item["public static ArrayList WeatherDataWeekly weeklyToWeatherDataWeekly 
+(...)" ]liest den von der Methode "handlePLZweekly" gestellten HTTP-Request aus und zieht die gewünschten Daten anhand der Struktur der Klasse "WeatherDataWeekly" aus dem Response-Json der "OpenWeatherMap"-API. Anschließend wird die gewünschte Json-Struktur zusammengebaut.
 \item["private void reconnectToMoM()"] stellt sicher, dass bei einem Verbindungsverlust zur MOM wieder eine Verbindung hergestellt wird. 
 \item["public void publishFakeWeatherData(WeatherData weatherData)"] sendet die Daten, via Web-Client eingepflegt wurden, an die MOM. 
 \end{description}
