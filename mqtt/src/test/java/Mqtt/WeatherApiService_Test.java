@@ -99,6 +99,10 @@ public class WeatherApiService_Test extends TestCase {
 		assertEquals(actualResult, expectedDailyResult);
 	}
 
+	/**
+	 * Test ApiCall for Topic "Weekly"
+	 */
+
 	public String json3hrsWithWindDeg(String hr) {
 		// dt_txt\":\"2017-06-10 21:00:00
 		return "{\"dt\":1497117600,\"main\":{\"temp\":21.4,\"temp_min\":20,\"temp_max\":21.4,\"pressure\":957,\"sea_level\":1033.31,\"grnd_level\":957.44,\"humidity\":63,\"temp_kf\":1.4},\"weather\":[{\"id\":803,\"main\":\"Clouds\",\"description\":\"broken clouds\",\"icon\":\"04d\"}],\"clouds\":{\"all\":64},\"wind\":{\"speed\":1.06,\"deg\":24.0006},\"rain\":{},\"sys\":{\"pod\":\"d\"},\"dt_txt\":"
@@ -124,9 +128,10 @@ public class WeatherApiService_Test extends TestCase {
 		for (int i = 0; i <= 10; i++) {
 			cal = add3hours(cal);
 			String seg = format.format(cal.getTime());
-			if(i==0){
-			input = input +"\n"+ json3hrsWithWindDeg("\""+seg+"\"");}else{
-				input = input +"\n,"+ json3hrsWithWindDeg("\""+seg+"\"");
+			if (i == 0) {
+				input = input + "\n" + json3hrsWithWindDeg("\"" + seg + "\"");
+			} else {
+				input = input + "\n," + json3hrsWithWindDeg("\"" + seg + "\"");
 			}
 
 			WeatherDataWeekly dailyResult = new WeatherDataWeekly();
@@ -156,19 +161,17 @@ public class WeatherApiService_Test extends TestCase {
 		JsonElement root = jp.parse(input);
 
 		ArrayList<WeatherDataWeekly> actualResult = WeatherApiService.weeklyToWeatherDataWeekly(root, "78467");
-	
+
 		assertEquals(actualResult, expectedWeeklyResult);
 
 	}
-	
-	
-	
+
 	public String json3hrsWithoutWindDeg(String hr) {
 		// dt_txt\":\"2017-06-10 21:00:00
 		return "{\"dt\":1497117600,\"main\":{\"temp\":21.4,\"temp_min\":20,\"temp_max\":21.4,\"pressure\":957,\"sea_level\":1033.31,\"grnd_level\":957.44,\"humidity\":63,\"temp_kf\":1.4},\"weather\":[{\"id\":803,\"main\":\"Clouds\",\"description\":\"broken clouds\",\"icon\":\"04d\"}],\"clouds\":{\"all\":64},\"wind\":{\"speed\":1.06},\"rain\":{},\"sys\":{\"pod\":\"d\"},\"dt_txt\":"
 				+ hr + "}";
 	}
-	
+
 	public void testApiCallWeeklyWithoutWindDeg() {
 
 		ArrayList<WeatherDataWeekly> expectedWeeklyResult = new ArrayList<>();
@@ -181,9 +184,10 @@ public class WeatherApiService_Test extends TestCase {
 		for (int i = 0; i <= 10; i++) {
 			cal = add3hours(cal);
 			String seg = format.format(cal.getTime());
-			if(i==0){
-			input = input +"\n"+ json3hrsWithoutWindDeg("\""+seg+"\"");}else{
-				input = input +"\n,"+ json3hrsWithoutWindDeg("\""+seg+"\"");
+			if (i == 0) {
+				input = input + "\n" + json3hrsWithoutWindDeg("\"" + seg + "\"");
+			} else {
+				input = input + "\n," + json3hrsWithoutWindDeg("\"" + seg + "\"");
 			}
 
 			WeatherDataWeekly dailyResult = new WeatherDataWeekly();
@@ -213,15 +217,9 @@ public class WeatherApiService_Test extends TestCase {
 		JsonElement root = jp.parse(input);
 
 		ArrayList<WeatherDataWeekly> actualResult = WeatherApiService.weeklyToWeatherDataWeekly(root, "78467");
-	
+
 		assertEquals(actualResult, expectedWeeklyResult);
 
 	}
-
-	
-	
-	
-	
-	
 
 }
