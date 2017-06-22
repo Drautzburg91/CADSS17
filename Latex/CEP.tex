@@ -59,7 +59,7 @@ Sollte die CEP Engine etwas finden wird ein Alert gesendet. Diese Nachrichten be
       H2&Herzinfakt Warnung: Für Herzkranke zu hohe Temperatur (>=25)\\
      \hline
       \end{tabular}
-   \caption{Die Wanung-Codes}\label{tab:WaningCodes}
+   \caption{Die Warnung-Codes}\label{tab:WarningCodes}
     \end{minipage}
 \end{table}
 Die CEP Engine wird über die Klasse Engine Control gesteuert. Diese Singleton-Klasse stellt sicher, dass die anderen Klassen Zugriff auf von ihnen benötigten Funktionen der Engine haben, aber dabei nicht mehr Zugriff als notwendig erhalten. Die Klasse ist ein Singleton um sicherzugehen das jede Klasse auf die gleiche Engine zugreift. Die Klasse selbst erstellt eine Instanz der Klasse EsperService. Die Instanz wrid über eine Factory erstellt. Die Factory geht sicher das jedes benötigte Statement mit einen Listener verknüpft wird. Die EsperService-Klasse beinhaltet die tatsächliche Esper Engine und stellt einen Wrapper für diese dar. Das folgende Klassendiagramm zeigt die Methoden und die Abhängigkeiten der Klassen.
@@ -79,24 +79,23 @@ select * from JSONMessage where humidity >= 90
 \end{lstlisting}
 Einige Warnungen sind vor allem im Winter wichtig. Dabei geht es um Schneefall, niedrige Temperaturen und Frost. Die erste Winternachricht W1 warnt über eine Frostgefahr. Dabei werden zwei JSONMessages ausgewertet, ob sie nacheinander ins System gekommen sind, dabei aus dem gleichen Ort stammen und Temperaturen unter 0 Grad angeben. Es werden zwei aufeinander folgende Nachrichten benötigt, da Wasser nicht sofort gefriert sondern Zeit braucht. Wenn also zwei Messungen eine negative Temperatur angeben, hatte das Wasser Zeit zu gefrieren. Sollte auf eine Nachricht mit negativer Temperatur eine Nachricht mit positiver Temperatur oder 0 Grad folgen, wird davon die erste Nachricht entfernt da das Wasser nicht genug zeit zum gefrieren hatte. Das Statement sieht wie folgt aus: 
 \begin{lstlisting}
-select * from pattern[m1=JSONMessage ->
-m2=JSONMessage
+select * from pattern[m1=JSONMessage -> m2=JSONMessage 
 (m1.plz = m2.plz and m1.temperature <0 and m2.temperature <0]
 \end{lstlisting}
-Über die Identifier m1 oder m2 können die einzelnen Nachrichten im Listener angesprochen werden. Der Listener sendet die Nachricht wieder als Alert weiter. W2 ist die zweite Nachricht und gibt eine Meldung bei besonderst kalten Temperaturen aus. Dabei benötigt es nur eine Nachricht mit einer Temperatur von unter -9 Grad um eine Warnung auszugeben. Niedirgere Temperaturen sind normalerweise selten in Deutschland und generell eher gefährlich. Daher muss eine Warnung an die Clients weitergeben werden. Das Statement funktioniert wie die bereits beschriebenen Statements. 
+Über die Identifier m1 oder m2 können die einzelnen Nachrichten im Listener angesprochen werden. Der Listener sendet die Nachricht wieder als Alert weiter. W2 ist die zweite Nachricht und gibt eine Meldung bei besonders kalten Temperaturen aus. Dabei benötigt es nur eine Nachricht mit einer Temperatur von unter -9 Grad um eine Warnung auszugeben. Niedrigere Temperaturen sind normalerweise selten in Deutschland und generell eher gefährlich. Daher muss eine Warnung an die Clients weitergeben werden. Das Statement funktioniert wie die bereits beschriebenen Statements. 
 \begin{lstlisting}
 select * from JSONMessage where temperature <=-9
 \end{lstlisting}
-Die Letzte Winternachricht befasst sich mit starken Schneefall. Dabei wrid der Wettercode von der Wetterapi ausgewertet. Der Code 622 bedeutet starker Schneefall. Die Clients können den Code zwar auswerten und auch entsprechend Meldungen ausgeben aber starker Schneefall kann gefährlich werden. Daher wird eine Meldung weitergesendet um sicherzugehen das alle Clients auch ihre Nutzer warnen. Das Statement sieht wie folgt aus. 
+Die letzte Winternachricht befasst sich mit starkem Schneefall. Dabei wird der Wettercode von der WetterApi ausgewertet. Der Code 622 bedeutet starker Schneefall. Die Clients können den Code zwar auswerten und auch entsprechend Meldungen ausgeben aber starker Schneefall kann gefährlich werden. Daher wird eine Meldung weitergesendet um sicherzugehen das alle Clients auch ihre Nutzer warnen. Das Statement sieht wie folgt aus. 
 \begin{lstlisting}
 select * from JSONMessage where currentWeatherId = 622
 \end{lstlisting}  
-Für den Sommer gibt es eine eigene Warnung. Diese warnt den Nutzer vor sehr guten Wetter. Das ist normalerweise nicht gefährlich aber es kann Clients interessieren ob sie ihren Nutzern sagen können, dass diese Baden gehen können. Dabei wurden als Bedingungen eine Temperatur über 25 Grad und ein klarer Himmel verwendet. Die ID dieses Alarms ist S1. 
+Für den Sommer gibt es eine eigene Warnung. Diese warnt den Nutzer vor sehr gutem Wetter. Das ist normalerweise nicht gefährlich aber es kann Clients interessieren ob sie ihren Nutzern sagen können, dass diese Baden gehen können. Dabei wurden als Bedingungen eine Temperatur über 25 Grad und ein klarer Himmel verwendet. Die ID dieses Alarms ist S1. 
 \begin{lstlisting}
 select * from JSONMessage where temperature > 25 and currentWeatherId >= 800
 \end{lstlisting}
-Die letzte Warnungskategorie beschäftigt sich mit Herzinfaktrisiken. Die Anwendung ist keine Medizinische Anwendung und folgt auch nicht den denentsprechenden Richtlinien. Daher kann die Anwendung nicht eine genaue Aussage darüber treffen ob ein Herzkranker Tabletten nehmen muss. Die Anwendung kann aber Aussgaben darüber treffen was laut Statistiken gefährlich für Menschen mit Herzproblemen werden könnte. Das stellt aber keine Empfehlung Medikamente zu nehmen dar. Es soll die Nutzer nur darauf hinweisen das sie sich Gedanken machen sollten, ob sie davon betroffen werden können. 
- Schwankt der Luftdruck zu strark, kann bei einigen Menschen es zu einen Herzinfakt kommen. Daher gibt es ein Statement welches überprüft ob in den letzten 30 Minuten eine starke Schwankung stattgefunden hat. Wenn eine Meldung in den Eventstream gelangt wird diese aufbewahrt bis das Zeitfenster abgelaufen ist oder das Muster erkannt wurde. Das Statement sieht wie folgt aus:
+Die letzte Warnungskategorie beschäftigt sich mit Herzinfarktrisiken. Die Anwendung ist keine medizinische Anwendung und folgt auch nicht den dementsprechenden Richtlinien. Daher kann die Anwendung nicht eine genaue Aussage darüber treffen ob ein Herzkranker Tabletten nehmen muss. Die Anwendung kann aber Ausgaben darüber treffen was laut Statistiken gefährlich für Menschen mit Herzproblemen werden könnte. Das stellt aber keine Empfehlung Medikamente zu nehmen dar. Es soll die Nutzer nur darauf hinweisen das sie sich Gedanken machen sollten, ob sie davon betroffen sein könnten. 
+Schwankt der Luftdruck zu stark, kann es bei einigen Menschen zu einem Herzinfarkt kommen. Daher gibt es ein Statement welches überprüft ob in den letzten 30 Minuten eine starke Schwankung stattgefunden hat. Wenn eine Meldung in den Eventstream gelangt, wird diese aufbewahrt bis das Zeitfenster abgelaufen ist oder das Muster erkannt wurde. Das Statement sieht wie folgt aus:
 
 \begin{lstlisting}
 select * from pattern[d1=JSONMessage ->
@@ -105,50 +104,50 @@ d2=JSONMessage
  (p2.pressure - p1.pressure <-5 or 
 p1.pressure - p2.pressure <-10))
  where timer:within(30 min)]
-\end{lstlisting} Das Statement W2 beschäftigt sich mit der Gefahr einer zu hohen Temperatur. Sollte diese über 25 Grad sein kann es in eingien Fällen das herzinfaktrisiko erhöhen. Das Statement dazu entspricht den anderen Updatestatements. 
+\end{lstlisting} Das Statement W2 beschäftigt sich mit der Gefahr einer zu hohen Temperatur. Sollte diese über 25 Grad liegen kann es in einigen Fällen das Herzinfarktrisiko erhöhen. Das Statement dazu entspricht den anderen Updatestatements. 
 
 \begin{lstlisting}
-select * from JSONMessage wgere temperature >=25
+select * from JSONMessage wgere temperature >= 25
 \end{lstlisting}
- Zu jeden Eintrag in der Tabelle \ref{tab:WaningCodes} gibt es ein eigenes Statement. Dazu gibt es ein Statement um jede Nachricht zu erfassen. Dabei werden keine unique Consumptionmodes verwendet da eine Nachricht mehrere Statements auslösen kann. Es kann zum Beispiel gutes Badewetter, ein hoher Luftddruck und eine hohe Luftfeuchtigkeit gleichzeitig eintreten. Genauso wie eine Nachricht nicht im Eventstream bis zum erreichen eines Fensterendes oder eines Musters blockiert werden kann. Während die erste Nachricht darauf wartet wegen der temperatur Schwankungen festgehalten zu werden, kann eine andere Nachricht eingehen die in Kompination mit der ersten Nachricht ein anderes Muster erfüllt.  
+Zu jedem Eintrag in der Tabelle \ref{tab:WarningCodes} gibt es ein eigenes Statement. Dazu gibt es ein Statement um jede Nachricht zu erfassen. Dabei werden keine unique Consumptionmodes verwendet da eine Nachricht mehrere Statements auslösen kann. Es kann zum Beispiel gutes Badewetter, ein hoher Luftdruck und eine hohe Luftfeuchtigkeit gleichzeitig eintreten. Genauso wie eine Nachricht nicht im Eventstream bis zum erreichen eines Fensterendes oder eines Musters blockiert werden kann. Während die erste Nachricht darauf wartet, wegen der Temperatur Schwankungen festgehalten zu werden, kann eine andere Nachricht eingehen die in Kombination mit der ersten Nachricht ein anderes Muster erfüllt (TODO erster Satzabschnitt ergibt keinen Sinn/ist nicht verständlich!).  
 \subsection{Ablauf}
-Sobald die Anwendung gestartet wurde, ließt diese alle ihr bekannten Städte aus. Für jede Postleitzahl werden zwei Reader-threads erstellt. Einer davon wartet auf alle Nachrichten unter den Topic plz/today und der andere wartet auf alle Nachrichten unter dem Topic plz/weekly. Damit der Reader die Nachrichten auch erhält muss eine Verbindung zur MoM erstellt werden. Dafür wird die Adresse und die Credentials für die MoM aus den Umgebungsvariablen ausgelesen. Die Nachrichten kommen in einen JSON Format an. Dieses Format wird versucht in eine Instanz der Klasse JSONMessage umzuwandeln. Klappt das nicht wird verscuht daraus eine WeeklyForcast Nachricht zu machen. Klappt das auch nicht gibt die Anwendugn eine Fehlermeldung aus und ignoriert die Nachricht, Jede JSONMessage wird als Event den Eventstream der CEP weitergegeben. Sollte die Engine eine Besonderheit finden wird eine Warnung an plz/alert gesendet. Auf jedenfall wird die Nachricht an plz/today/cep weitergeleitet. Die Wochenvorhersage wird an plz/weekly/cep gesendet.  
+Sobald die Anwendung gestartet wurde, ließt diese alle ihr bekannten Städte aus. Für jede Postleitzahl werden zwei Reader-Threads erstellt. Einer davon wartet auf alle Nachrichten unter dem Topic plz/today und der andere wartet auf alle Nachrichten unter dem Topic plz/weekly. Damit der Reader die Nachrichten auch erhält muss eine Verbindung zur MOM erstellt werden. Dafür wird die Adresse und die Credentials für die MOM aus den Umgebungsvariablen ausgelesen. Die Nachrichten kommen in dem JSON Format an. Abhängig vom Topic der Nachricht, unter dem sie empfangen wurde, wird die Nachricht als Tages- oder fünf-tägige Vorhersage behandelt. Jede JSONMessage wird als Event dem Eventstream der CEP weitergegeben. Sollte die Engine eine Besonderheit finden wird eine Warnung an plz/alert gesendet. In jedem Fall wird die Nachricht an plz/today/CEP weitergeleitet. Die Wochenvorhersage wird an plz/weekly/CEP gesendet.  
 \subsection{Erfüllte Anforderungen}
-Die Anwendung muss sich natürlich an die Anforderungen des 12-Faktor App Standards halten. Die erste Anforderung Codebase wird dadurch erfüllt das die Anwendung selbständig und alleine Funktionieren kann. Die anderen Komponenten, wie zum Beispiel die Wetter API sind nicht notwendig. Sie wurden nur mit entwickelt um ein Vollständiges Scenario darstellen zu können. Die einzige notwendige andere komponente ist eine MoM. Dabei kann die MoM aber jederzeit ausgetauscht werden. Die MoM wurde auch nicht von uns entwickelt sondern nur auf dem Server aufgesetzt. 
+Die Anwendung muss sich natürlich an die Anforderungen des 12-Faktor App Standards halten. Die erste Anforderung Codebase wird dadurch erfüllt das die Anwendung selbständig und alleine Funktionieren kann. Die anderen Komponenten, wie zum Beispiel die Wetter API sind nicht notwendig. Sie wurden nur mit entwickelt um ein vollständiges Szenario darstellen zu können. Die einzige notwendige andere Komponente ist eine MOM. Dabei kann die MOM aber jederzeit ausgetauscht werden. 
 \\
-Die Abhänigkeiten werden mit Maven verwaltet. Jede Benötigte Bibliothek wird einfach als Dependency hinzugefügt und diese wird, mit allen von dieser Benötigten Bibliotheken, runtergeladen und im Buildpath hinzugefügt. Neue Versionen oder Abhänigkeiten können einfach mit einer Zeile mehr in der Konfiguration hinzugefügt werden. Es wird nichts an Code Verwendet was nicht entweder von Java selbst kommt (Version 1.8) oder aus einer in Maven definierten Bibilothek vorhanden ist. Die Anwendung geht niemals davon aus das etwas implizit vorhanden ist.
+Die Abhängigkeiten werden mit Maven verwaltet. Jede benötigte Bibliothek wird einfach als Dependency hinzugefügt und diese wird, mit allen von dieser benötigten Bibliotheken, heruntergeladen und im Buildpath hinzugefügt. Neue Versionen oder Abhängigkeiten können einfach mit einer Zeile in der Konfiguration hinzugefügt werden. Es wird im Code nichts verwendet, was nicht entweder von Java (Version 1.8) selbst oder aus einer in Maven definierten Bibliothek kommt. Die Anwendung geht niemals davon aus das etwas implizit vorhanden ist.
 \\
-Die Addresse der MoM, der Nutzername und das Passworrt sind alle in Umgebungsvariablen festgelegt. Die einzige Konsigurationsdatei im Projekt ist die pom.xml. Diese hat aber mit der laufenden Anwendung nach dem erstellen des Builds nichts mehr zu tun. 
+Die Adresse der MOM, der Nutzername und das Passwort sind alle in Umgebungsvariablen festgelegt. Die einzige Konfigurationsdatei im Projekt ist die pom.xml. Diese hat aber mit der laufenden Anwendung nach dem erstellen des Builds nichts mehr zu tun. 
 \\
-Die Anwendung verwendet als anderen Service die MoM. Diese wird über eine API angesprochen. Die API ist allgemeingültig für jede MoM, sofern sie MQTT unterstüzt. Die Datenbank wird über eine selbstgeschriebene API angesprochen. Die Art der Datenbank kann über eine neue Klasse ausgetauscht werden, da über ein Interface die Datenbank angesprochen wird. Die Adresse kann auch ausgetauscht werden. 
+Die Anwendung verwendet als anderen Service die MOM. Diese wird über eine API angesprochen. Die API ist allgemeingültig für jede MOM, sofern sie das MQTT-Protokoll unterstützt. Die Datenbank wird über eine selbstgeschriebene API angesprochen. Die Art der Datenbank kann über eine neue Klasse ausgetauscht werden, da über ein Interface die Datenbank angesprochen wird. Die Adresse kann auch ausgetauscht werden. 
 \\
-Der Relasebuild kann nur von Jenkins erstellt werden. Dieses erstellt alle zusätzlichen für eine veröffentlichte Version benötigten Datein. Jenkins erlangt den Code über das Github Repository. Zu den Dateien gehört unter anderen die Konfiguration für das Deployment auf der Cloud.
+Der Releasebuild kann nur von Jenkins erstellt werden. Dieses erstellt alle zusätzlichen für eine veröffentlichte Version benötigten Dateien. Jenkins erlangt den Code über das Github Repository. Zu den Dateien gehört unter anderen die Konfiguration für das Deployment auf der Cloud.
 \\
-Säntliche Daten werden nur kurzeitig von der CEP Engine gespeichert. Die Anwendung legt keine Files an welche länger als die Ausführungszeit auf dem Server vorhanden sind. Daten die nicht mehr vorhanden sind, werden auch nicht mehr aufgerufen. Die CEP kennt nur die Temporär gespeicherten Daten. jede Datei die nicht mehr gespeichert ist, wird von der Engine nicht mehr berücksichtigt. Daher wird jede eingehende Nachricht zusätzlich in einer Datenbank gespeichert. Wenn die Engine startet werden alle Daten der letzten 24 Stunden geladen und neu gesendet. Auf dieseweise gehen keine Informationen verloren.
+Sämtliche Daten werden nur kurzzeitig von der CEP Engine gespeichert. Die Anwendung legt keine Files an welche länger als die Ausführungszeit auf dem Server vorhanden sind. Daten die nicht mehr vorhanden sind, werden auch nicht mehr aufgerufen. Die CEP kennt nur die temporär gespeicherten Daten. Jede Datei die nicht mehr gespeichert ist, wird von der Engine nicht mehr berücksichtigt. Daher wird jede eingehende Nachricht zusätzlich in einer Datenbank gespeichert. Wenn die Engine startet werden alle Daten der letzten 24 Stunden geladen und neu gesendet. Auf diese Weise gehen keine Informationen verloren.
 \\
 Die Anwendung braucht nur eine JVM zum Laufen. Ansonsten wird davon ausgegangen das über die Cloud Foundry oder die Cloud eines anderen Anbieters über eine Einstellung die Anwendung mit einen Port verknüpft werden kann. 
 \\
-Es werden verschiedene Threads verwendet. Diese werden aber nicht wegen der zum skalieren verwendet, sondern um sicherzugehen das eine Nachricht ausgewertet werden kann während eine andere gesendet wird. Es soll also nur die Ausführungszeit verschiedener nebenläufig ausführbarer Schritte optimiert werden. Weitere instanzen der Cloud werden zum skalieren erstellt. 
+Es werden verschiedene Threads verwendet. Diese werden aber nicht zum skalieren verwendet, sondern um sicherzugehen, dass eine Nachricht ausgewertet werden kann, während eine andere gesendet wird. Es soll also nur die Ausführungszeit verschiedener, nebenläufig ausführbarer Schritte optimiert werden. Weitere Instanzen in der Cloud werden zum skalieren erstellt. 
 \\
-Es macht keinen unterschied ob die Anwendung normal geschlossen wurde oder abgestürzt ist. Die CEP Engine und die MoM Verbindung werden geschlossen und können ohne Probleme wieder geöffnet werden. Wenn eine Verbindung wieder gebraucht wird, wird diese automatsich wieder geöffnet. Nur die bisherigen Muster gehen Verloren wenn die Anwendung plötzlich abstürtzt. Sobald die Anwendung neu startet werden die Daten der letzten 24 Stunden geladen und neu gesendet. Die Muster können so wiederhergestellt werden. Alles was älter als 24 Stunden ist, ist nicht mehr relevant. 
+Es macht keinen Unterschied ob die Anwendung normal geschlossen wurde oder abgestürzt ist. Die CEP Engine und die MOM Verbindung werden geschlossen und können ohne Probleme wieder geöffnet werden. Wenn eine Verbindung wieder gebraucht wird, wird diese automatisch wieder geöffnet. Nur die bisherigen Muster gehen Verloren wenn die Anwendung plötzlich abstürzt. Sobald die Anwendung neu startet, werden die Daten der letzten 24 Stunden geladen und neu gesendet. Die Muster können so wiederhergestellt werden. Alles was älter als 24 Stunden ist, ist nicht mehr relevant. 
 \\
-Es werden keine Log-Dateien angelegt. Die Anwendug gibt Mledungen über den Output- und den ErrorStream aus. An einer anderen Stelle muss daraus ein Log oder eine sonstige Auswertung erfolgen. 
+Es werden keine Log-Dateien angelegt. Die Anwendung gibt Meldungen über den Output- und den ErrorStream aus. An einer anderen Stelle muss daraus ein Log oder eine sonstige Auswertung erfolgen. 
 \\
-In der folgenden Tabelle werden die Anforderungen nochtmal zusammengefasst dargestellt. 
+In der folgenden Tabelle werden die Anforderungen nochmal zusammengefasst dargestellt. 
 \begin{table}[!ht]
   \centering
     \begin{minipage}{15cm}
       \centering
       \begin{tabular}{*{3}{|l|p{5.0cm}|p{5.0cm}}}\hline
-      \multicolumn{4}{|c|}{\cellcolor[RGB]{200,200,200}Validierung nach "12 Faktor APP"} \\\hline
+      \multicolumn{4}{|c|}{\cellcolor[RGB]{200,200,200}Validierung nach "12 Faktor App"} \\\hline
      \textbf{ID}&\textbf{Anforderung}&\textbf{Validierungs Element}&\textbf{Erfüllt}\\\hline
-     1.&Codebase&Andere Komponenten sind nur für das Testszenario da. Deployment verschiederner Versionen über Repo möglich&Ja\\
+     1.&Codebase&Andere Komponenten sind nur für das Testszenario da. Deployment verschiedener Versionen über Repository möglich&Ja\\
       \hline
      2.&Abhängigkeiten&Abhängigkeiten werden über Maven verwaltet&Ja\\
      \hline
      3.&Konfiguration&Bis auf Buildconfigurations gibt es keine Konfigurationsdatei. Alles andere über Umgebungsvariablen&Ja\\
      \hline
-     4.&Unterstützende Dienste&Die unterstüzenden Dienste können über Umgebungsvariablen ausgetauscht werden&Ja\\
+     4.&Unterstützende Dienste&Die unterstützenden Dienste können über Umgebungsvariablen ausgetauscht werden&Ja\\
      \hline 
      5.&Build, release, run&Wird von Jenkins verwaltet&Ja\\
      \hline
@@ -156,17 +155,17 @@ In der folgenden Tabelle werden die Anforderungen nochtmal zusammengefasst darge
      \hline
       7.&Bindung an Ports&Wird von Cloud Foundry übernommen&Ja\\
      \hline
-      8.&Nebenläufigkeit&Es wird nicht mit threads skaliert sondern mit Cloud Foundry instanzen&Ja\\
+      8.&Nebenläufigkeit&Es wird nicht mit Threads skaliert sondern mit Cloud Foundry Instanzen&Ja\\
      \hline
       9.&Einweggebrauch&Verbindungen können beliebig geschlossen oder geöffnet werden ohne das wichtige Daten verloren gehen&Ja\\
      \hline
      10.&Dev-Prod-Vergleichbarkeit&Nicht zutreffent&Nein\\
      \hline     
-     11.&Logs&Es wird mit den Streams gearbeitet.&Ka\\
+     11.&Logs&Es wird mit den Streams gearbeitet.&Ja\\
      \hline
-     12.&Admin-Prozesse&Nicht zutreffent&Nein\\
+     12.&Admin-Prozesse&Nicht zutreffend&Nein\\
      \hline
       \end{tabular}
-   \caption{Validierung der CEP nach "12 Faktor APP"}\label{tab:AnforderungenCEP}
+   \caption{Validierung der CEP nach "12 Faktor App"}\label{tab:AnforderungenCEP}
     \end{minipage}
 \end{table}
