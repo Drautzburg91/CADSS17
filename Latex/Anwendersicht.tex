@@ -1,11 +1,11 @@
 \section{Anwendersicht}
 Für die Anwendersicht wurden zwei Applikationen erstellt. Zum einen eine Mobile Applikation und zum anderen eine Web Applikation. Die Mobile Applikation wurde für das Betriebssystem Android in AndroidStudio entwickelt. Die Web Applikation wurde mit Hilfe eines Bootstrap Templates erstellt. Beide Applikationen verwenden die Bibliothek Paho um mit der MOM zu Interagieren.  
-\subsection{Andriod-App}
+\subsection{Android-App}
 Die Android Applikation soll eine Wetter Applikation sein, dafür soll sie verschiedene Wetterdaten anzeigen können. Dazu wurde zu beginn des Projektes festgelegt, welche Daten anzeigt werden sollen. Diese können in zwei Kategorien unterschieden werden. Zum einen das \textbf{Tageswetter} und zum anderen die \textbf{Wochenvorhersage}. Unter das Tageswetter fallen die folgenden Punkte: 
 \begin{itemize}
 \item das Tageswetter als großes Icon
 \item die momentane Temperatur in $^\circ$C
-\item das genaue Wetter in Wörtern
+\item das genaues Wetter in Wörtern
 \item der Standort
 \item das Datum mit Uhrzeit
 \item die Windgeschwindigkeit in km/h
@@ -14,7 +14,7 @@ Die Android Applikation soll eine Wetter Applikation sein, dafür soll sie versc
 \end{itemize}  
 Bei der Wettervorhersage für eine Woche ergeben sich nachfolgende Punkte
 \begin{itemize}
-\item die Wochentage ab dem nachfolge Tag des Tageswetters
+\item die Wochentage ab dem Nachfolgetag des Tageswetters
 \item ein kleines Wettericon
 \item die Tagesmaximaltemperatur in $^\circ$C mit der Schriftfarbe rot
 \item die Tagesminimaltemperatur in $^\circ$C mit der Schriftfarbe blau
@@ -29,9 +29,9 @@ Des Weiteren sollte es eine Auswahlmöglichkeit geben zwischen der Automatischen
 \end{figure} 
 Die Applikation wurde in Androidstudio in der Sprache Java und XML geschrieben. 
 Aufgebaut ist die Applikation über 8 Klassen wie in  Abb. \ref{img:AndroidUMLDiagramm} zusehen ist. Die Klasse \textbf{AktuellesWetterActivity} fungiert dabei als Main-Class.
-Die Klasse \textbf{MqttService} ist ein Android Service. Als einen Android Service bezeichnet man einen Prozess der Nebenläufig zum Hauptprozess läuft. Dieser Service ist für die Verbindung zur MoM notwendig und wird später in Unterkapitel \ref{subsubsec:MqttService} näher erläutert.
-Die Weiteren Klassen sind Hilfsklassen zur Verarbeitung der, durch die MoM bereitgestellten Daten.
-So zum Beispiel übersetzt die Klasse \textbf{Uebersetzung} die verschiedenen Wettercodes, in für den Anwender lesbare Wetterbezeichnungen. Dies geschieht mit Hilfe einer einfachen Switch-Case-Anweisung wie exemplarisch in Abb. \ref{img:Case-Uebersetzung} zu sehen.
+Die Klasse \textbf{MqttService} ist ein Android Service. Als einen Android Service bezeichnet man einen Prozess der nebenläufig zum Hauptprozess läuft. Dieser Service ist für die Verbindung zur MOM notwendig und wird später im Unterkapitel \ref{subsubsec:MqttService} näher erläutert.
+Die weiteren Klassen sind Hilfsklassen zur Verarbeitung der, durch die MoM bereitgestellten Daten.
+Beispielsweise übersetzt die Klasse \textbf{Uebersetzung} die verschiedenen Wettercodes in, für den Anwender lesbare, Wetterbezeichnungen. Dies geschieht mit Hilfe einer einfachen Switch-Case-Anweisung, wie exemplarisch in Abb. \ref{img:Case-Uebersetzung} zu sehen.
   \begin{lstlisting}
  switch (code) {
             case "H1": {
@@ -59,20 +59,20 @@ So zum Beispiel übersetzt die Klasse \textbf{Uebersetzung} die verschiedenen We
 	\label{img:Case-Uebersetzung}
 \end{lstlisting} 
 
-Bei beginn der Applikation soll wie in den Anforderungen beschreiben die Position automatisch durch GPS ermittelt werden. Dazu wurde das von Android bereitgestellte Interface LocationListener verwendet. Dazu müssen die Methoden onLocationChanged(), onProviderDisabled(), onProviderEnabled() und onStatusChanged() implementiert werden. 
+Bei beginn der Applikation soll, wie in den Anforderungen beschrieben, die Position automatisch durch GPS ermittelt werden. Dazu wurde das von Android bereitgestellte Interface LocationListener verwendet. Dazu müssen die Methoden onLocationChanged(), onProviderDisabled(), onProviderEnabled() und onStatusChanged() implementiert werden. 
 Die wichtigste Methode dabei ist die onLocationChanged(). Diese liefert jedes Mal wenn sich die Position des Smartphones verändert die neue Position zurück. 
-Um nun das Interface LocationListener zu verwenden ist es notwendig sich den Location Service bei den SystemServices zu holen die geschieht über folgende Codezeile:
+Um nun das Interface LocationListener zu verwenden, ist es notwendig sich den Location Service bei den SystemServices zu holen. Dies geschieht über folgende Codezeile:
   \begin{lstlisting}
    LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
   \end{lstlisting}
-  Des Weiteren ist es notwendig ab Android Version 6.0 (API level 23) dem Anwender die Möglichkeit zugeben die Standortbestimmung mittels GPS zu verweigern. Dafür muss eine Permissions Abfrage gemacht werden, diese wird von Android fertig geliefert und muss nur in den Code eingebaut werden. Wenn das geschehen ist kann über das Objekt locationManager die Methode requestLocationUpdates(String provider,long minTime, float minDistance, LocationListener listener) mit den Parametern: 
+  Des Weiteren ist es ab Android Version 6.0 (API level 23)notwendig dem Anwender die Möglichkeit zugeben, die Standortbestimmung mittels GPS zu verweigern. Dafür muss eine Permissions Abfrage gemacht werden, welche von Android fertig bereitgestellt und in den Code eingebaut werden kann. Wenn das geschehen ist, kann über das Objekt locationManager die Methode requestLocationUpdates(String provider,long minTime, float minDistance, LocationListener listener) mit den Parametern: 
     \begin{itemize}
 \item provider = "gps"
 \item minTime = 10000 (Millisekunden)(dieser Wert ist für die App nicht so wichtig, da die Aktualisierung nur beim Start und auf Knopfdruck benötigt wird)
 \item minDistance = 50 (in Meter)(dieser Wert ist für diese App nicht so wichtig, da die Genauigkeit der Position eine untergeordnete Rolle spielt)
 \item listener = this (Klasse die das Interface LocationListener implementiert)
 \end{itemize}  
-aufrufen. Nach dem diese Methode mit den Settings des LocationManagers aufgerufen wurde kann die Methode getLastKnownLocation("gps") der Klasse LocationManager aufgerufen werden. Diese Methode Liefert ein Objekt der Klasse Location zurück. Dieses Location Objekt beinhaltet die Positionsdaten. Um nun von den Positionsdaten auf die benötigten angaben wie Stadtnamen und Postleitzahl (PLZ) zukommen, wird ein Objekt der Klasse Geocoder benötigt. Die Klasse Geocoder ist ebenfalls Bestandteil der Android Location Library. Durch diese Klasse können die Längen- und Breitengrad Daten des Location Objektes in Stadtnamen und PLZ umgewandelt werden.
+aufrufen. Nachdem diese Methode mit den Settings des LocationManagers ausgeführt wurde, kann die Methode getLastKnownLocation("gps") der Klasse LocationManager aufgerufen werden. Diese Methode liefert ein Objekt der Klasse Location zurück. Dieses Location Objekt beinhaltet die Positionsdaten. Um nun von den Positionsdaten auf die benötigten Angaben wie Stadtname und Postleitzahl (PLZ) zukommen, wird ein Objekt der Klasse Geocoder benötigt. Die Klasse Geocoder ist ebenfalls Bestandteil der Android Location Library. Durch diese Klasse können die Längen- und Breitengrad Daten des Location Objektes in Stadtnamen und PLZ umgewandelt werden.
 Liegen diese Daten vor kann der Stadtname auf der App angezeigt werden und der Android Service MqttService mit dem Übergabeparameter PLZ über folgenden Code 
  \begin{lstlisting}
 private Intent serv = new Intent(this, MqttService.class);
@@ -82,7 +82,7 @@ startService(serv);
 gestartet werden.
 \subsubsection{Mqtt Service}
 \label{subsubsec:MqttService}
-Der MqttService ist das Herzstück der Android Applikation in diesem Service wird die Verbindung zur MOM hergestellt und die Daten die diese liefert Empfangen.
+Der MqttService ist das Herzstück der Android Applikation in diesem Service wird die Verbindung zur MOM hergestellt und die Daten die diese liefert empfangen.
 Mit dem Open Source Projekt Paho wurde eine Verbindung zu der in Kapitel \ref{rabbitmq} vorgestellten MOM realisiert. Dafür wurde die für Android spezifische Library über Grovy importiert. Durch diesen Import ist es möglich einen Android-Client zu erstellen. Dafür wurde das Interface MqttCallback implementiert. Zu diesem Interface gehören die Methoden: 
  \begin{itemize}
 \item connectionLost(Throwable t):
