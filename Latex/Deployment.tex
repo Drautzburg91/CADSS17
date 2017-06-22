@@ -3,7 +3,7 @@ TODO
 \subsection{Allgemein}
 TODO
 \subsection{Cloudfoundry (Pivotal)}
-Für das Deployment des Wetter-API-Service und für die CEP wurde der Cloudanbieter Pivotal ausgewählt. Dieser Anbieter zeichnet sich durch ein großzügiges Angebot einer Testversion für welche keinerlei Zahlungsmittel hinterlegt werden mussten. Pivotal vergibt nach der Registrierung ein Guthaben von \$87. 
+Für das Deployment des Wetter-API Service und für die CEP wurde der Cloudanbieter Pivotal ausgewählt. Dieser Anbieter zeichnet sich durch ein großzügiges Angebot einer Testversion für welche keinerlei Zahlungsmittel hinterlegt werden mussten. Pivotal vergibt nach der Registrierung ein Guthaben von \$87. 
 
 Für jede Komponente wurde ein extra Zugang in Pivotal angelegt, damit jede Komponente das volle Budget zur Verfügung hat, welches beim Testen der Skalierbarkeit benötigt werden wird. 
 
@@ -30,7 +30,7 @@ Die in Absatz \ref{rabbitmq} erläuterte Message Oriented Middleware RabbitMQ wi
 	\caption{Installation von Erlang im Dockerfile Quelle: https://github.com/docker-library/rabbitmq/blob/a6cb36022a5c1a17df78cfafe45a73d941ad4eb8/3.6/\-debian/Dockerfile}
 	\label{img:erlangDockerfile}
 \end{figure}
-Dies ist ein Ausschnitt aus dem Dockerfile des offiziellen Rabbitmq-Baseimages, einer Abbildung des Containers. Der Abschnitt stellt die Installation von Erlang auf einem Linux-System unter Verwendung des Paketmanagers \textit{Advanced Packaging Tool} (APT) dar.
+Dies ist ein Ausschnitt aus dem Dockerfile des offiziellen RabbitMQ-Baseimages, einer Abbildung des Containers. Der Abschnitt stellt die Installation von Erlang auf einem Linux-System unter Verwendung des Paketmanagers \textit{Advanced Packaging Tool} (APT) dar.
 \subsubsection{Dockerfile}
 Das Dockerfile für diesen Use-Case besteht neben dem erwähnten Baseimage aus Aktivierungen des in Absatz \ref{rabbitmq} vorgestellten Management Plugins, des MQTT Plugins sowie des MQTT-Websocket Plugins. Durch die Verwendung des Websocket Plugins ist die Kommunikation mit RabbitMQ auch über Webseiten möglich. Ein weiterer Bestandteil des Dockerfiles ist die rabbitmq.config. Diese ist notwendig um den Zugriff auf die MOM einzuschränken, da andernfalls eine Default-Konfiguration verwendet werden würde und durch diese der Nutzer \emph{guest} vollen Zugriff hätte. Um dennoch Administrations-Zugriff zu erlangen, wird über das Shell-Skript \textit{init.sh} ein Nutzer mit Administratorrechten angelegt. Die Zugangsdaten dieses Nutzers sind als Umgebungsvariablen hinterlegt. Die Ausführung des Skripts wird über den CMD-Befehl des Dockerfiles gesteuert. Zusätzlich ist es notwendig, Docker über den Befehl EXPOSE zu informieren, welche Ports der Container abhört. Im Anschluss an die Erstellung des Dockerfiles kann durch den Befehl \emph{docker build} ein Image erzeugt werden. Dieses Image wird auf den Amazon Container Service deployed.
 \subsubsection{Amazon Container Service}\label{acs}

@@ -22,14 +22,14 @@ Die Anwendung wird von der InformationLifeFlow Klasse gesteuert. Diese stellt di
 	\caption{Klassendiagramm der Steuerungsklassen}
 	\label{img:flowDiagramm}
 \end{figure} 
-Die MOM wird mithilfe einer Factory Klasse erstellt. Diese erstellt beim ersten Aufruf eine Verbindung zur MOM und gibt diese bei jeden Aufruf wieder zurück. Derzeit unterstützt die Anwendung nur eine MQTT-MOM. Mithilfe des IMoM Interfaces kann aber jederzeit eine weitere MOM hinzugefügt werden. Die MQTT MOM benötigt einen Hostpfad, einen Usernamen und ein Passwort. Diese werden von der Factory aus den Umgebungsvariablen ausgelesen und dann der MOM weitergegeben. Die MOM öffnet eine Verbindung und ist danach in der Lage Nachrichten zu senden oder zu Empfangen. Jede empfangene Nachricht wird von einer Callback-Methode ausgewertet. Diese überprüft was für ein Typ die Nachricht besitzt und behandelt diese dann entsprechend. Das bedeutet ein Forcast wird umgeformt und weitergeleitet während eine Tagesmeldung weiter an die CEP Engine gesendet wird. Beim Umformen des Forcasts wird auch die maximale Temperatur, die minimale Temperatur und das Durchschnittswetter für jeden Tag ermittelt. Das folgende Klassendiagramm zeigt die Komponenten der MOM-Verbindung.
+Die MOM wird mithilfe einer Factory Klasse erstellt. Diese erstellt beim ersten Aufruf eine Verbindung zur MOM und gibt diese bei jeden Aufruf wieder zurück. Derzeit unterstützt die Anwendung nur eine MQTT MOM. Mithilfe des IMoM Interfaces kann aber jederzeit eine weitere MOM hinzugefügt werden. Die MQTT MOM benötigt einen Hostpfad, einen Usernamen und ein Passwort. Diese werden von der Factory aus den Umgebungsvariablen ausgelesen und dann der MOM weitergegeben. Die MOM öffnet eine Verbindung und ist danach in der Lage Nachrichten zu senden oder zu Empfangen. Jede empfangene Nachricht wird von einer Callback-Methode ausgewertet. Diese überprüft was für ein Typ die Nachricht besitzt und behandelt diese dann entsprechend. Das bedeutet ein Forcast wird umgeformt und weitergeleitet während eine Tagesmeldung weiter an die CEP Engine gesendet wird. Beim Umformen des Forcasts wird auch die maximale Temperatur, die minimale Temperatur und das Durchschnittswetter für jeden Tag ermittelt. Das folgende Klassendiagramm zeigt die Komponenten der MOM-Verbindung.
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\textwidth]{Bilder/MoMKomponents.png}
 	\caption{Klassendiagramm der MOM Komponenten}
 	\label{img:MoMDiagramm}
 \end{figure} 
-Die Anwendung kennt verschiedene Nachrichtentypen. Die Nachrichten die eingehen sind entweder eine Nachricht vom Typ "JSONMessage" oder vom Typ "WeeklyForcast". Die JSONMessage stellt dabei die Nachricht für den aktuellen Wetterstand dar. Das sind die häufigsten Nachrichten die eingehen. Wie der Name schon andeutet, kommen die Nachrichten in einen JSON-Format an, dass direkt mithilfe von GSON in eine Instanz der Klasse umgeformt wird. Die WeeklyForcast Nachrichten kommen zwar auch in einem JSON-Format an, müssen aber nochmal umgewandelt und gefiltert werden, bis die benötigte Nachricht entsteht. Diese Nachrichten kommen deutlich seltener bei der Anwendung an da diese einen Abschätzung der nächsten Tage darstellt. Die JSONMessage wird zur weiteren Auswertung an die CEP Engine übergeben. Der Wochenbericht wird direkt weiterverarbeitet. Im folgenden Klassendiagramm werden die Nachrichten mit ihren Methoden gezeigt. 
+Die Anwendung kennt verschiedene Nachrichtentypen. Die Nachrichten die eingehen sind entweder eine Nachricht vom Typ "JSONMessage" oder vom Typ "WeeklyForcast". Die JSONMessage stellt dabei die Nachricht für den aktuellen Wetterstand dar. Das sind die häufigsten Nachrichten die eingehen. Wie der Name schon andeutet, kommen die Nachrichten in einem JSONFormat an, dass direkt mithilfe von GSON in eine Instanz der Klasse umgeformt wird. Die WeeklyForcast Nachrichten kommen zwar auch in einem JSON Format an, müssen aber nochmal umgewandelt und gefiltert werden, bis die benötigte Nachricht entsteht. Diese Nachrichten kommen deutlich seltener bei der Anwendung an da diese einen Abschätzung der nächsten Tage darstellt. Die JSONMessage wird zur weiteren Auswertung an die CEP Engine übergeben. Der Wochenbericht wird direkt weiterverarbeitet. Im folgenden Klassendiagramm werden die Nachrichten mit ihren Methoden gezeigt. 
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\textwidth]{Bilder/News.png}
@@ -69,7 +69,7 @@ Die CEP Engine wird über die Klasse Engine Control gesteuert. Diese Singleton-K
 	\caption{Das Klassendiagramm der CEP Klassen}
 	\label{img:esperDiagramm}
 \end{figure} 
-Die Esper Statements sorgen dafür, dass Muster in den eingehenden Wetterdaten erkannt werden, und reagieren mit passenden Nachrichten auf diese. Die Statements werden von der CEPFactory der Engine hinzugefügt. Jede eingehende Nachricht wird von mindestens einem Statement erfasst. Der entsprechende Listener sorgt dafür, dass die Clients die Daten erhalten und gibt eine Ausgabe aus. Zusätzlich werden die Daten in der Datenbank gespeichert. Jede Nachricht wird von diesem Statement erfasst und es dürfen auch weitere Statements greifen. Das Statement sieht wie folgt aus: 
+Die Esper Statements sorgen dafür, dass Muster in den eingehenden Wetterdaten erkannt werden, und reagieren mit passenden Nachrichten auf diese. Die Statements werden von der CEP Factory der Engine hinzugefügt. Jede eingehende Nachricht wird von mindestens einem Statement erfasst. Der entsprechende Listener sorgt dafür, dass die Clients die Daten erhalten und gibt eine Ausgabe aus. Zusätzlich werden die Daten in der Datenbank gespeichert. Jede Nachricht wird von diesem Statement erfasst und es dürfen auch weitere Statements greifen. Das Statement sieht wie folgt aus: 
 \begin{lstlisting}
 select * from JSONMessage
 \end{lstlisting}
@@ -86,7 +86,7 @@ select * from pattern[m1=JSONMessage -> m2=JSONMessage
 \begin{lstlisting}
 select * from JSONMessage where temperature <=-9
 \end{lstlisting}
-Die letzte Winternachricht befasst sich mit starkem Schneefall. Dabei wird der Wettercode von der WetterApi ausgewertet. Der Code 622 bedeutet starker Schneefall. Die Clients können den Code zwar auswerten und auch entsprechend Meldungen ausgeben aber starker Schneefall kann gefährlich werden. Daher wird eine Meldung weitergesendet um sicherzugehen das alle Clients auch ihre Nutzer warnen. Das Statement sieht wie folgt aus. 
+Die letzte Winternachricht befasst sich mit starkem Schneefall. Dabei wird der Wettercode von der Wetter-API ausgewertet. Der Code 622 bedeutet starker Schneefall. Die Clients können den Code zwar auswerten und auch entsprechend Meldungen ausgeben aber starker Schneefall kann gefährlich werden. Daher wird eine Meldung weitergesendet um sicherzugehen das alle Clients auch ihre Nutzer warnen. Das Statement sieht wie folgt aus. 
 \begin{lstlisting}
 select * from JSONMessage where currentWeatherId = 622
 \end{lstlisting}  

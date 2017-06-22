@@ -1,24 +1,24 @@
 \section{Datenverarbeitung}\label{db}
 
-Eine gehostete Datenbank eröffnet unserem WetterAPI-System viele weitere Möglichkeiten. Neben System User Informationen der Messaging-Oriented Middleware RabbitMQ ,  können die empfangenen Wetterdaten kontinuierlich abgespeichert werden. Die hinterlegten Daten können nun für eine Reihe von Statistiken und Auswertungen genutzt werden und bieten außerdem den Vorteil  den künftigen Ressourceneinsatz und die Skalierung effizienter zu gestalten. 
+Eine gehostete Datenbank eröffnet unserem Wetter-API System viele weitere Möglichkeiten. Neben System User Informationen der Messaging Oriented Middleware RabbitMQ ,  können die empfangenen Wetterdaten kontinuierlich abgespeichert werden. Die hinterlegten Daten können nun für eine Reihe von Statistiken und Auswertungen genutzt werden und bieten außerdem den Vorteil  den künftigen Ressourceneinsatz und die Skalierung effizienter zu gestalten. 
 In diesem Kapitel wird der Aufbau einer passenden Datenbank  beschrieben. Da das Testen eines skalierbaren Datenbankservices in der Regel sehr teuer ist, werden einige Funktionalitäten nur in der Theorie beschrieben. Dennoch lässt sich der Nutzen eines Datenbankkonzepts klar herausstellen.
 Zur Speicherung der Datensätze wird ein relationales Datenbankschema auf MYSQL Basis verwendet. Gehostet wird über den Amazon Web Service Dienst RDS. Für eine einfache Implementierung und Verwendung der Datenbank in den Systemmodulen CEP und MQTT (RabbitMQ) wird eine JDBC Schnittstelle zur Verfügung gestellt.
 
 \subsection{Datenbankschema}
 
-\textbf{System User und VHost ER Modell}
+\textbf{System User und vHost ER Modell}
 Das Datenbankschema lässt sich in 2 verschiedene Bereiche unterteilen. Neben einer Speicherstruktur für die eingehenden Wetterdaten, lassen sich auch User Accountinformationen der RabbitMQ abspeichern. In Abbildung \ref{img:DBSchemaSystemUser} ist das Schema der Tabellenkonstellationen für die Speicherung der SystemUser zu sehen: 
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\textwidth]{Bilder/DBSchemaSystemUser.png}
-	\caption{Datenbank ER Modellierung - Rabbit MQ System Data}
+	\caption{Datenbank ER Modellierung - RabbitMQ System Data}
 	\label{img:DBSchemaSystemUser}
 \end{figure} 
-Die Tabelle SystemUser  beinhaltet die Login Credentials und die Tabelle VHost lässt die Sicherung der RabbitMQ Informationen zu. 
-Die n:m Beziehung zwischen System Usern und VHost wird in der Tabelle Assigned abgebildet. Hier lassen sich auch die jeweiligen Berechtigungen read, write und configure des Users auf der RabbitMQ Instanz hinterlegen.
+Die Tabelle SystemUser  beinhaltet die Login Credentials und die Tabelle vHost lässt die Sicherung der RabbitMQ Informationen zu. 
+Die n:m Beziehung zwischen System Usern und vHost wird in der Tabelle Assigned abgebildet. Hier lassen sich auch die jeweiligen Berechtigungen read, write und configure des Users auf der RabbitMQ Instanz hinterlegen.
 
 \textbf{Wetter Daten ER Modell}
-Damit die eingehenden Daten der WetterAPI  korrekt abgelegt werden können, sind Stammdaten in der Datenbank gepflegt. Neben den zur Verfügung stehenden Städten in der Tabelle City, werden auch die Standardwetterdaten (Tabelle DeaultWeather) aus der verwendeten WetterAPI hinterlegt. Jedes eingehende  Wetterdatenobjekt ist einer Stadt zugeordnet und referenziert ein DefaultWeather Eintrag.
+Damit die eingehenden Daten der Wetter-API  korrekt abgelegt werden können, sind Stammdaten in der Datenbank gepflegt. Neben den zur Verfügung stehenden Städten in der Tabelle City, werden auch die Standardwetterdaten (Tabelle DeaultWeather) aus der verwendeten Wetter-API hinterlegt. Jedes eingehende  Wetterdatenobjekt ist einer Stadt zugeordnet und referenziert ein DefaultWeather Eintrag.
 Die User unserer Systemlösung können ebenfalls in der Datenbank gespeichert werden. Die Tabelle Subscribe beinhaltet die n:m Referenzen von Usern, welche bestimmte Städte beziehungsweise deren Wetterdaten abonniert haben. Jeder Eintrag in der Tabelle Subscribe besitzt zudem das Datum der Aktivierung des Abonnements. Abbildung \ref{img:DBSchemaWetterDaten} visualisiert das ER Modell der Wetterdatenspeicherung:
 \begin{figure}[htbp]
 	\centering
@@ -26,10 +26,10 @@ Die User unserer Systemlösung können ebenfalls in der Datenbank gespeichert we
 	\caption{Datenbank ER Modellierung - Wetter Daten Modellierung}
 	\label{img:DBSchemaWetterDaten}
 \end{figure} 
-Die Central Processing Unit, kurz CEP, errechnet anhand der eingehenden Wetterdaten verschiedene Benachrichtigungen (Alerts), welche über die MoM als Topic an die User verteilt werden. In der Datenbank können diese Alerts in Abhängigkeit der betroffenen Stadt gespeichert werden.
+Die Central Processing Unit, kurz CEP, errechnet anhand der eingehenden Wetterdaten verschiedene Benachrichtigungen (Alerts), welche über die MOM als Topic an die User verteilt werden. In der Datenbank können diese Alerts in Abhängigkeit der betroffenen Stadt gespeichert werden.
 
 \subsection{Datenbank – JDBC Schnittstelle}
-Der Zugriff und die Verwaltung der Datensätze nach dem, im vorherigen Kapitel beschrieben, Datenschema, ist in der Java Klasse  CadWeatherSystemDatabaseAPI realisiert. Diese Klasse lässt sich in alle Teilmodule unseres Gesamtsystems implementieren und bietet eine Schnittstellefunktionalität zur Verwendung der Datenbankinstanzen. In den Java Methoden, werden die MYSQL Kommunikationssatetments codiert als String über ein connection Objekt auf der Datenbank ausgeführt. Grundsätzlich stehen INSERT Operationen für alle Tabellen, sowie diverse SELECT Abfragemöglichkeiten zur Verfügung. Ziel dieser Struktur ist eine simple, vereinheitlichte Methodik zur Benutzung der Datenbankinstanzen.
+Der Zugriff und die Verwaltung der Datensätze nach dem, im vorherigen Kapitel beschrieben, Datenschema, ist in der Java Klasse CadWeatherSystemDatabaseAPI realisiert. Diese Klasse lässt sich in alle Teilmodule unseres Gesamtsystems implementieren und bietet eine Schnittstellefunktionalität zur Verwendung der Datenbankinstanzen. In den Java Methoden, werden die MYSQL Kommunikationssatetments codiert als String über ein connection Objekt auf der Datenbank ausgeführt. Grundsätzlich stehen INSERT Operationen für alle Tabellen, sowie diverse SELECT Abfragemöglichkeiten zur Verfügung. Ziel dieser Struktur ist eine simple, vereinheitlichte Methodik zur Benutzung der Datenbankinstanzen.
 Der Konstruktor der Klasse gibt dem Entwickler die Möglichkeit ein MYSQL Datenbankobjekt in die Schnittstelle einzubinden.
 
 In der nachfolgenden Tabelle sind alle derzeit programierten Methoden aufgelistet.
@@ -70,14 +70,14 @@ Die INSERT  Methoden liefern das Feedback der Datenbankoperation in einem String
 \item ResultSet selectUserPwByEMail(String EMail)
 \end{itemize}
 
-{\bf Rabbit MQ DB - Insert }
+{\bf RabbitMQ DB - Insert }
 \begin{itemize}
 \item String insertSystemUser(String userName, String password, String additionalDescription)
 \item String insertVHost(String vHostName, String additionalDescription)
 \item String insertAssigned(String systemUserUserName,String vHostName, String additionalInformation, boolean readRights, boolean writeRights, boolean configureRights);
 \end{itemize}
 
-{\bf Rabbit MQ DB - SELECT }
+{\bf RabbitMQ DB - SELECT }
 \begin{itemize}
 \item ResultSet selectVHostAll()
 \item ResultSet selectSystemUserAll()
@@ -88,11 +88,11 @@ Die INSERT  Methoden liefern das Feedback der Datenbankoperation in einem String
 
 
 \subsection{Auswertungen und Nutzen der Datenbankspeicherung}
-Die Datensätze können vielseitig genutzt werden. Zum einen hält die CEP Komponente unseres Systems die empfangen Wetterdaten der MoM bzw. der WetterAPI nur temporär. Gleiches gilt für erzeugte Benachrichtigungen in Form von Alerts.
+Die Datensätze können vielseitig genutzt werden. Zum einen hält die CEP Komponente unseres Systems die empfangen Wetterdaten der MOM bzw. der Wetter-API nur temporär. Gleiches gilt für erzeugte Benachrichtigungen in Form von Alerts.
 Durch eine Sicherung in der Datenbank stehen die Wetterdaten unabhängig vom Status der CEP persistent zur Verfügung. 
 Des Weiteren können verschiedene Auswertungen der Datensätze weitere Erkenntnisse bringen. 
 
-\textbf{Wetter API User}
+\textbf{Wetter-API User}
 Durch die Protokollierung der Alerts lassen sich Statistiken über die Ereignisse und deren Verteilung aufstellen. Daraus könnten wir für die User beispielsweise Vorabwarnungen zukommen lassen. Außerdem könnte man den Usern auf lange Sicht gesehen Wettervergleiche bzw. Wetterentwicklungen bereitstellen.
 
 \textbf{Cloud System Analyse}
@@ -101,7 +101,7 @@ Diese Prognosen können für eine Kostenabschätzung des Cloudsytsem wertvoll se
 Selbstverständlich ist der größte Vorteil einer Cloudlösung das dynamische Reagieren auf verschiedene Lastverhalten. Dennoch ist es im Rahmen von Businessmodellen notwendig zu wissen, welche Kosten an welcher Stelle entstehen beziehungsweise geplant werden können.
 
 \subsection{AWS RDS Datenbankverfügbarkeit}
-In Bezug auf die Performance spielt bei der Datenbank nur die Anzahl der CEP Calls eine Rolle. Dies führt je nach Szenario und Wetterveränderungen unterschiedlich viele I/O Operationen aus. Dennoch würde unser WetterAPI System selbst bei extrem hohen Userzahlen keine Datenlast liefern, welche die Datenbank an ihre Grenze bringen könnte. Das Bottleneck unseres Systems sind die Instanzen der CEP. Im Rahmen unseres Projektes ist die Skalierung des Datenbank Services nicht eingerichtet, da zusätzliche oder skalierte Datenbankinstanzen mit hohen Kosten verbunden sind, da die benötigten Konfigurationen nicht im Umfang des AWS Trialkontingents enthalten sind. Ganz wichtig ist die Tatsache, dass das Starten einer weiteren Instanz das kostenlose Kontigent an Ressourcen aufhebt. Aus eigener Erfahrung wissen wir, wie sich ein solches Szenario zu einer gewissen Kostenfalle entwickeln kann.
+In Bezug auf die Performance spielt bei der Datenbank nur die Anzahl der CEP Calls eine Rolle. Dies führt je nach Szenario und Wetterveränderungen unterschiedlich viele I/O Operationen aus. Dennoch würde unser Wetter-API System selbst bei extrem hohen Userzahlen keine Datenlast liefern, welche die Datenbank an ihre Grenze bringen könnte. Das Bottleneck unseres Systems sind die Instanzen der CEP. Im Rahmen unseres Projektes ist die Skalierung des Datenbank Services nicht eingerichtet, da zusätzliche oder skalierte Datenbankinstanzen mit hohen Kosten verbunden sind, da die benötigten Konfigurationen nicht im Umfang des AWS Trialkontingents enthalten sind. Ganz wichtig ist die Tatsache, dass das Starten einer weiteren Instanz das kostenlose Kontigent an Ressourcen aufhebt. Aus eigener Erfahrung wissen wir, wie sich ein solches Szenario zu einer gewissen Kostenfalle entwickeln kann.
 An dieser Stelle sollen dennoch die Möglichkeiten der Datenbankverfügbarkeit in Bezug auf den AWS RDS Dienst beschrieben werden.
 
 \textbf{Vertikale Skalierung}
@@ -142,11 +142,11 @@ In diesem Absatz wird dargestellt, ob und wie die Anforderungen umgesetzt wurden
      \hline
       8.&Nebenläufigkeit&Die Skalierung kann über ACS erfolgen. ACS ist bereits hoch skalierbar und bietet dem Verwalter des Containers die Konfiguration der Skalierung an. So können Minimum- und Maximum-Tasks sowie eine gewünschte Anzahl an Tasks definiert werden. Die Anzahl der laufenden Tasks bestimmt die Anzahl der laufenden Instanzen. Im verwendeten Nutzungsplan von ACS ist eine Instanz im Mittel über einen Monat verteilt kostenlos verfügbar.&Ja\\
      \hline
-      9.&Einweggebrauch&Der Container kann schnell stoppt und gestartet werden. Durch Probleme mit der Rabbitmq-eigenen Datenbank besteht dann allerdings die Gefahr, im laufenden Betrieb hinzugefügte Nutzer neu hinzufügen zu müssen, da diese bei Rabbitmq auf den Namen des Hosts gespeichert werden und sich dieser beim Neustart des Containers ändert. Ein Workaround wurde entwickelt, dieser aktualisiert aber lediglich das Init-Skript und fügt diesem die Nutzer automatisch hinzu. Dadurch muss beim Neustart auch das Skript aktualisiert werden. &Teilweise\\
+      9.&Einweggebrauch&Der Container kann schnell stoppt und gestartet werden. Durch Probleme mit der RabbitMQ-eigenen Datenbank besteht dann allerdings die Gefahr, im laufenden Betrieb hinzugefügte Nutzer neu hinzufügen zu müssen, da diese bei RabbitMQ auf den Namen des Hosts gespeichert werden und sich dieser beim Neustart des Containers ändert. Ein Workaround wurde entwickelt, dieser aktualisiert aber lediglich das Init-Skript und fügt diesem die Nutzer automatisch hinzu. Dadurch muss beim Neustart auch das Skript aktualisiert werden. &Teilweise\\
      \hline
      10.&Dev-Prod-Vergleichbarkeit&Containerisierung durch Docker (\ref{Docker}).&Ja\\
      \hline     
-     11.&Logs&Das Docker-Image von Rabbitmq gibt die Log standardmäßig über Stdout (tty) aus&Ja\\
+     11.&Logs&Das Docker-Image von RabbitMQ gibt die Log standardmäßig über Stdout (tty) aus&Ja\\
      \hline
      12.&Admin-Prozesse&Automatische Ausführung eines Skripts beim Containerstart&ja\\
      \hline
