@@ -1,11 +1,3 @@
-\documentclass[11pt,a4paper]{article}
-\usepackage[utf8]{inputenc}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
-\usepackage{graphicx}
-\begin{document}
-
 \section{Datenverarbeitung}\label{db}
 
 Eine gehostete Datenbank eröffnet unserem WetterAPI-System viele weitere Möglichkeiten. Neben System User Informationen der Messaging-Oriented Middleware RabbitMQ ,  können die empfangenen Wetterdaten kontinuierlich abgespeichert werden. Die hinterlegten Daten können nun für eine Reihe von Statistiken und Auswertungen genutzt werden und bieten außerdem den Vorteil  den künftigen Ressourceneinsatz und die Skalierung effizienter zu gestalten. 
@@ -15,7 +7,7 @@ Zur Speicherung der Datensätze wird ein relationales Datenbankschema auf MYSQL 
 \subsection{Datenbankschema}
 
 \textbf{System User und VHost ER Modell}
-Das Datenbankschema lässt sich in 2 verschiedene Bereiche unterteilen. Neben einer Speicherstruktur für die eingehenden Wetterdaten, lassen sich auch User Accountinformationen der RabbitMQ abspeichern. In Abbildung … ist das Schema der Tabellenkonstellationen für die Speicherung der SystemUser zu sehen: 
+Das Datenbankschema lässt sich in 2 verschiedene Bereiche unterteilen. Neben einer Speicherstruktur für die eingehenden Wetterdaten, lassen sich auch User Accountinformationen der RabbitMQ abspeichern. In Abbildung \ref{img:DBSchemaSystemUser} ist das Schema der Tabellenkonstellationen für die Speicherung der SystemUser zu sehen: 
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\textwidth]{Bilder/DBSchemaSystemUser.png}
@@ -27,10 +19,10 @@ Die n:m Beziehung zwischen System Usern und VHost wird in der Tabelle Assigned a
 
 \textbf{Wetter Daten ER Modell}
 Damit die eingehenden Daten der WetterAPI  korrekt abgelegt werden können, sind Stammdaten in der Datenbank gepflegt. Neben den zur Verfügung stehenden Städten in der Tabelle City, werden auch die Standardwetterdaten (Tabelle DeaultWeather) aus der verwendeten WetterAPI hinterlegt. Jedes eingehende  Wetterdatenobjekt ist einer Stadt zugeordnet und referenziert ein DefaultWeather Eintrag.
-Die User unserer Systemlösung können ebenfalls in der Datenbank gespeichert werden. Die Tabelle Subscribe beinhaltet die n:m Referenzen von Usern, welche bestimmte Städte beziehungsweise deren Wetterdaten abonniert haben. Jeder Eintrag in der Tabelle Subscribe besitzt zudem das Datum der Aktivierung des Abonnements. Abbildung … visualisiert das ER Modell der Wetterdatenspeicherung:
+Die User unserer Systemlösung können ebenfalls in der Datenbank gespeichert werden. Die Tabelle Subscribe beinhaltet die n:m Referenzen von Usern, welche bestimmte Städte beziehungsweise deren Wetterdaten abonniert haben. Jeder Eintrag in der Tabelle Subscribe besitzt zudem das Datum der Aktivierung des Abonnements. Abbildung \ref{img:DBSchemaWetterDaten} visualisiert das ER Modell der Wetterdatenspeicherung:
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.5\textwidth]{Bilder/DBSchemaWetterDaten.png}
+	\includegraphics[width=0.5\textwidth]{Bilder/DBWetterDaten.png}
 	\caption{Datenbank ER Modellierung - Wetter Daten Modellierung}
 	\label{img:DBSchemaWetterDaten}
 \end{figure} 
@@ -45,45 +37,45 @@ Die INSERT  Methoden liefern das Feedback der Datenbankoperation in einem String
 
 {\bf GENERAL DB}
 \begin{itemize}
-\item checkDatabaseConnection()
+\item String  checkDatabaseConnection()
 \item java.sql.Connection getConnection()
 \item setConnection(java.sql.Connection  databaseConnection)
 \end{itemize}
 
 {\bf CEP DB - INSERT}
 \begin{itemize}
-\item String insertDefaultWeather(int WeatherID, String main, String description, String icon_referenz)
+\item String insertDefaultWeather(int WeatherID, String main, String description, String iconReferenz)
 \item String insertCity(int ZipCode, String cityName, Double logitude, Double latitude, int cityID)
-\item String insertUser(String E_Mail, String userName, String passwort, int mainLocation)
+\item String insertUser(String EMail, String userName, String passwort, int mainLocation)
 \item String insertSubcribe(String E_Mail, int ZipCode)
 \item String insertAlert(int ZipCode, Timestamp timestamp, String title, String code, String message)
 \item String insertWeather(Timestamp TimeStamp, int ZipCode, int WeatherID, 
-				double main_temp, double main_pressure, double main_humidity, double main_tempMin,
-				double main_tempMax, double main_seaLevel, double main_grndLevel,
-				String wind_direction, double wind_speed, double wind_deg, String clouds_desc, double rain_3h, 
-				double snow_3h, 
-				Timestamp sys_sunset, Timestamp sys_sunrise
-				);)
+				double mainTemp, double mainPressure, double mainHumidity, double mainTempMin,
+				double mainTempMax, double mainSeaLevel, double mainGrndLevel,
+				String windDirection, double windSpeed, double windDeg, String cloudsDesc, double rain3h, 
+				double snow3h, 
+				Timestamp sysSunset, Timestamp sysSunrise
+				)
 \end{itemize}
 
 {\bf CEP DB - SELECT }
 \begin{itemize}
-\item ResultSet selectUserByMail(String user_E_Mail)
-\item ResultSet selectCityByZipCode(int city_ZipCode)
-\item ResultSet selectDefaultWeatherByID(int defaultWeather_ID)
-\item ResultSet selectAllWeatherByCityZipCode(int city_ZipCode)
-\item ResultSet selectWeatherByCityAndDay(int city_ZipCode, Timestamp weatherDay)
-\item ResultSet selectWeatherByCityAndTimePeriod(int city_ZipCode, Timestamp fromDate, Timestamp toDate) 
-\item ResultSet selectSubscribeByUser(String user_E_Mail)
+\item ResultSet selectUserByMail(String userEMail)
+\item ResultSet selectCityByZipCode(int cityZipCode)
+\item ResultSet selectDefaultWeatherByID(int defaultWeatherID)
+\item ResultSet selectAllWeatherByCityZipCode(int cityZipCode)
+\item ResultSet selectWeatherByCityAndDay(int cityZipCode, Timestamp weatherDay)
+\item ResultSet selectWeatherByCityAndTimePeriod(int cityZipCode, Timestamp fromDate, Timestamp toDate) 
+\item ResultSet selectSubscribeByUser(String userEMail)
 \item ResultSet selectSubscribeByCity(int ZipCode)
-\item ResultSet selectUserPwByEMail(String E_Mail)
+\item ResultSet selectUserPwByEMail(String EMail)
 \end{itemize}
 
 {\bf Rabbit MQ DB - Insert }
 \begin{itemize}
 \item String insertSystemUser(String userName, String password, String additionalDescription)
 \item String insertVHost(String vHostName, String additionalDescription)
-\item String insertAssigned(String systemUser_userName,String vHost_name, String additionalInformation, boolean readRights, boolean writeRights, boolean configureRights);
+\item String insertAssigned(String systemUserUserName,String vHostName, String additionalInformation, boolean readRights, boolean writeRights, boolean configureRights);
 \end{itemize}
 
 {\bf Rabbit MQ DB - SELECT }
@@ -96,7 +88,7 @@ Die INSERT  Methoden liefern das Feedback der Datenbankoperation in einem String
 
 
 
-\subsection{Auswertungen & Nutzen der Databankspeicherung}
+\subsection{Auswertungen und Nutzen der Databankspeicherung}
 Die Datensätze können vielseitig genutzt werden. Zum einen hält die CEP Komponente unseres Systems die empfangen Wetterdaten der MoM bzw. der WetterAPI nur temporär. Gleiches gilt für erzeugte Benachrichtigungen in Form von Alerts.
 Durch eine Sicherung in der Datenbank stehen die Wetterdaten unabhängig vom Status der CEP persistent zur Verfügung. 
 Des Weiteren können verschiedene Auswertungen der Datensätze weitere Erkenntnisse bringen. 
