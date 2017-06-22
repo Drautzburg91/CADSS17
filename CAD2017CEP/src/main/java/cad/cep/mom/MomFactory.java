@@ -34,7 +34,11 @@ public final class MomFactory {
 	}
 	public static IMoM createMoMForValues(String user) throws MoMException{
 		try {
+			
 			String host = String.format("tcp://%s", System.getenv("MOM_HOST"));
+			if(host ==null){
+				return mqttMom;
+			}
 			String pw = System.getenv("MOM_PW");
 			return new MQTTMom(host, user, pw);
 		} catch (MoMException e) {
