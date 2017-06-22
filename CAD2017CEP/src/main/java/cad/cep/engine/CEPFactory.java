@@ -54,7 +54,6 @@ public final class CEPFactory {
 			}
 		} catch (MoMException e) {
 			e.printStackTrace();
-			System.err.println("FUCK JUNIT");
 		}
 		service = new EsperService();
 		service.registerAdditionalEvent(JSONMessage.class);

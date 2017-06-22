@@ -40,6 +40,9 @@ public final class MomFactory {
 				return mqttMom;
 			}
 			String pw = System.getenv("MOM_PW");
+			if(pw == null){
+				return null;
+			}
 			return new MQTTMom(host, user, pw);
 		} catch (MoMException e) {
 			throw new MoMException("Can not create new MoM", e);

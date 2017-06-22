@@ -40,7 +40,7 @@ public class DayTest {
 		try {
 			day.setDate("error");
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("that should happen");
 		}
 		day.setDate("2017-06-17");
 		day.setMaxTemperature(10000.56);
