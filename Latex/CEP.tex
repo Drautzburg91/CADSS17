@@ -1,11 +1,11 @@
-\section{Complex Event Process}\label{cep}
+\section{Complex Event Processing}\label{cep}
 
 
 \subsection{Zielsetzung}
 Das Ziel der Anwendung ist es, die Daten welche an die MOM gesendet wurden auszulesen und dann weiterzuverarbeiten. Dabei wird mithilfe einer Complex Event Processing Engine dann nach besonderen Ereignissen gesucht. Sollte ein solches eintreffen wird eine Warnung an alle Clients über ein besonderes Topic gesendet. Die Anwendung soll sich dabei ein die 12 Faktoren einer Cloud Anwendung halten. Ein weiteres Ziel ist, dass die Anwendung in jeder Cloud laufen kann und nicht abhängig von einer bestimmten Cloud ist. 
 
 \subsection{Umsetzungsentscheidungen}
-Als Complex Processing Engine wurde Esper ausgewählt. Da Esper eine Java API besitzt und die MOM ebenenfalls über eine Javaschnittstelle verfügt (siehe Kapitel \ref{rabbitmq}) kann Esper leicht mit den anderen Komponenten der Anwendung verbunden werden. Esper besitzt zudem eine ausführliche Dokumentation, was die Umsetzung deutlich erleichtert hat. Es gibt neben Esper andere Engines welche ebenfalls mit Java verbunden werden können. Eine davon ist Apache Spark. Spark wird von Amazon direkt unterstützt und ist eine eigene Engine, welche nur noch mit Statements befüllt werden muss. Wir haben uns aber gegen Spark entschieden, da es zum einen uns stärker an die Amazon Cloud binden würde und zum anderen die Amazon Spark Engine sehr viel abnimmt und so Kontrolle über das Verhalten der Anwendung nimmt. 
+Als Complex Processing Engine wurde Esper ausgewählt. Da Esper eine Java API besitzt und die MOM ebenenfalls über eine Java-Schnittstelle verfügt (siehe Kapitel \ref{rabbitmq}) kann Esper leicht mit den anderen Komponenten der Anwendung verbunden werden. Esper besitzt zudem eine ausführliche Dokumentation, was die Umsetzung deutlich erleichtert hat. Es gibt neben Esper andere Engines welche ebenfalls mit Java verbunden werden können. Eine davon ist Apache Spark. Spark wird von Amazon direkt unterstützt und ist eine eigene Engine, welche nur noch mit Statements befüllt werden muss. Wir haben uns aber gegen Spark entschieden, da es zum einen uns stärker an die Amazon Cloud binden würde und zum anderen die Amazon Spark Engine sehr viel abnimmt und so Kontrolle über das Verhalten der Anwendung nimmt. 
 \\
 Die Anwendung wurde mit Java geschrieben, da es mit Java leicht ist die verschiedenen Komponenten der Anwendung zu verbinden. Java kann überall laufen, sofern eine JVM vorhanden ist. Dadurch haben wir sichergestellt, dass die Anwendung auf jeder Cloud laufen kann. Zusätzlich ist Java die Programmiersprache in der unsere Gruppe die meiste Erfahrung besitzt.   
 
@@ -54,9 +54,9 @@ Sollte die CEP Engine etwas finden wird ein Alert gesendet. Diese Nachrichten be
      \hline 
      S1&Gutes Wetter: Es scheint die Sonne und es hat über 25 Grad\\
      \hline
-      H1&Herzinfakt Warnung: Für Herzkranke starke Luftdruck Schwankungen\\
+      H1&Herzinfarkt Warnung: Für Herzkranke starke Luftdruck Schwankungen\\
      \hline
-      H2&Herzinfakt Warnung: Für Herzkranke zu hohe Temperatur (>=25)\\
+      H2&Herzinfarkt Warnung: Für Herzkranke zu hohe Temperatur (>=25)\\
      \hline
       \end{tabular}
    \caption{Die Warnung-Codes}\label{tab:WarningCodes}
