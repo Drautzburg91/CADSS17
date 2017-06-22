@@ -14,7 +14,7 @@ Das Datenbankschema lässt sich in 2 verschiedene Bereiche unterteilen. Neben ei
 	\caption{Datenbank ER Modellierung - Rabbit MQ System Data}
 	\label{img:DBSchemaSystemUser}
 \end{figure} 
-Die Tabelle SystemUser  beinhaltet die LogIn Credentials und die Tabelle VHost lässt die Sicherung der RabbitMQ Informationen zu. 
+Die Tabelle SystemUser  beinhaltet die Login Credentials und die Tabelle VHost lässt die Sicherung der RabbitMQ Informationen zu. 
 Die n:m Beziehung zwischen System Usern und VHost wird in der Tabelle Assigned abgebildet. Hier lassen sich auch die jeweiligen Berechtigungen read, write und configure des Users auf der RabbitMQ Instanz hinterlegen.
 
 \textbf{Wetter Daten ER Modell}
@@ -87,7 +87,7 @@ Die INSERT  Methoden liefern das Feedback der Datenbankoperation in einem String
 
 
 
-\subsection{Auswertungen und Nutzen der Databankspeicherung}
+\subsection{Auswertungen und Nutzen der Datenbankspeicherung}
 Die Datensätze können vielseitig genutzt werden. Zum einen hält die CEP Komponente unseres Systems die empfangen Wetterdaten der MoM bzw. der WetterAPI nur temporär. Gleiches gilt für erzeugte Benachrichtigungen in Form von Alerts.
 Durch eine Sicherung in der Datenbank stehen die Wetterdaten unabhängig vom Status der CEP persistent zur Verfügung. 
 Des Weiteren können verschiedene Auswertungen der Datensätze weitere Erkenntnisse bringen. 
@@ -142,7 +142,7 @@ In diesem Absatz wird dargestellt, ob und wie die Anforderungen umgesetzt wurden
      \hline
       8.&Nebenläufigkeit&Die Skalierung kann über ACS erfolgen. ACS ist bereits hoch skalierbar und bietet dem Verwalter des Containers die Konfiguration der Skalierung an. So können Minimum- und Maximum-Tasks sowie eine gewünschte Anzahl an Tasks definiert werden. Die Anzahl der laufenden Tasks bestimmt die Anzahl der laufenden Instanzen. Im verwendeten Nutzungsplan von ACS ist eine Instanz im Mittel über einen Monat verteilt kostenlos verfügbar.&Ja\\
      \hline
-      9.&Einweggebrauch&Der Container kann schnell stoppt und gestartet werden. Durch Probleme mit der Rabbitmq-eigenen Datenbank besteht dann allerdings die Gefahr, im laufenden Betrieb hinzugefügte Nutzer neu hinzufügen zu müssen, da diese bei Rabbitmq auf den Namen des Hosts gespeichert werden und sich dieser beim Neustart des Containers ändert. Ein Workaround wurde entwickelt, dieser aktualiert aber lediglich das Init-Skript und fügt diesem die Nutzer automatisch hinzu. Dadurch muss beim Neustart auch das Skript aktualisiert werden. &Teilweise\\
+      9.&Einweggebrauch&Der Container kann schnell stoppt und gestartet werden. Durch Probleme mit der Rabbitmq-eigenen Datenbank besteht dann allerdings die Gefahr, im laufenden Betrieb hinzugefügte Nutzer neu hinzufügen zu müssen, da diese bei Rabbitmq auf den Namen des Hosts gespeichert werden und sich dieser beim Neustart des Containers ändert. Ein Workaround wurde entwickelt, dieser aktualisiert aber lediglich das Init-Skript und fügt diesem die Nutzer automatisch hinzu. Dadurch muss beim Neustart auch das Skript aktualisiert werden. &Teilweise\\
      \hline
      10.&Dev-Prod-Vergleichbarkeit&Containerisierung durch Docker (\ref{Docker}).&Ja\\
      \hline     
