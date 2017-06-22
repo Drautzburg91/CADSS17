@@ -61,9 +61,9 @@ Um mit diesen Json-Response-Types besser und freier arbeiten zu können wurde ei
 
 ***TODO: Komponenten Diagramm*****
 
-kurzer Absatz zu den Komponenten und den Zusammenhang 
+Im oben stehenden Diagramm werden die einzelnen Teilkomponenten der in diesem Kapitel beschrieben Komponente gezeigt. 
 
-Die zugrundeliegenden Klassen in den einzelnen Komponenten werden im folgenden kurz beschrieben. Anschließend wird in den nächsten Abschnitten auf die wichtigsten Klassen und die darin enthaltenen Methoden noch genauer eingegangen. 
+Die zugrundeliegenden Klassen der einzelnen Komponenten werden im folgenden kurz beschrieben. Anschließend wird in den nächsten Abschnitten auf die wichtigsten Klassen und die darin enthaltenen Methoden noch genauer eingegangen. 
 
 \begin{description}
 
@@ -89,9 +89,6 @@ Die zugrundeliegenden Klassen in den einzelnen Komponenten werden im folgenden k
 \item[WeatherFormValidator:]Der WeatherFormValidator überprüft, ob alle notwendigen Eingaben zur Erstellung eigener Wetterdaten vorhanden sind.
 \item[WeatherApiApplication:]Diese Klasse ist die Startklasse der Spring-Boot Applikation und lädt die properties-Dateien welche die Nachrichten der verschiedenen Validierungsklassen enthalten.
 \item[WebSecurityConfig:]In dieser Klasse wird definiert, auf welche URLs dieser Anwendung ohne gültigen Login zugegriffen werden kann.
-
-
-
 
 \end{description}
 
@@ -166,13 +163,13 @@ Neben den Speicherung der Nutzer und Berechtigungen in der Datenbank müssen die
      \hline
       8.&Nebenläufigkeit&Es könnte zu jeder Zeit eine neue Instanz auf Pivotal gestartet werden, jedoch bedarf es bei dieser Komponente keiner Skalierung&Ja\\
      \hline
-      9.&Einweggebrauch&....&Nein\\
+      9.&Einweggebrauch&Pivotal generiert aus der hochgeladenen .jar oder .war einen Container, welcher jeder Zeit über die GUI in Pivotal gestoppt werden kann. &Ja\\
      \hline
-     10.&Dev-Prod-Vergleichbarkeit&....&Nein\\
+     10.&Dev-Prod-Vergleichbarkeit&Containerisierung durch Pivotal&Ja\\
      \hline     
      11.&Logs&Pivotal gibt die Logs standardmäßig über Stdout aus&Ja\\
      \hline
-     12.&Admin-Prozesse&....&Nein\\
+     12.&Admin-Prozesse&Nicht vorhanden&Nein\\
      \hline
       \end{tabular}
    \caption{Validierung nach "12 Faktor APP"}\label{tab:Anforderungen}
