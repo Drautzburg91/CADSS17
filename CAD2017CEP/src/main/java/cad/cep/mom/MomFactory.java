@@ -36,9 +36,6 @@ public final class MomFactory {
 		try {
 			
 			String host = String.format("tcp://%s", System.getenv("MOM_HOST"));
-			if(host ==null){
-				return mqttMom;
-			}
 			String pw = System.getenv("MOM_PW");
 			if(pw == null){
 				return null;

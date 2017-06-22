@@ -145,7 +145,7 @@ public final class CEPFactory {
 					for (int i = 0; i < senders.size(); i++) {
 						MoMSender sender = senders.get(0);
 						underlying.setTemperature(underlying.getTemperature()+i);
-						sender.send(underlying.getTopic()+"/CEP", underlying, false);
+						sender.send(underlying.getTopic()+"/CEP", underlying, true);
 					}
 					System.out.println("fuck you");
 					System.out.println(database);
