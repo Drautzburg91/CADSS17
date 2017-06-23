@@ -62,7 +62,7 @@ Sollte die CEP Engine etwas finden wird ein Alert gesendet. Diese Nachrichten be
    \caption{Die Warnungs-Codes}\label{tab:WarningCodes}
     \end{minipage}
 \end{table}
-Die CEP Engine wird über die Klasse Engine Control gesteuert. Diese Singleton-Klasse stellt sicher, dass die anderen Klassen Zugriff auf von ihnen benötigten Funktionen der Engine haben, aber dabei nicht mehr Zugriff als notwendig erhalten. Die Klasse ist ein Singleton um sicherzugehen das jede Klasse auf die gleiche Engine zugreift. Die Klasse selbst erstellt eine Instanz der Klasse EsperService. Die Instanz wrid über eine Factory erstellt. Die Factory geht sicher das jedes benötigte Statement mit einen Listener verknüpft wird. Die EsperService-Klasse beinhaltet die tatsächliche Esper Engine und stellt einen Wrapper für diese dar. Das folgende Klassendiagramm zeigt die Methoden und die Abhängigkeiten der Klassen.
+Die CEP Engine wird über die Klasse Engine Control gesteuert. Diese Singleton-Klasse stellt sicher, dass die anderen Klassen Zugriff auf von ihnen benötigten Funktionen der Engine haben, aber dabei nicht mehr Zugriff als notwendig erhalten. Die Klasse ist ein Singleton um sicherzugehen das jede Klasse auf die gleiche Engine zugreift. Die Klasse selbst erstellt eine Instanz der Klasse EsperService. Die Instanz wird über eine Factory erstellt. Die Factory geht sicher das jedes benötigte Statement mit einen Listener verknüpft wird. Die EsperService-Klasse beinhaltet die tatsächliche Esper Engine und stellt einen Wrapper für diese dar. Das folgende Klassendiagramm zeigt die Methoden und die Abhängigkeiten der Klassen.
  \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\textwidth]{Bilder/Esper.png}
