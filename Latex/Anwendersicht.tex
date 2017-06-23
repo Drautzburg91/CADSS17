@@ -32,7 +32,7 @@ Aufgebaut ist die Applikation über 8 Klassen wie in  Abb. \ref{img:AndroidUMLDi
 Die Klasse \textbf{MqttService} ist ein Android Service. Als einen Android Service bezeichnet man einen Prozess der nebenläufig zum Hauptprozess läuft. Dieser Service ist für die Verbindung zur MOM notwendig und wird später im Unterkapitel \ref{subsubsec:MqttService} näher erläutert.
 Die weiteren Klassen sind Hilfsklassen zur Verarbeitung der, durch die MOM bereitgestellten Daten.
 Beispielsweise übersetzt die Klasse \textbf{Uebersetzung} die verschiedenen Wettercodes in, für den Anwender lesbare, Wetterbezeichnungen. Dies geschieht mit Hilfe einer einfachen Switch-Case-Anweisung, wie exemplarisch in Abb. \ref{img:Case-Uebersetzung} zu sehen.
-  \begin{lstlisting}
+  \begin{lstlisting}[captionpos=b, caption={Switch Case zur Übersetzung der Warn-IDs}\label{img:Case-Uebersetzungen}]
  switch (code) {
             case "H1": {
                 return "Starke Luftdruckschwankungen, nehmen Sie Ihre Medizin falls benoetigt";
@@ -56,7 +56,7 @@ Beispielsweise übersetzt die Klasse \textbf{Uebersetzung} die verschiedenen Wet
                 return "Luftfeuchtigkeit ueber 90%";
             }
         }
-	\label{img:Case-Uebersetzung}
+	
 \end{lstlisting} 
 
 Bei Beginn der Applikation soll, wie in den Anforderungen beschrieben, die Position automatisch durch GPS ermittelt werden. Dazu wurde das von Android bereitgestellte Interface LocationListener verwendet. Dazu müssen die Methoden onLocationChanged(), onProviderDisabled(), onProviderEnabled() und onStatusChanged() implementiert werden. 
@@ -211,7 +211,7 @@ Auf technischer Seite nutzt die Webapplikation die Sprachen PHP, JavaScript, HTM
 \end{lstlisting}
 Die Verbindung zur MOM wird clientseitig über die JavaScript Bibliothek Paho aufgebaut. Paho ist ein Projekt der Eclipse Foundation - bekannt vor allem für die gleichnamige IDE - mit dem Ziel Internet of Things Applikationen die Implementierung des MQTT Protokolls zu vereinfachen. Paho ist für eine ganze Reihe von Sprachen verfügbar, darunter Java, Python, C, C++ und dem hier verwendeten JavaScript. Der Funktionsumfang unterscheidet sich jedoch und so unterstützt die JavaScript Version nicht das Standard MQTT Protokoll, sondern nur eine angepasste Version für WebSockets. Für RabbitMQ lässt sich die Unterstützung von WebSockets über das RabbitMQ Web MQTT Plugin hinzufügen. Dies ermöglicht eine direkte Verbindung zwischen dem Browser des Nutzers und der MOM, ohne weitere Interaktion mit dem Webserver.
 In Kombination mit der Umsetzung als Single Page Application bedeutet dies eine minimale Belastung des Webservers und erlaubt somit eine große Anzahl Nutzer pro Server. Bei Herokus kostenlosem Hostingmodell, welches nur 512 MB RAM und einen Worker bereitstellt waren so bereits in Tests über einen Zeitraum von einer Minute 1500 Aufrufe der Seite pro Sekunde möglich (vgl. Abb.\ref{img:testsettings} und \ref{img:testresults}).
-\begin{figure}[htbp]
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=1.0\textwidth]{Bilder/Web-TestSettings.png}
 	\caption{Testeinstellungen}\cite{webc:2}
@@ -223,7 +223,7 @@ In Kombination mit der Umsetzung als Single Page Application bedeutet dies eine 
 	\caption{Testeinstellungen}\cite{webc:3}
 	\label{img:testresults}
 \end{figure}
-. Getestet wurde dies über den cloudbasierten Lasttest der SendGrid Labs, welcher unter der Webseite www.loader.io verfügbar ist und in einem AWS Rechenzentrum an der amerikanischen Ostküste läuft. 
+Getestet wurde dies über den cloudbasierten Lasttest der SendGrid Labs, welcher unter der Webseite www.loader.io verfügbar ist und in einem AWS Rechenzentrum an der amerikanischen Ostküste läuft. 
 Kommt der Benutzer auf die Webseite kann er eine Stadt wählen und sich einloggen. Der Login startet im JavaScript Code die Funktion connect und löst somit einen Verbindungsversuch zur MOM aus. Wurde beim Nutzername der Tenant nicht mit angegeben wird automatisch der Default-Tenant verwendet. Bei erfolgreicher Verbindung wird der Callback onConnect aufgerufen, der die Topics für das aktuelle Wetter, die Vorhersage und die Wetterwarnungen des gewählten Ortes abonniert. Geht zu einem Topic eine neue Nachricht ein wird diese in der Funktion onMessageArrived behandelt. Hierbei wird unterschieden zu welchem Topic die Nachricht gehört und im Fall des aktuellen Wetters oder der Vorhersage auch, ob die Nachricht neue Informationen enthält. Ist dies nicht der Fall wird die Nachricht nicht weiter behandelt, da dies an den dargestellten Informationen nichts ändern würde. Unterscheidet sich die Nachricht zur vorherigen wird die Nachricht dekodiert und die neuen Informationen werden mit Hilfe von jQuery-Funktionen in der HTML-Darstellung eingebunden, wie nachfolgend zu sehen ist. 
 \begin{lstlisting} [captionpos=b, caption={Verarbeitung des Topics \emph{today}}\label{img:Verarbeiten-des-Topics-today}]
 switch (message.destinationName) {
@@ -316,8 +316,20 @@ In diesem Absatz wird in nachfolgender Tabelle dargestellt, ob und wie die Anfor
      \hline
       7. & Bindung an Ports & Der Webserver wird nur zum Einlesen der Konfiguration verwendet, lokal kann über localhost oder sogar das filesystem zugegriffen werden & Ja\\
      \hline
-      8. & Nebenläufigkeit & Die App verwendet bei Heroku Web- und Workerprozesse und kann horizontal skaliert werden & Ja\\
+     8. & Nebenläufigkeit & Die App verwendet bei Heroku Web- und Workerprozesse und kann horizontal skaliert werden & Ja\\
      \hline
+      \end{tabular}
+   \caption{Validierung des Webclient nach "12 Faktor App"}\label{tab:AnforderungenWebclient}
+    \end{minipage}
+\end{table}
+\newpage
+\begin{table}[!ht]
+  \centering
+    \begin{minipage}{17cm}
+      \centering
+      \begin{tabular}{*{3}{|l|p{3.0cm}|p{7.0cm}}}\hline
+      \multicolumn{4}{|c|}{\cellcolor[RGB]{200,200,200}Validierung nach "12 Faktor App"} \\\hline
+     \textbf{ID}&\textbf{Anforderung}&\textbf{Validierungs Element}&\textbf{Erfüllt}\\\hline
       9. & Einweggebrauch & Die App kann jederzeit gestoppt und auch schnell wieder gestartet werden. Da der Nutzer keine aktive Verbindung zur App hält bekommt dieser davon nichts mit & Ja\\
      \hline
      10. & Dev-Prod-Vergleichbarkeit & Änderungen können vom Entwickler selbst binnen Sekunden deployed werden, zur Entwicklung wird der gleiche Webserver verwendet & Ja\\
