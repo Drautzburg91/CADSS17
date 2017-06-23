@@ -31,7 +31,7 @@ Die Applikation wurde in Androidstudio in der Sprache Java und XML geschrieben.
 Aufgebaut ist die Applikation über 8 Klassen wie in  Abb. \ref{img:AndroidUMLDiagramm} zusehen ist. Die Klasse \textbf{AktuellesWetterActivity} fungiert dabei als Main-Class.
 Die Klasse \textbf{MqttService} ist ein Android Service. Als einen Android Service bezeichnet man einen Prozess der nebenläufig zum Hauptprozess läuft. Dieser Service ist für die Verbindung zur MOM notwendig und wird später im Unterkapitel \ref{subsubsec:MqttService} näher erläutert.
 Die weiteren Klassen sind Hilfsklassen zur Verarbeitung der, durch die MOM bereitgestellten Daten.
-Beispielsweise übersetzt die Klasse \textbf{Uebersetzung} die verschiedenen Wettercodes in, für den Anwender lesbare, Wetterbezeichnungen. Dies geschieht mit Hilfe einer einfachen Switch-Case-Anweisung, wie exemplarisch in Abb. \ref{img:Case-Uebersetzungen} zu sehen.
+Beispielsweise übersetzt die Klasse \textbf{Uebersetzung} die verschiedenen Wettercodes in, für den Anwender lesbare, Wetterbezeichnungen. Dies geschieht mit Hilfe einer einfachen Switch-Case-Anweisung, wie exemplarisch in Listing 1 zu sehen ist.
   \begin{lstlisting}[captionpos=b, caption={Switch Case zur Übersetzung der Warn-IDs}\label{img:Case-Uebersetzungen}]
  switch (code) {
             case "H1": {
@@ -200,7 +200,7 @@ Anschließend wird die prognostizierte Höchst- und Tiefsttemperatur über den W
 Am Schluss der Webseite kommt ein Footer, der Platz bietet für rechtliche Informationen.
 
 \subsubsection{Technische Umsetzung}
-Auf technischer Seite nutzt die Webapplikation die Sprachen PHP, JavaScript, HTML und css. PHP wird ausschließlich verwendet um die Variablen, welche für die Verbindung zu Message Oriented Middleware benötigt werden, aus den beim Serverhost konfigurierbaren Umgebungsvariablen auszulesen, wie in Abb.\ref{img:Einbindung PATH-Variablen} zu sehen.
+Auf technischer Seite nutzt die Webapplikation die Sprachen PHP, JavaScript, HTML und css. PHP wird ausschließlich verwendet um die Variablen, welche für die Verbindung zu Message Oriented Middleware benötigt werden, aus den beim Serverhost konfigurierbaren Umgebungsvariablen auszulesen, wie in Listing 2 zu sehen ist.
 \begin{lstlisting} [captionpos=b, caption={Einbindung PATH-Variablen}\label{img:Einbindung PATH-Variablen}]
 <script type="text/javascript">
   momAddress = "<?php echo getenv("momAddress"); ?>";
@@ -292,7 +292,7 @@ function generateGraph(data) {
 \end{lstlisting}
 
 Wie der Graph, passt sich auch der Rest der Webseite dynamisch an die Anzeige des Nutzers an. Dies wird durch den Einsatz von Bootstrap erreicht. 
-
+\clearpage
 \subsubsection{12 Faktor App}\label{web12FactorApp}
 In diesem Absatz wird in nachfolgender Tabelle dargestellt, ob und wie die Anforderungen der 12 Faktor App umgesetzt wurden.
 
