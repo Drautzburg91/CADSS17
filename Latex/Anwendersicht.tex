@@ -31,8 +31,8 @@ Die Applikation wurde in Androidstudio in der Sprache Java und XML geschrieben.
 Aufgebaut ist die Applikation über 8 Klassen wie in  Abb. \ref{img:AndroidUMLDiagramm} zusehen ist. Die Klasse \textbf{AktuellesWetterActivity} fungiert dabei als Main-Class.
 Die Klasse \textbf{MqttService} ist ein Android Service. Als einen Android Service bezeichnet man einen Prozess der nebenläufig zum Hauptprozess läuft. Dieser Service ist für die Verbindung zur MOM notwendig und wird später im Unterkapitel \ref{subsubsec:MqttService} näher erläutert.
 Die weiteren Klassen sind Hilfsklassen zur Verarbeitung der, durch die MOM bereitgestellten Daten.
-Beispielsweise übersetzt die Klasse \textbf{Uebersetzung} die verschiedenen Wettercodes in, für den Anwender lesbare, Wetterbezeichnungen. Dies geschieht mit Hilfe einer einfachen Switch-Case-Anweisung, wie exemplarisch in Abb. \ref{Case-Uebersetzung} zu sehen.
-  \begin{lstlisting}[captionpos=b, caption={Switch Case zur Übersetzung der Warn-IDs}\label{Case-Uebersetzungen}]
+Beispielsweise übersetzt die Klasse \textbf{Uebersetzung} die verschiedenen Wettercodes in, für den Anwender lesbare, Wetterbezeichnungen. Dies geschieht mit Hilfe einer einfachen Switch-Case-Anweisung, wie exemplarisch in Abb. \ref{img:Case-Uebersetzungen} zu sehen.
+  \begin{lstlisting}[captionpos=b, caption={Switch Case zur Übersetzung der Warn-IDs}\label{img:Case-Uebersetzungen}]
  switch (code) {
             case "H1": {
                 return "Starke Luftdruckschwankungen, nehmen Sie Ihre Medizin falls benoetigt";
