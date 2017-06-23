@@ -44,8 +44,8 @@ Der Webclient wird als PHP-Anwendung bei Heroku deployed. Wird eine Änderung im
 
 
 \subsection{Jenkins}\label{Jenkins}
-Jenkins ist ein webbasiertes Continuous Integration Tool, es wurde von Sun in Java entwickelt und wird von Oracle bis heute weiterentwickelt. In diesem Projekt wird Jenkins verwendet, um die CEP und die WetterAPI-Applikation automatisch zu builden und auf Cloud Foundry zu pushen und zu starten.
-Dies geschieht mit Hilfe des Cloud Foundry Plugins für Jenkins. Dazu wird der Aktuelle Stand des Git-Repository auf einem Server mit Hilfe des Terminalbefehls mvn install gebuildet. Wurde das Projekt erfolgreich gebuildet, wird das War-File (WetterAPI) oder das Jar-File (CEP) mit den für die einzelnen Applikationen spezifischen Einstellungen und Umgebungsvariablen (Siehe Abb. \ref{img:jenkinsConf} ) auf Cloud Foundry gepusht und gestartet.
+Jenkins ist ein webbasiertes Continuous Integration Tool. Es wurde von Sun in Java entwickelt und wird von Oracle bis heute weiterentwickelt. In diesem Projekt wird Jenkins verwendet, um die CEP und die WetterAPI-Applikation automatisch zu builden und auf Cloud Foundry zu pushen und zu starten.
+Dies geschieht mit Hilfe des Cloud Foundry Plugins für Jenkins. Dazu wird der aktuelle Stand des Git-Repository auf einem Server mit Hilfe des Terminalbefehls mvn install gebuildet. Wurde das Projekt erfolgreich gebuildet, wird das War-File (WetterAPI) oder das Jar-File (CEP) mit den für die einzelnen Applikationen spezifischen Einstellungen und Umgebungsvariablen (siehe Abb. \ref{img:jenkinsConf} ) auf Cloud Foundry gepusht und gestartet.
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.7\textwidth]{Bilder/JenkinsBsp1.png}
