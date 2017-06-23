@@ -1,7 +1,7 @@
 \section{Deployment}
-\subsection{Allgemein}
+Das Deployment der einzelnen Komponenten erstreckt sich auf mehrere Plattformen. So werden die Wetter-Api und die CEP auf die Cloud Application Platform Cloudfoundry des Anbieters Pivotal deployed. Das Deployment des entwickelten Webclients erfolgt über Heroku und die Messaging Komponente RabbitMQ wird als Dockercontainer durch den Amazon Container Service deployed. Die Vorgehensweise bei den unterschiedlichen Anbietern wird in den nachfolgenden Absätzen vorgestellt.
 \subsection{Cloudfoundry (Pivotal)}
-Für das Deployment des Wetter-API-Service und für die CEP wurde der Cloudanbieter Pivotal ausgewählt. Dieser Anbieter zeichnet sich durch ein großzügiges Angebot einer Testversion für welche keinerlei Zahlungsmittel hinterlegt werden mussten. Pivotal vergiebt nach der Registrierung ein Guthaben von 87\$. 
+Für das Deployment des Wetter-API-Service und für die CEP wurde der Cloudanbieter Pivotal ausgewählt. Dieser Anbieter zeichnet sich durch ein großzügiges Angebot einer Testversion für welche keinerlei Zahlungsmittel hinterlegt werden mussten. Pivotal vergibt nach der Registrierung ein Guthaben von 87\$. 
 
 Für jede Komponente wurde ein extra Zugang in Pivotal angelegt, damit jede Komponente das volle Budget zur Verfügung hat, welches beim Testen der Skalierbarkeit benötigt werden wird. 
 
@@ -24,10 +24,10 @@ Die in Absatz \ref{rabbitmq} erläuterte message-oriented Middleware RabbitMQ wi
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\textwidth]{Bilder/erlangDockerfile.png}
-	\caption{Installation von Erlang im Dockerfile}
+	\caption{Installation von Erlang im Dockerfile}\cite{dock:1}
 	\label{img:erlangDockerfile}
 \end{figure}
-Dies ist ein Ausschnitt aus dem Dockerfile des offiziellen Rabbitmq-Baseimages, einer Abbildung des Containers. Der Abschnitt stellt die Installation von Erlang auf einem Linux-System unter Verwendung des Paketmanagers \textit{Advanced Packaging Tool} (APT) dar.
+Dies ist ein Ausschnitt aus dem Dockerfile des offiziellen RabbitMQ-Baseimages, einer Abbildung des Containers. Der Abschnitt stellt die Installation von Erlang auf einem Linux-System unter Verwendung des Paketmanagers \textit{Advanced Packaging Tool} (APT) dar.
 \subsubsection{Dockerfile}
 Das Dockerfile für diesen Use-Case besteht neben dem erwähnten Baseimage aus Aktivierungen des in Absatz \ref{rabbitmq} vorgestellten Management Plugins, des MQTT Plugins sowie des MQTT-Websocket Plugins. Durch die Verwendung des Websocket Plugins ist die Kommunikation mit RabbitMQ auch über Webseiten möglich. Ein weiterer Bestandteil des Dockerfiles ist die rabbitmq.config. Diese ist notwendig um den Zugriff auf die MOM einzuschränken, da andernfalls eine Default-Konfiguration verwendet werden würde und durch diese der Nutzer \emph{guest} vollen Zugriff hätte. Um dennoch Administrations-Zugriff zu erlangen, wird über das Shell-Skript \textit{init.sh} ein Nutzer mit Administratorrechten angelegt. Die Zugangsdaten dieses Nutzers sind als Umgebungsvariablen hinterlegt. Die Ausführung des Skripts wird über den CMD-Befehl des Dockerfiles gesteuert. Zusätzlich ist es notwendig, Docker über den Befehl EXPOSE zu informieren, welche Ports der Container abhört. Im Anschluss an die Erstellung des Dockerfiles kann durch den Befehl \emph{docker build} ein Image erzeugt werden. Dieses Image wird auf den Amazon Container Service deployed.
 \subsubsection{Amazon Container Service}\label{acs}
@@ -38,7 +38,7 @@ Der Webclient wird als PHP-Anwendung bei Heroku deployed. Wird eine Änderung im
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=1.0\textwidth]{Bilder/Web-herokuEnv.PNG}
-	\caption{Konfiguration der Variablen bei Heroku}
+	\caption{Konfiguration der Variablen bei Heroku}\cite{hero:1}
 	\label{img:herokuConf}
 \end{figure} 
 
