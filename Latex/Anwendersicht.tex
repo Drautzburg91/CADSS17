@@ -141,6 +141,45 @@ Die nachfolgende Abb. \ref{img:AndroidApplikation} zeigt die fertige Applikation
 \caption{Android-Applikation}
 \label{img:AndroidApplikation}
 \end{figure}
+\subsubsection{12 Faktor App}\label{web12FactorApp}
+In diesem Absatz wird in nachfolgender Tabelle dargestellt, ob und wie die Anforderungen der 12 Faktor App umgesetzt wurden.
+
+
+\begin{table}[!ht]
+  \centering
+    \begin{minipage}{17cm}
+      \centering
+      \begin{tabular}{*{3}{|l|p{3.0cm}|p{7.0cm}}}\hline
+      \multicolumn{4}{|c|}{\cellcolor[RGB]{200,200,200}Validierung nach "12 Faktor App"} \\\hline
+     \textbf{ID}&\textbf{Anforderung}&\textbf{Validierungs Element}&\textbf{Erfüllt}\\\hline
+     1. & Codebase & Codebase in git verwaltet, deployment verschiedener Versionen über Repo möglich & Ja\\
+      \hline
+     2. & Abhängigkeiten & Bibliotheken werden über CNDs aufgelöst und geladen, inklusive Fallback & Ja\\
+     \hline
+     3. & Konfiguration & Konfiguration \& Credentials werden über Umgebungsvariablen ausgelesen & Ja\\
+     \hline
+     4. & Unterstützende Dienste & MOM kann über Konfiguration ausgetauscht werden & Ja\\
+     \hline 
+     5. & Build, release, run & Push auf entsprechenden Git Branch löst einen Build \& und bei Erfolg ein Release aus & nicht zutreffend\\
+     \hline
+     6. & Prozesse & Der Client läuft im auf dem Android Endgerät des Nutzers und serverseitig  müssen keine Daten verarbeitet/ gespeichert werden & Ja\\
+     \hline
+      7. & Bindung an Ports & Der Webserver wird nur zum Einlesen der Konfiguration verwendet, lokal kann über localhost oder sogar das filesystem zugegriffen werden & Ja\\
+     \hline
+      8. & Nebenläufigkeit & Die App verwendet mehrere Services die Nebenläufig ablaufen, die App kann skalieren & Ja, nicht zutreffend\\
+     \hline
+      9. & Einweggebrauch & Die App kann jederzeit gestoppt und auch schnell wieder gestartet werden. Da der Nutzer keine aktive Verbindung zur App hält bekommt dieser davon nichts mit & Ja, nicht zutreffend\\
+     \hline
+     10. & Dev-Prod-Vergleichbarkeit & Änderungen können vom Entwickler selbst binnen Sekunden deployed werden, muss der Nutzer ebenfalls etwas zur Aktualisierung zu tun & Ja\\
+     \hline     
+     11. & Logs & Logs werden auf Logoutsteams geschrieben, können über das Terminal von Android ausgelesen werden & Ja\\
+     \hline
+     12. & Admin-Prozesse & Es werden keine Admin-Prozesse benötigt oder verwendet & nicht zutreffend\\
+     \hline
+      \end{tabular}
+   \caption{Validierung des Androidclient nach "12 Faktor App"}\label{tab:AnforderungenWebclient}
+    \end{minipage}
+\end{table}
 
 
 \subsection{Web-Client} \label{Web-Client}
