@@ -82,8 +82,8 @@ startService(serv);
 
 \subsubsection{MqttService}
 \label{subsubsec:MqttService}
-Der MqttService ist das Herzstück der Android Applikation in diesem Service wird die Verbindung zur MOM hergestellt und die Daten die diese liefert empfangen.
-Mit dem Open Source Projekt Paho wurde eine Verbindung zu der in Kapitel \ref{rabbitmq} vorgestellten MOM realisiert. Dafür wurde die für Android spezifische Library über Grovy importiert. Durch diesen Import ist es möglich einen Android-Client zu erstellen. Dafür wurde das Interface MqttCallback implementiert. Zu diesem Interface gehören die Methoden: 
+Der MqttService ist das Herzstück der Android Applikation. In diesem Service wird die Verbindung zur MOM hergestellt und die Daten die diese liefert empfangen.
+Mit dem Open Source Projekt Paho wurde eine Verbindung zu der in Kapitel \ref{rabbitmq} vorgestellten MOM realisiert. Dafür wurde die für Android spezifische Library über Gradle importiert. Durch diesen Import ist es möglich einen Android-Client zu erstellen. Dafür wurde das Interface MqttCallback implementiert. Zu diesem Interface gehören die Methoden: 
  \begin{itemize}
 \item connectionLost(Throwable t):
 \\Diese Methode hat den Zweck, wenn während des Betriebs der Applikation die Verbindung zur MOM verloren geht, diese wieder aufzubauen.
