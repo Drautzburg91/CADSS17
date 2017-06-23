@@ -21,7 +21,7 @@ Bei der Wettervorhersage für eine Woche ergeben sich nachfolgende Punkte
 \item ein Diagramm das die Maximal- und Minimaltemperaturen veranschaulicht
 \end{itemize}  
 Des Weiteren sollte es eine Auswahlmöglichkeit geben zwischen der Automatischen Standortbestimmung mittels GPS und der Eingabe einer Postleitzahl um den Standort festzulegen.
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
 	\centering
 	\includegraphics[width=1.0\textwidth]{Bilder/AndroidUML.png}
 	\caption{Klassendiagramm der Android-Applikation}
@@ -31,8 +31,8 @@ Die Applikation wurde in Androidstudio in der Sprache Java und XML geschrieben.
 Aufgebaut ist die Applikation über 8 Klassen wie in  Abb. \ref{img:AndroidUMLDiagramm} zusehen ist. Die Klasse \textbf{AktuellesWetterActivity} fungiert dabei als Main-Class.
 Die Klasse \textbf{MqttService} ist ein Android Service. Als einen Android Service bezeichnet man einen Prozess der nebenläufig zum Hauptprozess läuft. Dieser Service ist für die Verbindung zur MOM notwendig und wird später im Unterkapitel \ref{subsubsec:MqttService} näher erläutert.
 Die weiteren Klassen sind Hilfsklassen zur Verarbeitung der, durch die MOM bereitgestellten Daten.
-Beispielsweise übersetzt die Klasse \textbf{Uebersetzung} die verschiedenen Wettercodes in, für den Anwender lesbare, Wetterbezeichnungen. Dies geschieht mit Hilfe einer einfachen Switch-Case-Anweisung, wie exemplarisch in Abb. \ref{img:Case-Uebersetzung} zu sehen.
-  \begin{lstlisting}[captionpos=b, caption={Switch Case zur Übersetzung der Warn-IDs}\label{img:Case-Uebersetzungen}]
+Beispielsweise übersetzt die Klasse \textbf{Uebersetzung} die verschiedenen Wettercodes in, für den Anwender lesbare, Wetterbezeichnungen. Dies geschieht mit Hilfe einer einfachen Switch-Case-Anweisung, wie exemplarisch in Abb. \ref{Case-Uebersetzung} zu sehen.
+  \begin{lstlisting}[captionpos=b, caption={Switch Case zur Übersetzung der Warn-IDs}\label{Case-Uebersetzungen}]
  switch (code) {
             case "H1": {
                 return "Starke Luftdruckschwankungen, nehmen Sie Ihre Medizin falls benoetigt";
@@ -135,12 +135,14 @@ public void onReceive(Context context, Intent intent) {
   Um nun das in den Anforderungen gewünschte Diagramm zu erzeugen gibt es die Klasse Chart. Diese erzeugt mit Hilfe der in Weekly enthaltenen Minimum- und Maximumtemperaturen für die einzelnen Tagen ein Liniendiagramm. Dazu wurde die free Library aChartengine verwendet.
 Die nachfolgende Abb. \ref{img:AndroidApplikation} zeigt die fertige Applikation mit dem Tageswetter und der Wochenvorhersage.
 
-\begin{figure}[h]
-    \subfigure{\includegraphics[width=0.5\textwidth]{Bilder/AndroidApp.png}}
-    \subfigure{\includegraphics[width=0.5\textwidth]{Bilder/AndroidAppPLZ.png}}
+\begin{figure}[!ht]
+\centering
+    \subfigure{\includegraphics[width=0.3\textwidth]{Bilder/AndroidApp.png}}
+    \subfigure{\includegraphics[width=0.3\textwidth]{Bilder/AndroidAppPLZ.png}}
 \caption{Android-Applikation}
 \label{img:AndroidApplikation}
 \end{figure}
+
 \subsubsection{12 Faktor App}\label{web12FactorApp}
 In diesem Absatz wird in nachfolgender Tabelle dargestellt, ob und wie die Anforderungen der 12 Faktor App umgesetzt wurden.
 
@@ -211,7 +213,7 @@ Auf technischer Seite nutzt die Webapplikation die Sprachen PHP, JavaScript, HTM
 \end{lstlisting}
 Die Verbindung zur MOM wird clientseitig über die JavaScript Bibliothek Paho aufgebaut. Paho ist ein Projekt der Eclipse Foundation - bekannt vor allem für die gleichnamige IDE - mit dem Ziel Internet of Things Applikationen die Implementierung des MQTT Protokolls zu vereinfachen. Paho ist für eine ganze Reihe von Sprachen verfügbar, darunter Java, Python, C, C++ und dem hier verwendeten JavaScript. Der Funktionsumfang unterscheidet sich jedoch und so unterstützt die JavaScript Version nicht das Standard MQTT Protokoll, sondern nur eine angepasste Version für WebSockets. Für RabbitMQ lässt sich die Unterstützung von WebSockets über das RabbitMQ Web MQTT Plugin hinzufügen. Dies ermöglicht eine direkte Verbindung zwischen dem Browser des Nutzers und der MOM, ohne weitere Interaktion mit dem Webserver.
 In Kombination mit der Umsetzung als Single Page Application bedeutet dies eine minimale Belastung des Webservers und erlaubt somit eine große Anzahl Nutzer pro Server. Bei Herokus kostenlosem Hostingmodell, welches nur 512 MB RAM und einen Worker bereitstellt waren so bereits in Tests über einen Zeitraum von einer Minute 1500 Aufrufe der Seite pro Sekunde möglich (vgl. Abb.\ref{img:testsettings} und \ref{img:testresults}).
-\begin{figure}[h]
+\begin{figure}[!ht]
 	\centering
 	\includegraphics[width=1.0\textwidth]{Bilder/Web-TestSettings.png}
 	\caption{Testeinstellungen}\cite{webc:2}
@@ -223,6 +225,7 @@ In Kombination mit der Umsetzung als Single Page Application bedeutet dies eine 
 	\caption{Testeinstellungen}\cite{webc:3}
 	\label{img:testresults}
 \end{figure}
+\clearpage
 Getestet wurde dies über den cloudbasierten Lasttest der SendGrid Labs, welcher unter der Webseite www.loader.io verfügbar ist und in einem AWS Rechenzentrum an der amerikanischen Ostküste läuft. 
 Kommt der Benutzer auf die Webseite kann er eine Stadt wählen und sich einloggen. Der Login startet im JavaScript Code die Funktion connect und löst somit einen Verbindungsversuch zur MOM aus. Wurde beim Nutzername der Tenant nicht mit angegeben wird automatisch der Default-Tenant verwendet. Bei erfolgreicher Verbindung wird der Callback onConnect aufgerufen, der die Topics für das aktuelle Wetter, die Vorhersage und die Wetterwarnungen des gewählten Ortes abonniert. Geht zu einem Topic eine neue Nachricht ein wird diese in der Funktion onMessageArrived behandelt. Hierbei wird unterschieden zu welchem Topic die Nachricht gehört und im Fall des aktuellen Wetters oder der Vorhersage auch, ob die Nachricht neue Informationen enthält. Ist dies nicht der Fall wird die Nachricht nicht weiter behandelt, da dies an den dargestellten Informationen nichts ändern würde. Unterscheidet sich die Nachricht zur vorherigen wird die Nachricht dekodiert und die neuen Informationen werden mit Hilfe von jQuery-Funktionen in der HTML-Darstellung eingebunden, wie nachfolgend zu sehen ist. 
 \begin{lstlisting} [captionpos=b, caption={Verarbeitung des Topics \emph{today}}\label{img:Verarbeiten-des-Topics-today}]
@@ -244,7 +247,6 @@ switch (message.destinationName) {
     ...
 }
 \end{lstlisting}
-
 
 Zur Generierung des Graphen (vgl. Listing \ref{img:renderGraph}) wird die Bibliothek c3.js benutzt, welche wiederum intern d3.js verwendet, jedoch die Erstellung von Diagrammen mit weniger und einfacherem Quellcode ermöglicht als bei d3.js nötig wäre. Die erzeugten Graphen passen sich an die Anzahl, Minimal- und Maximalwerte der zu visualisierenden Daten an und skalieren mit der Bildschirmgröße. Die Konfiguration des Diagramms erfolgt über die Funktion generateGraph. Hier wird unter „bindto“ der css-selector angegeben, in dem der Graph erzeugt werden soll. Die Größe wird unter „size“ auf eine Höhe von 200 Pixeln begrenzt, unter „axis.x“ wird die Beschriftung entlang der X-Achse definiert. Entlang der y-Achse passt sich die Skala automatisch an die unter „data.columns“ eingetragenen Daten an. Die Datenpaare werden mit Höchst- bzw. Tiefsttemperatur benannt und farblich rot bzw. blau definiert. Über den Punkt padding wird der linke sowie rechte Abstand zum Container festgelegt. Hier muss genügend Platz für die Beschriftung links sein, da die Außenpunkte für die Darstellung der Start- bzw. Endpunkt der X-Achse ist. Um die schriftliche Vorhersage ausgerichtet unter dem Graphen darzustellen muss im css für diese der gleiche Abstand, jedoch als Margin, festgelegt werden.
 
