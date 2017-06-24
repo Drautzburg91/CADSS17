@@ -1,0 +1,106 @@
+\documentclass[paper,oneside,onecolumn,notitlepage,bibtotocnumbered,fontsize=12pt,bigheadings,ngerman]{scrartcl}
+\usepackage[singlespacing]{setspace}
+\usepackage[ngerman]{babel}
+\usepackage{fancyhdr}   
+%for € use 
+\usepackage{eurosym}                 
+\pagestyle{fancy} 
+\usepackage[parfill]{parskip}                        
+\addto\captionsngerman{
+\renewcommand{\figurename}{Abbildung}
+\renewcommand{\tablename}{Tab.}
+}
+\newcommand{\thema}{CAD-Project - MOM based Information Live Flow}
+\newcommand{\schlagworte}{MoM, IoT, Cloud, CEP}
+\newcommand{\zusammenfassung}{
+}
+
+\newcommand{\autor}{Paul Drautzburg,  Lukas Hansen,  Georg Mohr, Kim De Souza, Sebastian Thuemmel, Sascha Drobig}
+
+%Encodingeinstellung
+\usepackage[utf8]{inputenc}
+%Packete zur Formatierung von Tabellen und Grafiken
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{floatflt}
+\usepackage{here}
+\usepackage{blindtext}
+\usepackage{wrapfig}
+\usepackage{bigstrut}
+\usepackage{subfloat}
+\usepackage{subfigure}
+%\usepackage{scrpage2} 
+%\pagestyle{scrheadings}
+\usepackage[small]{titlesec}
+\usepackage{colortbl}	
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{nicefrac}
+\usepackage{pstricks}
+\usepackage{pst-3dplot}
+\usepackage{glossaries}
+\usepackage{listings}
+\usepackage{needspace}
+\usepackage[nottoc]{tocbibind}
+\usepackage{subfigure}
+%\pagestyle{myheadings}
+%\clearscrheadfoot
+\renewcommand{\thefootnote}{\arabic{footnote}} 
+\lstset{breaklines=true}
+
+
+
+%Titelseite (optional)
+\newcommand{\sectionnumbering}[1]{% 
+  \setcounter{section}{0}% 
+   \renewcommand{\thesection}{\csname #1\endcsname{section}}} 
+   
+   
+   
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+\usepackage{listings}
+
+\begin{document}
+\shorthandoff{"}
+\pagenumbering{roman} 
+\include{cover}
+\include{title}
+{\Large \textbf{Vorwort}}
+\bigskip
+\\
+Das vorliegende Dokument beschreibt die Umsetzung für das Projekt im Rahmen des MSI-Kurses \textit{Cloud Application Development}.
+\include{affidavit}
+\include{abstract}
+\normalsize
+\setlength{\parindent}{0pt}
+\newpage
+\sectionnumbering{Roman} 
+\tableofcontents
+\clearpage
+\listoffigures 
+\clearpage 
+\listoftables 
+\clearpage
+\pagenumbering{arabic} 
+\sectionnumbering{arabic} 
+
+\include{Motivation}
+\include{Einleitung}
+\include{RabbitMQ}
+\include{WetterAPI}
+\include{Datenverarbeitung}
+\include{CEP}
+\include{Anwendersicht}
+\include{Deployment}
+\include{Kostenmodell}
+\include{Schlussbetrachtung}
+\bibliographystyle{plainnat}
+\bibliography{literatur.bib}
+
+\end{document}
