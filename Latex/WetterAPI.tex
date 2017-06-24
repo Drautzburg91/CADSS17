@@ -1,14 +1,14 @@
-\section{Wetter-API(Datenquelle)}
+\section{Wetter-API (Datenquelle)}
 In diesem Kapitel wird auf die im Rahmen dieses Projektes Wetter-API vom Anbieter "OpenWeatherMap" eingegangen und anschließend eigens dafür implementierte Services zu dieser beschrieben. Anschließend werden die für den Services implementierten Klassen, Methoden und Tests beschrieben. Abschließend wird diese Komponente gegen die zu Beginn definierten Anforderungen validiert. 
 \subsection{Die API}
 Der Anbieter "OpenWeatherMap" bietet kostenlos die Möglichkeit Wetterdaten via HTTP-Request abzufragen. 
-Hierzu ist lediglich ein Nutzerzugang erforderlich, welchen sich jeder anlegen kann. Es können verschiedene Vorhersagen abgefragt werden, für diese Arbeit beschränkt es sich jedoch auf die tägliche Vorhersage und eine  5-tages Vorhersage. Solch ein angesprochener HTTP-Request (hier für eine 5-tägige Vorhersage) setzt sich wie folgt zusammen, 
+Hierzu ist lediglich ein Nutzerzugang erforderlich, welchen sich jeder anlegen kann. Es können verschiedene Vorhersagen abgefragt werden, für diese Arbeit beschränkt es sich jedoch auf die tägliche Vorhersage und eine  5-tages Vorhersage. Solch ein angesprochener HTTP-Request (hier für eine 5-tägige Vorhersage) setzt sich wie folgt zusammen:
 \begin{lstlisting}
 http://api.openweathermap.org/data/2.5/forecast?zip=78467,de&
 APPID=41c464d95d33fabc24d44a5086ea9848
 \end{lstlisting}
 
-Der Parameter "ZIP" wird zum setzten der Postleitzahl für die gewünschte Stadt genutzt, zu diesem muss noch das Länderkürzel hinzugefügt werden. Die "APPID" wird von "OpenweatherMap" für jeden Nutzeraccount spezifisch vergeben und dient als Authentifizierung. Der Parameter"forecast" dient zur Unterscheidung zwischen einer aktuellen Vorhersage und einer 5-tages Vorhersage, bei Erster würde der Request wie folgt aussehen, 
+Der Parameter "ZIP" wird zum setzten der Postleitzahl für die gewünschte Stadt genutzt, zu diesem muss noch das Länderkürzel hinzugefügt werden. Die "APPID" wird von "OpenweatherMap" für jeden Nutzeraccount spezifisch vergeben und dient als Authentifizierung. Der Parameter"forecast" dient zur Unterscheidung zwischen einer aktuellen Vorhersage und einer 5-tages Vorhersage, bei Erster würde der Request wie folgt aussehen:
 
 \begin{lstlisting}
 http://api.openweathermap.org/data/2.5/weather?zip=78467,de&
@@ -40,7 +40,7 @@ somit kann ohne auf Probleme zu stoßen, ein Request-Intervall von 60 Sekunden, 
 	\caption{OpenWeatherMap Konditionen}\cite{map:1}
 	\label{img:OpenWeather}
 \end{figure} 
-Im Bezug auf den "Response-Type" der API, kann entschieden werden, ob als "Response-Type" das JSON- oder XML-Format gewählt werden soll. Aufgrund der guten Möglichkeiten von Java mit JSON-Dokumente zu arbeiten, wurde  das JSON-Format, als "Response-Type", gewählt.
+Im Bezug auf den "Response-Type" der API, kann entschieden werden, ob als "Response-Type" das JSON- oder XML-Format gewählt werden soll. Aufgrund der vielen vorhandenen Möglichkeiten von Java mit JSON-Dokumente zu arbeiten, wurde  das JSON-Format, als "Response-Type", gewählt.
 Um bessere Vorstellungen von solch einem Response im JSON-Format zu bekommen wird dieser untenstehend am Beispiel einer täglichen Vorhersage gezeigt.  
 
   \begin{lstlisting}
@@ -54,7 +54,7 @@ folgenden Informationen für 5 Tage.
 {"cod":"200","message":0.0035,"cnt":40,"list":[{"dt":1497808800,"main":{"temp":295.56,"temp_min":294.226,"temp_max":295.56,"pressure":957.98,"sea_level":1034.02,"grnd_level":957.98,"humidity":53,"temp_kf":1.34},"weather":[{"id":800,"main":"Clear","description":"clear sky","icon":"01d"}],"clouds":{"all":0},"wind":{"speed":2.46,"deg":51.5021},"sys":{"pod":"d"},"dt_txt":"2017-06-18 18:00:00"}
 \end{lstlisting}
 \clearpage
-Um mit diesen JSON-Response-Types besser und freier arbeiten zu können wurde ein Service implementiert, welche die Daten vorher Filtert, somit werden nur wichtige Informationen genutzt. Die Implementierung dieses Services wird im folgenden Abschnitt beschrieben. Der Service greift die Grundlagen und Problemstellungen der "OpenWeatherMap"-API auf, welche in diesem Abschnitt beschrieben wurden, von den Request-Intervallen bis hin zu den zwei verschiedenen Arten von Vorhersagen.
+Um mit diesen JSON-Response-Types besser und freier arbeiten zu können wurde ein Service implementiert, welche die Daten vorher Filtert, somit werden nur wichtige Informationen genutzt. Die Implementierung dieses Services wird im folgenden Abschnitt beschrieben. Der Wetter-API-Service greift die Grundlagen und Problemstellungen der "OpenWeatherMap"-API auf, welche in diesem Abschnitt beschrieben wurden, von den Request-Intervallen bis hin zu den zwei verschiedenen Arten von Vorhersagen.
 
 \subsection{Die Komponenten und Klassen}
 
@@ -168,7 +168,7 @@ Neben den Speicherung der Nutzer und Berechtigungen in der Datenbank müssen die
      8.&Nebenläufigkeit&Es könnte zu jeder Zeit eine neue Instanz auf Pivotal gestartet werden, jedoch bedarf es bei dieser Komponente keiner Skalierung&Ja\\
      \hline
       \end{tabular}
-   \caption{Validierung nach "12 Faktor APP"}\label{tab:Anforderungen}
+   \caption{Validierung nach "12 Faktor APP (1)"}\label{tab:Anforderungen}
     \end{minipage}
 \end{table}
 
@@ -189,6 +189,6 @@ Neben den Speicherung der Nutzer und Berechtigungen in der Datenbank müssen die
      12.&Admin-Prozesse&Nicht vorhanden&Nein\\
      \hline
       \end{tabular}
-   \caption{Validierung nach "12 Faktor APP"}\label{tab:Anforderungen}
+   \caption{Validierung nach "12 Faktor APP (2)"}\label{tab:Anforderungen}
     \end{minipage}
 \end{table}

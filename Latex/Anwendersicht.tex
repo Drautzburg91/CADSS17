@@ -248,7 +248,7 @@ switch (message.destinationName) {
 }
 \end{lstlisting}
 
-Zur Generierung des Graphen (vgl. Listing \ref{img:renderGraph}) wird die Bibliothek c3.js benutzt, welche wiederum intern d3.js verwendet, jedoch die Erstellung von Diagrammen mit weniger und einfacherem Quellcode ermöglicht als bei d3.js nötig wäre. Die erzeugten Graphen passen sich an die Anzahl, Minimal- und Maximalwerte der zu visualisierenden Daten an und skalieren mit der Bildschirmgröße. Die Konfiguration des Diagramms erfolgt über die Funktion generateGraph. Hier wird unter „bindto“ der css-selector angegeben, in dem der Graph erzeugt werden soll. Die Größe wird unter „size“ auf eine Höhe von 200 Pixeln begrenzt, unter „axis.x“ wird die Beschriftung entlang der X-Achse definiert. Entlang der y-Achse passt sich die Skala automatisch an die unter „data.columns“ eingetragenen Daten an. Die Datenpaare werden mit Höchst- bzw. Tiefsttemperatur benannt und farblich rot bzw. blau definiert. Über den Punkt padding wird der linke sowie rechte Abstand zum Container festgelegt. Hier muss genügend Platz für die Beschriftung links sein, da die Außenpunkte für die Darstellung der Start- bzw. Endpunkt der X-Achse ist. Um die schriftliche Vorhersage ausgerichtet unter dem Graphen darzustellen muss im css für diese der gleiche Abstand, jedoch als Margin, festgelegt werden.
+Zur Generierung des Graphen (vgl. Listing 4) wird die Bibliothek c3.js benutzt, welche wiederum intern d3.js verwendet, jedoch die Erstellung von Diagrammen mit weniger und einfacherem Quellcode ermöglicht als bei d3.js nötig wäre. Die erzeugten Graphen passen sich an die Anzahl, Minimal- und Maximalwerte der zu visualisierenden Daten an und skalieren mit der Bildschirmgröße. Die Konfiguration des Diagramms erfolgt über die Funktion generateGraph. Hier wird unter „bindto“ der css-selector angegeben, in dem der Graph erzeugt werden soll. Die Größe wird unter „size“ auf eine Höhe von 200 Pixeln begrenzt, unter „axis.x“ wird die Beschriftung entlang der X-Achse definiert. Entlang der y-Achse passt sich die Skala automatisch an die unter „data.columns“ eingetragenen Daten an. Die Datenpaare werden mit Höchst- bzw. Tiefsttemperatur benannt und farblich rot bzw. blau definiert. Über den Punkt padding wird der linke sowie rechte Abstand zum Container festgelegt. Hier muss genügend Platz für die Beschriftung links sein, da die Außenpunkte für die Darstellung der Start- bzw. Endpunkt der X-Achse ist. Um die schriftliche Vorhersage ausgerichtet unter dem Graphen darzustellen muss im css für diese der gleiche Abstand, jedoch als Margin, festgelegt werden.
 
 \begin{lstlisting}[captionpos=b, caption={Renderung des Graphen}\label{img:renderGraph}] 
 
@@ -321,7 +321,7 @@ In diesem Absatz wird in nachfolgender Tabelle dargestellt, ob und wie die Anfor
      8. & Nebenläufigkeit & Die App verwendet bei Heroku Web- und Workerprozesse und kann horizontal skaliert werden & Ja\\
      \hline
       \end{tabular}
-   \caption{Validierung des Webclient nach "12 Faktor App"}\label{tab:AnforderungenWebclient}
+   \caption{Validierung des Webclient nach "12 Faktor App (1)"}\label{tab:AnforderungenWebclient}
     \end{minipage}
 \end{table}
 \newpage
@@ -341,6 +341,6 @@ In diesem Absatz wird in nachfolgender Tabelle dargestellt, ob und wie die Anfor
      12. & Admin-Prozesse & Es werden keine Admin-Prozesse benötigt oder verwendet & nicht zutreffend\\
      \hline
       \end{tabular}
-   \caption{Validierung des Webclient nach "12 Faktor App"}\label{tab:AnforderungenWebclient}
+   \caption{Validierung des Webclient nach "12 Faktor App (2)"}\label{tab:AnforderungenWebclient}
     \end{minipage}
 \end{table}
